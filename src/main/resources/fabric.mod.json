@@ -1,10 +1,11 @@
 {
   "schemaVersion": 1,
   "id": "ore-readout",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "name": "Ore Readout",
-  "description": "A small fabric mod for printing in chat to operators and to the console when blocks are broken",
+  "description": "A small Fabric mod to notify server operators and the console when blocks are broken",
   "authors": [
+    "silw",
     "yitzy299"
   ],
   "contact": {
@@ -23,8 +24,8 @@
     "ore-readout.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.1",
-    "fabric": ">=0.25.0",
-    "minecraft": "1.16.x"
+    "fabricloader": ">=0.16.0",
+    "fabric": ">=0.114.0",
+    "minecraft": "1.21.4"
   }
 }
