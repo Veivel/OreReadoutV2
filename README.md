@@ -1,10 +1,54 @@
-# Ore-Readout
- A simple fabric mod for printing to the chat/server console when an ore is broken
+## OreReadoutV2
 
-## Config
-`send_to_console` toggles messages to the console
+A simple Fabric mod to notify staff and server console when certain blocks are broken.
+If you are familiar with OreAnnouncer and OreNotifier, this is basically the lite version of those but on Fabric.
 
-`send_to_chat` toggles messages to players with permission level 2+
+## Configuration
 
-## Downloads
-You can download from the ![Curseforge page](https://www.curseforge.com/minecraft/mc-mods/ore-readout)
+When you load the mod for the first time, a `config/ore-readout.properties` file should be generated.
+
+```conf
+# Whether to send messages to server console or not
+send_to_console=true
+
+# Whether to send messages to staff (requires perms)
+send_to_chat=false
+
+# Whether to send messages to Discord via webhooks
+send_to_discord=false
+
+# Discord Webhook URL. You may leave this if send_to_discord=false
+discord_webhook_url=https://discord.com/api/webhooks/xxx/xxx
+
+# List of blocks to notify for, separated by commas.
+# No spaces allowed (TODO! Needs a rework.)
+blocks=minecraft:diamond_ore,minecraft:emerald_ore,minecraft:iron_ore
+```
+
+## Permissions
+
+Any permissions manager that uses `fabric-permissions-api` is (at least in theory) supported 
+– e.g. LuckPerms, CyberPermissions, Universal Perms. 
+This mod was tested only with LuckPerms.
+
+If you have `send_to_chat=true` in the config, you will need to make sure
+your staff have this permission enabledt:
+
+```
+ore-readout.view
+```
+
+If you configured it properly, your staff should see:
+![](/docs/assets/chat.png)
+
+## Discord Webhook
+
+To get a webhook URL, see step 1 of [this article](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
+![](/docs/assets/discord2.png)
+
+## Important
+
+I only picked up maintenance of this mod after finding [the original version](https://modrinth.com/mod/ore-readout) by yitzy299,
+which was abandoned. While you may ask for support or make feature requests on the GitHub page, I cannot promise to deliver anything.
+
+If there's a change you want made, [consider contributing](#)!

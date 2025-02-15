@@ -27,8 +27,6 @@ public class MixinBlockBreak {
     @Inject(method = "onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;", at = @At("HEAD"))
     public void onBroken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfoReturnable ci) {
         Block block = state.getBlock();
-
-        // TODO: change string detection system to be array or hashmap
         if (OreReadout.blocks.contains(Registries.BLOCK.getId(block).toString())) {
             notify(block, pos, world, player);
         }
@@ -37,17 +35,17 @@ public class MixinBlockBreak {
     private void notify(Block block, BlockPos pos, World world, PlayerEntity player) {
         String VIEW_LOGS_PERMISSION = "ore-readout.view";
         String playerName = player.getName().getString();
-        Identifier blockIdentifier = Registries.BLOCK.getId(block);
-        Identifier dimensionIdentifier = world.getRegistryKey().getValue();
+        String blockName = Registries.BLOCK.getId(block).toString().replaceFirst("minecraft:", "");
+        String dimensionName = world.getRegistryKey().getValue().toString().replaceFirst("minecraft:", "");
 
         if (OreReadout.sendInConsole) {
             OreReadout.LOG.info(
                 playerName + " mined " 
-                + blockIdentifier + " at [" 
+                + blockName + " at [" 
                 + pos.getX() + " " 
                 + pos.getY() + " " 
                 + pos.getZ() + "] in " 
-                + dimensionIdentifier
+                + dimensionName
             );
         }
         if (OreReadout.sendToChat) {
@@ -59,14 +57,15 @@ public class MixinBlockBreak {
                         try {
                             serverPlayerEntity.sendMessage(
                                 Text.of("🔔").copy().formatted(Formatting.AQUA)
-                                .append(Utils.fmt("»", Formatting.GRAY))
+                                .append(Utils.fmt(" » ", Formatting.GRAY))
                                 .append(Utils.fmt(playerName, Formatting.AQUA))
                                 .append(Utils.fmt(" mined ", Formatting.WHITE))
-                                .append(Utils.fmt(blockIdentifier.toString() + " at ", Formatting.WHITE))
+                                .append(Utils.fmt(blockName + " at ", Formatting.WHITE))
+                                // TODO: add click action to teleport to pos
                                 .append(Utils.fmt("[" + pos.getX() + " ", Formatting.AQUA))
                                 .append(Utils.fmt(pos.getY() + " ", Formatting.AQUA))
                                 .append(Utils.fmt(pos.getZ() + "] ", Formatting.AQUA))
-                                .append(Utils.fmt("in " + dimensionIdentifier + ".", Formatting.WHITE))
+                                .append(Utils.fmt("in " + dimensionName + ".", Formatting.WHITE))
                             );
                         } catch(Exception e1) {
                             e1.printStackTrace();
@@ -78,11 +77,11 @@ public class MixinBlockBreak {
         if (OreReadout.sendToDiscord) {
             OreReadout.discordWebhookSender.sendOreReadout(
                 playerName, 
-                blockIdentifier.toString(), 
+                blockName, 
                 pos.getX(), 
                 pos.getY(), 
                 pos.getZ(), 
-                dimensionIdentifier.toString()
+                dimensionName
             );
         }
     }

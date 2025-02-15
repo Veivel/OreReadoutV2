@@ -58,6 +58,8 @@ public class OreReadout implements ModInitializer {
             throw new IOException("Configuration error: send_to_discord is true but discord_webhook_url is blank");
         }
         discordWebhookSender = new DiscordWebhookSender(OreReadout.discordWebhookUrl);
+
+        // TODO: change string detection system to be array or hashmap
         blocks = props.getProperty("blocks");
     }
 }

@@ -3,7 +3,7 @@
   "id": "ore-readout",
   "version": "1.3",
   "name": "OreReadoutV2",
-  "description": "A small Fabric mod to notify server operators and the console when blocks are broken",
+  "description": "A simple Fabric mod to notify staff and server console when certain blocks are broken.",
   "authors": [
     "silw",
     "yitzy299"
