@@ -6,26 +6,28 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class DiscordWebhookSender {
-
-    public static void sendWebhook(String playerName, String minedItem, int x, int y, int z, String webhookUrl) {
+    public static void sendWebhook(String playerName, String minedItem, int x, int y, int z, String dimension, String webhookUrl) {
         try {
-            // Build the JSON payload manually.
+            // build the JSON payload manually
             StringBuilder jsonPayload = new StringBuilder();
             jsonPayload.append("{")
                 .append("\"embeds\": [")
                     .append("{")
-                        .append("\"title\": \"Ore Readout Event\",")
+                        .append("\"title\": \"\",")
                         .append("\"description\": \"")
                             .append(escapeJson(playerName))
-                            .append(" has mined ")
+                            .append(" mined ")
                             .append(escapeJson(minedItem))
-                            .append(" at [ ")
+                            .append(" at [`")
                             .append(x)
                             .append(" ")
                             .append(y)
                             .append(" ")
                             .append(z)
-                            .append(" ].\",")
+                            .append("`]")
+                            .append(" in ")
+                            .append(dimension)
+                            .append(". \",")
                         .append("\"color\": 4352240,")
                         .append("\"footer\": {\"text\": \"\"},")
                         .append("\"author\": {\"name\": \"\"},")

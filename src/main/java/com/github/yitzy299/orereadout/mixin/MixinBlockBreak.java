@@ -23,25 +23,27 @@ public class MixinBlockBreak {
     public void onBroken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfoReturnable ci) {
         Block block = state.getBlock();
         if (OreReadout.blocks.contains(Registries.BLOCK.getId(block).toString())) {
-            print(block, pos, world, player);
+            notify(block, pos, world, player);
         }
     }
 
-    private void print(Block block, BlockPos pos, World world, PlayerEntity player) {
-        String webhookUrl = "";
-        DiscordWebhookSender.sendWebhook(
-            player.getName().toString(), 
-            Registries.BLOCK.getId(block).toString(), 
-            pos.getX(), 
-            pos.getY(), 
-            pos.getZ(), 
-            webhookUrl
-        );
+    private void notify(Block block, BlockPos pos, World world, PlayerEntity player) {
+        if (OreReadout.sendToDiscord) {
+            DiscordWebhookSender.sendWebhook(
+                player.getName().getString(), 
+                Registries.BLOCK.getId(block).toString(), 
+                pos.getX(), 
+                pos.getY(), 
+                pos.getZ(), 
+                world.getRegistryKey().getValue().toString(),
+                OreReadout.discordWebhookUrl
+            );
+        }
         if (OreReadout.sendToChat) {
             player.getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> {
                 if (serverPlayerEntity.hasPermissionLevel(2)) {
                         try {
-                            serverPlayerEntity.sendMessage(new Literal(Registries.BLOCK.getId(block) + " was broken by " + player.getName().toString() + " at " + pos.getX() +
+                            serverPlayerEntity.sendMessage(new Literal(Registries.BLOCK.getId(block) + " was broken by " + player.getName().getString() + " at " + pos.getX() +
                                 ", " + pos.getY() + ", " + pos.getZ() + " in " + world.getRegistryKey().getValue()).parse(null, null, 0));
                         } catch(Exception e1) {
                             e1.printStackTrace();

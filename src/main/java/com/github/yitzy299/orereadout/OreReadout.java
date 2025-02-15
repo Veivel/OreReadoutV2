@@ -17,6 +17,8 @@ public class OreReadout implements ModInitializer {
     public static Logger LOG = LogManager.getLogger();
     public static boolean sendToChat = false;
     public static boolean sendInConsole = true;
+    public static boolean sendToDiscord = false;
+    public static String discordWebhookUrl = "";
     public static String blocks;
     @Override
     public void onInitialize() {
@@ -39,11 +41,20 @@ public class OreReadout implements ModInitializer {
     }
 
     private void readProperties() throws IOException {
-        InputStream inputStream = new FileInputStream(FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + "/ore-readout.properties");
+        InputStream inputStream = new FileInputStream(
+            FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + "/ore-readout.properties"
+        );
         Properties props = new Properties();
         props.load(inputStream);
+
         sendToChat = props.getProperty("send_to_chat").equals("true");
         sendInConsole = props.getProperty("send_to_console").equals("true");
+        sendToDiscord = props.getProperty("send_to_discord").equals("true");
+        discordWebhookUrl = props.getProperty("discord_webhook_url", "N/A");
+        if (sendToDiscord && discordWebhookUrl.equals("N/A")) {
+            throw new IOException("Configuration error: send_to_discord is true but no webhook URL was provided");
+        }
+
         blocks = props.getProperty("blocks");
     }
 }
