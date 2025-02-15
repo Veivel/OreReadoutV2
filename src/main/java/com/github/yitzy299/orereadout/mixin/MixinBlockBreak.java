@@ -29,14 +29,14 @@ public class MixinBlockBreak {
 
     private void notify(Block block, BlockPos pos, World world, PlayerEntity player) {
         if (OreReadout.sendToDiscord) {
-            DiscordWebhookSender.sendWebhook(
+            DiscordWebhookSender discordWebhookSender = new DiscordWebhookSender(OreReadout.discordWebhookUrl);
+            discordWebhookSender.sendOreReadout(
                 player.getName().getString(), 
                 Registries.BLOCK.getId(block).toString(), 
                 pos.getX(), 
                 pos.getY(), 
                 pos.getZ(), 
-                world.getRegistryKey().getValue().toString(),
-                OreReadout.discordWebhookUrl
+                world.getRegistryKey().getValue().toString()
             );
         }
         if (OreReadout.sendToChat) {

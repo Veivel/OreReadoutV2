@@ -6,9 +6,16 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class DiscordWebhookSender {
-    public static void sendWebhook(String playerName, String minedItem, int x, int y, int z, String dimension, String webhookUrl) {
+    private String webhookUrl = "";
+
+    public DiscordWebhookSender(String webhookUrl) {
+      this.webhookUrl = webhookUrl;
+    }
+
+    public void sendOreReadout(String playerName, String minedItem, int x, int y, int z, String dimension) {
         try {
             // build the JSON payload manually
+            // https://toolscord.com/webhook
             StringBuilder jsonPayload = new StringBuilder();
             jsonPayload.append("{")
                 .append("\"embeds\": [")
