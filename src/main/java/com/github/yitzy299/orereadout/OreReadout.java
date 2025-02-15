@@ -5,6 +5,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import main.java.com.github.yitzy299.orereadout.DiscordWebhookSender;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,11 +17,13 @@ import java.util.Properties;
 
 public class OreReadout implements ModInitializer {
     public static Logger LOG = LogManager.getLogger();
+    public static DiscordWebhookSender discordWebhookSender = null;
     public static boolean sendToChat = false;
     public static boolean sendInConsole = true;
     public static boolean sendToDiscord = false;
     public static String discordWebhookUrl = "";
     public static String blocks;
+
     @Override
     public void onInitialize() {
         Path configPath = Paths.get(FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + "/ore-readout.properties");
@@ -36,7 +40,6 @@ public class OreReadout implements ModInitializer {
             readProperties();
         } catch (IOException e) {
             e.printStackTrace();
-
         }
     }
 
@@ -47,14 +50,14 @@ public class OreReadout implements ModInitializer {
         Properties props = new Properties();
         props.load(inputStream);
 
+        sendInConsole = props.getProperty("send_to_console", "true").equals("true");
         sendToChat = props.getProperty("send_to_chat").equals("true");
-        sendInConsole = props.getProperty("send_to_console").equals("true");
         sendToDiscord = props.getProperty("send_to_discord").equals("true");
         discordWebhookUrl = props.getProperty("discord_webhook_url", "N/A");
         if (sendToDiscord && discordWebhookUrl.equals("N/A")) {
-            throw new IOException("Configuration error: send_to_discord is true but no webhook URL was provided");
+            throw new IOException("Configuration error: send_to_discord is true but discord_webhook_url is blank");
         }
-
+        discordWebhookSender = new DiscordWebhookSender(OreReadout.discordWebhookUrl);
         blocks = props.getProperty("blocks");
     }
 }

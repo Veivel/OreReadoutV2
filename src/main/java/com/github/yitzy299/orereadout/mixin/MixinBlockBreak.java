@@ -2,12 +2,16 @@ package com.github.yitzy299.orereadout.mixin;
 
 import com.github.yitzy299.orereadout.OreReadout;
 
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import main.java.com.github.yitzy299.orereadout.DiscordWebhookSender;
+import main.java.com.github.yitzy299.orereadout.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.PlainTextContent.Literal;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.registry.Registries;
@@ -19,44 +23,67 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Block.class)
 public class MixinBlockBreak {
+
     @Inject(method = "onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;", at = @At("HEAD"))
     public void onBroken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfoReturnable ci) {
         Block block = state.getBlock();
+
+        // TODO: change string detection system to be array or hashmap
         if (OreReadout.blocks.contains(Registries.BLOCK.getId(block).toString())) {
             notify(block, pos, world, player);
         }
     }
 
     private void notify(Block block, BlockPos pos, World world, PlayerEntity player) {
-        if (OreReadout.sendToDiscord) {
-            DiscordWebhookSender discordWebhookSender = new DiscordWebhookSender(OreReadout.discordWebhookUrl);
-            discordWebhookSender.sendOreReadout(
-                player.getName().getString(), 
-                Registries.BLOCK.getId(block).toString(), 
-                pos.getX(), 
-                pos.getY(), 
-                pos.getZ(), 
-                world.getRegistryKey().getValue().toString()
+        String VIEW_LOGS_PERMISSION = "ore-readout.view";
+        String playerName = player.getName().getString();
+        Identifier blockIdentifier = Registries.BLOCK.getId(block);
+        Identifier dimensionIdentifier = world.getRegistryKey().getValue();
+
+        if (OreReadout.sendInConsole) {
+            OreReadout.LOG.info(
+                playerName + " mined " 
+                + blockIdentifier + " at [" 
+                + pos.getX() + " " 
+                + pos.getY() + " " 
+                + pos.getZ() + "] in " 
+                + dimensionIdentifier
             );
         }
         if (OreReadout.sendToChat) {
             player.getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> {
-                if (serverPlayerEntity.hasPermissionLevel(2)) {
+                Permissions
+                .check(serverPlayerEntity.getUuid(), VIEW_LOGS_PERMISSION, false)
+                .thenAcceptAsync(hasPermission -> {
+                    if (hasPermission) {
                         try {
-                            serverPlayerEntity.sendMessage(new Literal(Registries.BLOCK.getId(block) + " was broken by " + player.getName().getString() + " at " + pos.getX() +
-                                ", " + pos.getY() + ", " + pos.getZ() + " in " + world.getRegistryKey().getValue()).parse(null, null, 0));
+                            serverPlayerEntity.sendMessage(
+                                Text.of("🔔").copy().formatted(Formatting.AQUA)
+                                .append(Utils.fmt("»", Formatting.GRAY))
+                                .append(Utils.fmt(playerName, Formatting.AQUA))
+                                .append(Utils.fmt(" mined ", Formatting.WHITE))
+                                .append(Utils.fmt(blockIdentifier.toString() + " at ", Formatting.WHITE))
+                                .append(Utils.fmt("[" + pos.getX() + " ", Formatting.AQUA))
+                                .append(Utils.fmt(pos.getY() + " ", Formatting.AQUA))
+                                .append(Utils.fmt(pos.getZ() + "] ", Formatting.AQUA))
+                                .append(Utils.fmt("in " + dimensionIdentifier + ".", Formatting.WHITE))
+                            );
                         } catch(Exception e1) {
                             e1.printStackTrace();
                         }
                     }
                 });
+            });
         }
-        if (OreReadout.sendInConsole) {
-            OreReadout.LOG.info(Registries.BLOCK.getId(block) + " was broken by " + player.getName().toString() + " at " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + " in " + world.getRegistryKey().getValue());
+        if (OreReadout.sendToDiscord) {
+            OreReadout.discordWebhookSender.sendOreReadout(
+                playerName, 
+                blockIdentifier.toString(), 
+                pos.getX(), 
+                pos.getY(), 
+                pos.getZ(), 
+                dimensionIdentifier.toString()
+            );
         }
-
-
     }
-
-
 }

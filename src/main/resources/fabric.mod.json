@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "id": "ore-readout",
-  "version": "1.2.1",
-  "name": "Ore Readout",
+  "version": "1.3",
+  "name": "OreReadoutV2",
   "description": "A small Fabric mod to notify server operators and the console when blocks are broken",
   "authors": [
     "silw",
@@ -26,6 +26,7 @@
   "depends": {
     "fabricloader": ">=0.16.0",
     "fabric": ">=0.114.0",
-    "minecraft": "1.21.4"
+    "minecraft": "1.21.4",
+    "fabric-permissions-api-v0": "*"
   }
 }

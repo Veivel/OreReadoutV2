@@ -12,10 +12,10 @@ public class DiscordWebhookSender {
       this.webhookUrl = webhookUrl;
     }
 
+    // TODO: make this send asynchronously?
     public void sendOreReadout(String playerName, String minedItem, int x, int y, int z, String dimension) {
         try {
-            // build the JSON payload manually
-            // https://toolscord.com/webhook
+            // build the JSON payload manually. see: https://toolscord.com/webhook
             StringBuilder jsonPayload = new StringBuilder();
             jsonPayload.append("{")
                 .append("\"embeds\": [")
