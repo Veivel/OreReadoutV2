@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "orereadoutv2",
+  "id": "orereadout",
   "version": "1.3",
   "name": "OreReadoutV2",
   "description": "A simple Fabric mod to notify staff and server console when certain blocks (e.g. ores) are broken.",
@@ -21,7 +21,7 @@
     ]
   },
   "mixins": [
-    "ore-readout.mixins.json"
+    "orereadout.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.16.0",
