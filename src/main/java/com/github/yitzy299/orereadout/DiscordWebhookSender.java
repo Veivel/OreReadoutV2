@@ -1,4 +1,4 @@
-package main.java.com.github.yitzy299.orereadout;
+package com.github.yitzy299.orereadout;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

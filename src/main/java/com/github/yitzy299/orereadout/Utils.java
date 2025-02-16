@@ -1,4 +1,4 @@
-package main.java.com.github.yitzy299.orereadout;
+package com.github.yitzy299.orereadout;
 
 import net.minecraft.text.Text;
 import net.minecraft.text.MutableText;

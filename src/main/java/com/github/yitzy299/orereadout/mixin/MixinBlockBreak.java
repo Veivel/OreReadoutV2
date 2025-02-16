@@ -1,25 +1,22 @@
 package com.github.yitzy299.orereadout.mixin;
 
-import com.github.yitzy299.orereadout.OreReadout;
-
-import me.lucko.fabric.api.permissions.v0.Permissions;
-import main.java.com.github.yitzy299.orereadout.DiscordWebhookSender;
-import main.java.com.github.yitzy299.orereadout.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.PlainTextContent.Literal;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.registry.Registries;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.github.yitzy299.orereadout.OreReadout;
+import com.github.yitzy299.orereadout.Utils;
+
+import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 @Mixin(Block.class)
 public class MixinBlockBreak {
