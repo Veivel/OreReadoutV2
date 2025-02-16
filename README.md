@@ -1,3 +1,5 @@
+// also: test with no props
+
 ## OreReadoutV2
 
 A simple Fabric mod to notify staff and server console when certain blocks are broken.
@@ -45,6 +47,12 @@ If you configured it properly, your staff should see:
 
 To get a webhook URL, see step 1 of [this article](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
 ![](/docs/assets/discord2.png)
+
+## Build from Source
+
+```bash
+gradle clean build
+```
 
 ## Important
 
