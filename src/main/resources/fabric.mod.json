@@ -3,14 +3,14 @@
   "id": "ore-readout",
   "version": "1.3",
   "name": "OreReadoutV2",
-  "description": "A simple Fabric mod to notify staff and server console when certain blocks are broken.",
+  "description": "A simple Fabric mod to notify staff and server console when certain blocks (e.g. ores) are broken.",
   "authors": [
     "silw",
     "yitzy299"
   ],
   "contact": {
-    "issues": "https://github.com/yitzy299/ore-readout",
-    "sources": "https://github.com/yitzy299/ore-readout"
+    "issues": "https://github.com/Veivel/orereadoutV2/issues",
+    "sources": "https://github.com/Veivel/orereadoutV2/issues"
   },
   "license": "MIT",
   "icon": "assets/ore-readout/icon.png",
