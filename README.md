@@ -1,4 +1,4 @@
-## OreReadoutV2
+## orereadoutV2
 
 A simple Fabric mod to notify staff and server console when certain blocks (e.g. ores) are broken.
 If you are familiar with OreAnnouncer and OreNotifier, 
