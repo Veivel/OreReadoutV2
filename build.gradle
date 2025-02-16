@@ -67,17 +67,4 @@ publishing {
             // }
         }
     }
-
-    repositories {
-        maven {
-            artifactId 'orereadout'
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/veivel/orereadoutv2"
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
-        // mavenLocal()
-    }
 }
