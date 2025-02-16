@@ -70,7 +70,7 @@ publishing {
 
     repositories {
         maven {
-            name = "GitHub Packages"
+            name = "GitHubPackages"
             url = "https://maven.pkg.github.com/veivel/orereadoutV2"
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
