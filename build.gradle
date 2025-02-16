@@ -55,7 +55,6 @@ jar {
     from "LICENSE"
 }
 
-// configure the maven publication
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -69,9 +68,15 @@ publishing {
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
+        maven {
+            name = "GitHub Packages"
+            url = "https://maven.pkg.github.com/veivel/orereadoutV2"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
         // mavenLocal()
     }
 }
