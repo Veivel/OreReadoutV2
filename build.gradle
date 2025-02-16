@@ -70,6 +70,7 @@ publishing {
 
     repositories {
         maven {
+            artifactId 'orereadout'
             name = "GitHubPackages"
             url = "https://maven.pkg.github.com/veivel/orereadoutv2"
             credentials {
