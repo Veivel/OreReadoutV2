@@ -1,5 +1,3 @@
-// also: test with no props
-
 ## OreReadoutV2
 
 A simple Fabric mod to notify staff and server console when certain blocks are broken.
