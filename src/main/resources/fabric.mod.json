@@ -17,7 +17,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "com.github.yitzy299.orereadout.OreReadout"
+      "com.github.Veivel.orereadout.OreReadout"
     ]
   },
   "mixins": [

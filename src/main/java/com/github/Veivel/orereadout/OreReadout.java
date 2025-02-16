@@ -1,4 +1,4 @@
-package com.github.yitzy299.orereadout;
+package com.github.Veivel.orereadout;
 
 import java.io.FileInputStream;
 import java.io.IOException;

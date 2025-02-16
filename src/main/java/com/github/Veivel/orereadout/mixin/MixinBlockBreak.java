@@ -1,12 +1,12 @@
-package com.github.yitzy299.orereadout.mixin;
+package com.github.Veivel.orereadout.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.github.yitzy299.orereadout.OreReadout;
-import com.github.yitzy299.orereadout.Utils;
+import com.github.Veivel.orereadout.OreReadout;
+import com.github.Veivel.orereadout.Utils;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.block.Block;
