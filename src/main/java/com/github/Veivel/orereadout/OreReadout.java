@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,15 +22,18 @@ public class OreReadout implements ModInitializer {
     public static boolean sendInConsole = true;
     public static boolean sendToDiscord = false;
     public static String discordWebhookUrl = "";
-    public static String blocks;
+    public static HashMap<String, Boolean> blockMap = new HashMap<String, Boolean>();
 
     @Override
     public void onInitialize() {
-        Path configPath = Paths.get(FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + "/ore-readout.properties");
+        String propertiesFilePath = FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + "/ore-readout.properties";
+        Path configPath = Paths.get(propertiesFilePath);
         if (!configPath.toFile().exists()) {
             try {
-                Files.copy(OreReadout.class.getResourceAsStream("/data/ore-readout/default_config.properties"), configPath);
+                InputStream stream = OreReadout.class.getResourceAsStream("/data/ore-readout/default_config.properties");
+                Files.copy(stream, configPath);
                 LOG.info("Config file for ore-readout created in config/ore-readout.properties");
+
                 readProperties();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -43,9 +47,8 @@ public class OreReadout implements ModInitializer {
     }
 
     private void readProperties() throws IOException {
-        InputStream inputStream = new FileInputStream(
-            FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + "/ore-readout.properties"
-        );
+        String propertiesFilePath = FabricLoader.getInstance().getConfigDir().toAbsolutePath().toString() + "/ore-readout.properties";
+        InputStream inputStream = new FileInputStream(propertiesFilePath);
         Properties props = new Properties();
         props.load(inputStream);
 
@@ -58,7 +61,8 @@ public class OreReadout implements ModInitializer {
         }
         discordWebhookSender = new DiscordWebhookSender(OreReadout.discordWebhookUrl);
 
-        // TODO: change string detection system to be array or hashmap
-        blocks = props.getProperty("blocks");
+        String blocks = props.getProperty("blocks");
+        blockMap = Utils.parseCommaSeparatedToMap(blocks);
+        LOG.info("Detected the following blocks to notify for: " + OreReadout.blockMap.keySet().toString());
     }
 }
