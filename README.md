@@ -45,6 +45,9 @@ ore-readout.view
 If you configured it properly, your staff should see:
 ![](/docs/assets/chat.png)
 
+You can also click on the coordinates to automatically type out `/tp @s {x} {y} {z}` to more easily teleport to the scene. Hovering over it will say "Click here to teleport".
+![](/docs/assets/teleport.png)
+
 ## Discord Webhook
 
 To get a webhook URL, see step 1 of [this article](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
