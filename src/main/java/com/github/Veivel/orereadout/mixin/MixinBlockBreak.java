@@ -38,7 +38,7 @@ public class MixinBlockBreak {
     }
 
     private void notify(String blockName, BlockPos pos, World world, PlayerEntity player) {
-        String VIEW_LOGS_PERMISSION = "ore-readout.view";
+        String VIEW_PERMISSIONS = "ore-readout.view";
         String playerName = player.getName().getString();
         String dimensionName = world.getRegistryKey().getValue().toString().replaceFirst("minecraft:", "");
 
@@ -65,7 +65,7 @@ public class MixinBlockBreak {
                     ))
                     .withClickEvent(new ClickEvent(
                         Action.SUGGEST_COMMAND, 
-                        String.format("/tp @s %d %d %d", pos.getX(), pos.getY(), pos.getZ())
+                        String.format("/tp %d %d %d", pos.getX(), pos.getY(), pos.getZ())
                     ));
                 MutableText clickableText = Utils
                     .fmt("[" + pos.getX() + " ", Formatting.AQUA)
@@ -74,8 +74,8 @@ public class MixinBlockBreak {
                     .setStyle(style);
 
                 // main text
-                Text mainText = Text.of("🔔").copy().formatted(Formatting.AQUA)
-                    .append(Utils.fmt(" » ", Formatting.GRAY))
+                Text mainText = Utils
+                    .oreReadoutPrefix()
                     .append(Utils.fmt(playerName, Formatting.AQUA))
                     .append(Utils.fmt(" mined ", Formatting.WHITE))
                     .append(Utils.fmt(blockName + " at ", Formatting.WHITE))
@@ -84,10 +84,17 @@ public class MixinBlockBreak {
 
                 // check perms for each player, send mainText if hasPermission
                 player.getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> {
+                    String uuidStr = serverPlayerEntity.getUuidAsString();
+                    
                     Permissions
-                    .check(serverPlayerEntity.getUuid(), VIEW_LOGS_PERMISSION, false)
+                    .check(serverPlayerEntity.getUuid(), VIEW_PERMISSIONS, false)
                     .thenAcceptAsync(hasPermission -> {
-                        if (hasPermission) {
+                        // check for player's toggle settings
+                        Boolean hasToggledOff = false;
+                        Boolean hasKey = OreReadout.playerDisableViewMap.containsKey(uuidStr);
+                        if (hasKey) hasToggledOff = OreReadout.playerDisableViewMap.get(uuidStr);
+
+                        if (hasPermission && !hasToggledOff) {
                             try {
                                 serverPlayerEntity.sendMessage(mainText);
                             } catch(Exception e1) {

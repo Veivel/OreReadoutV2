@@ -12,8 +12,14 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mojang.brigadier.tree.LiteralCommandNode;
+
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
 
 public class OreReadout implements ModInitializer {
     public static Logger LOG = LogManager.getLogger();
@@ -22,7 +28,12 @@ public class OreReadout implements ModInitializer {
     public static boolean sendInConsole = true;
     public static boolean sendToDiscord = false;
     public static String discordWebhookUrl = "";
+    
+    // map of all blocks to notify for
     public static HashMap<String, Boolean> blockMap = new HashMap<String, Boolean>();
+
+    // map of player UUID (str) to boolean, whether they disabled ore readouts or not
+    public static HashMap<String, Boolean> playerDisableViewMap = new HashMap<String, Boolean>();
 
     @Override
     public void onInitialize() {
@@ -44,6 +55,21 @@ public class OreReadout implements ModInitializer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
+                    .literal("ore")
+                    .requires(Permissions.require("ore-readout.root", 2))
+                    .build();
+            LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
+                    .literal("toggle")
+                    .requires(Permissions.require("ore-readout.toggle", 2))
+                    .executes(Commands::toggle)
+                    .build();
+
+            dispatcher.getRoot().addChild(baseNode);
+            baseNode.addChild(toggleCommandNode);
+        });
     }
 
     private void readProperties() throws IOException {

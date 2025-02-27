@@ -10,6 +10,10 @@ import net.minecraft.util.Formatting;
 
 public class Utils {
 
+		public static MutableText oreReadoutPrefix() {
+			return Text.of("🔔").copy().formatted(Formatting.AQUA).append(Utils.fmt(" » ", Formatting.GRAY));
+		}
+
 		/**
 		 * Returns a MutableText object. formatted with colour
 		 * @param str The main text content in string form
