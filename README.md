@@ -32,6 +32,8 @@ blocks=minecraft:diamond_ore,minecraft:emerald_ore,minecraft:iron_ore
 
 ## Permissions
 
+#### Base Permissions
+
 Any permissions manager that uses `fabric-permissions-api` is (at least in theory) supported 
 – e.g. LuckPerms, CyberPermissions, Universal Perms. This mod was tested only with LuckPerms.
 
@@ -45,12 +47,21 @@ ore-readout.view
 If you configured it properly, your staff should see:
 ![](/docs/assets/chat.png)
 
-You can also click on the coordinates to automatically type out `/tp {x} {y} {z}` to more easily teleport to the scene. Hovering over it will say "Click here to teleport".
+#### Toggle your own Notifications
+
+With the perms `ore-readout.root` and `ore-readout.toggle`, you can temporarily disable ore readouts
+in your own chat (as staff) with the command `/ore toggle`. 
+This setting is temporary and will be reset after the server is stopped or restarted.
+
+#### Teleporting
+
+You can also click on the coordinates to automatically type out `/tp {x} {y} {z}` to more easily teleport to the scene. Hovering over it will say "Click here to teleport to the location".
 ![](/docs/assets/teleport.png)
+
 
 ## Discord Webhook
 
-To get a webhook URL, see step 1 of [this article](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
+To get a webhook URL, see step 1 of [this Discord article](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
 ![](/docs/assets/discord2.png)
 
 ## Build from Source
@@ -59,9 +70,9 @@ To get a webhook URL, see step 1 of [this article](https://support.discord.com/h
 gradle clean build
 ```
 
-## Important
+## Important!
 
-I only picked up maintenance of this mod after finding [the original version](https://modrinth.com/mod/ore-readout) by yitzy299,
+I only picked up development of this Fabric mod after finding [the original version](https://modrinth.com/mod/ore-readout) by yitzy299,
 which was abandoned. While you may ask for support or make feature requests on the GitHub page, I cannot promise to deliver anything.
 
 If there is a change you want made, [consider contributing](https://github.com/Veivel/orereadoutV2/issues)!
