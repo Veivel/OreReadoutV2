@@ -27,7 +27,7 @@ discord_webhook_url=https://discord.com/api/webhooks/xxx/xxx
 
 # List of blocks to notify for, separated by commas.
 # No spaces allowed
-blocks=minecraft:diamond_ore,minecraft:emerald_ore,minecraft:iron_ore
+blocks=diamond_ore,emerald_ore,iron_ore
 ```
 
 ## Permissions
