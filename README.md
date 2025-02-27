@@ -38,18 +38,14 @@ Any permissions manager that uses `fabric-permissions-api` is (at least in theor
 – e.g. LuckPerms, CyberPermissions, Universal Perms. This mod was tested only with LuckPerms.
 
 If you have `send_to_chat=true` in the config, you will need to make sure
-your staff have the following permission enabled:
-
-```
-ore-readout.view
-```
+your staff have the permission `ore-readout.view` enabled.
 
 If you configured it properly, your staff should see:
 ![](/docs/assets/chat.png)
 
 #### Toggle your own Notifications
 
-With the perms `ore-readout.root` and `ore-readout.toggle`, you can temporarily disable ore readouts
+With the permissions `ore-readout.root` and `ore-readout.toggle` enabled, you can temporarily disable ore readouts
 in your own chat (as staff) with the command `/ore toggle`. 
 This setting is temporary and will be reset after the server is stopped or restarted.
 
