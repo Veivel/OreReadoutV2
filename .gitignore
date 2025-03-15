@@ -2,6 +2,8 @@
 /build/
 /run/
 .idea
+bin/
+.vscode
 ore-readout.iml
 ore-readout.ipr
 ore-readout.iws

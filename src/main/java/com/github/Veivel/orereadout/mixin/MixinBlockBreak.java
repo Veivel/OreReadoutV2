@@ -13,15 +13,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.ClickEvent.SuggestCommand;
+import net.minecraft.text.HoverEvent.ShowText;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.text.ClickEvent.Action;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -57,16 +56,16 @@ public class MixinBlockBreak {
         // send to specified players via chat
         if (OreReadout.sendToChat) {
             try {
+                HoverEvent showText = new ShowText(
+                    Utils.fmt("Click here to teleport to the location.", Formatting.GOLD)
+                );
+                ClickEvent suggestCommand = new SuggestCommand(
+                    String.format("/tp %d %d %d", pos.getX(), pos.getY(), pos.getZ())
+                );
                 // text that includes coordinates, click event, & hover event
                 Style style = Style.EMPTY
-                    .withHoverEvent(new HoverEvent(
-                        net.minecraft.text.HoverEvent.Action.SHOW_TEXT,
-                        Utils.fmt("Click here to teleport to the location.", Formatting.GOLD)
-                    ))
-                    .withClickEvent(new ClickEvent(
-                        Action.SUGGEST_COMMAND, 
-                        String.format("/tp %d %d %d", pos.getX(), pos.getY(), pos.getZ())
-                    ));
+                    .withHoverEvent(showText)
+                    .withClickEvent(suggestCommand);
                 MutableText clickableText = Utils
                     .fmt("[" + pos.getX() + " ", Formatting.AQUA)
                     .append(Utils.fmt(pos.getY() + " ", Formatting.AQUA))
