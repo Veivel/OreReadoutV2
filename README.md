@@ -1,4 +1,6 @@
-## Ore Readout V2
+# Ore Readout V2
+
+> **TLDR: Customizable ore readouts for server console and staff!**
 
 A simple Fabric mod to notify staff and server console when certain blocks (e.g. ores) are broken.
 If you are familiar with OreAnnouncer and OreNotifier, 
