@@ -2,6 +2,7 @@ package com.github.Veivel.orereadout;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -47,7 +48,7 @@ public class DiscordWebhookSender {
             String payloadString = jsonPayload.toString();
 
             // Send the JSON payload via HTTP POST
-            URL url = new URL(webhookUrl);
+            URL url = new URI(webhookUrl).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
