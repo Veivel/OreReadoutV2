@@ -1,4 +1,4 @@
-## orereadoutV2
+## Ore Readout V2
 
 A simple Fabric mod to notify staff and server console when certain blocks (e.g. ores) are broken.
 If you are familiar with OreAnnouncer and OreNotifier, 
@@ -71,4 +71,4 @@ gradle clean build
 I only picked up development of this Fabric mod after finding [the original version](https://modrinth.com/mod/ore-readout) by yitzy299,
 which was abandoned. While you may ask for support or make feature requests on the GitHub page, I cannot promise to deliver anything.
 
-If there is a change you want made, [consider contributing](https://github.com/Veivel/orereadoutV2/issues)!
+If there is a change you want made, [consider contributing](https://github.com/Veivel/OreReadoutV2/issues)!
