@@ -7,25 +7,23 @@ assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Describe the bug**: A clear and concise description of what the bug is.
+...
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Expected behavior**: A clear and concise description of what you expected to happen.
+...
 
-**Actual / observed behaviour**
-If applicable, add screenshots to help explain your problem.
+**Actual / observed behaviour**: If applicable, add screenshots to help explain your problem.
+...
 
-**Steps/models to reproduce**
-Provide step-by-step instructions to help reconstruct the issue.
+**Steps/models to reproduce**: Provide step-by-step instructions to help reconstruct the issue.
+...
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Versions**:
+- Game version: e.g 1.21.4
+- Fabric Version: e.g.0.118.4
+- Mod version: e.g.2.0.0
 
-**Mod and datapack list**
-Mods and datapacks currently installed on your server. Include OreReadout and its version.
+**Mod and datapack list**: Mods and datapacks currently installed on your server.
 
-**Additional context**
-Add any other context about the problem here.
+**Additional context**: Add any other context about the problem here.
