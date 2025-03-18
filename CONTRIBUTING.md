@@ -12,4 +12,4 @@ and make a Pull Request. Feel free to ping @Veivel or add as reviewer.
 
 ## Development
 
-// todo
+You should work on your personal GitHub fork and make a pull request to this repository's `master` branch once ready. Before working on anything, however, please create a new Issue first.
