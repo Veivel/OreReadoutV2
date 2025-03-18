@@ -56,21 +56,17 @@ This setting is temporary and will be reset after the server is stopped or resta
 You can also click on the coordinates to automatically type out `/tp {x} {y} {z}` to more easily teleport to the scene. Hovering over it will say "Click here to teleport to the location".
 ![](/docs/assets/teleport.png)
 
-
 ## Discord Webhook
 
 To get a webhook URL, see step 1 of [this Discord article](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
 ![](/docs/assets/discord2.png)
 
-## Build from Source
+## Support
 
-```bash
-gradle clean build
-```
-
-## Important!
-
-I only picked up development of this Fabric mod after finding [the original version](https://modrinth.com/mod/ore-readout) by yitzy299,
-which was abandoned. While you may ask for support or make feature requests on the GitHub page, I cannot promise to deliver anything.
+I only picked up development of this Fabric mod after finding [the original version](https://modrinth.com/mod/ore-readout) by yitzy299, which was abandoned four years ago. While you may ask for support or make feature requests on our GitHub issues tracker, **I cannot make promises to deliver anything**.
 
 If there is a change you want made, [consider contributing](https://github.com/Veivel/OreReadoutV2/issues)!
+
+## Contributing
+
+To build from source or contribute to the project, see [CONTRIBUTING.md](./CONTRIBUTING.md)

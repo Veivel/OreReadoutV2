@@ -1,0 +1,10 @@
+name: "Other"
+description: Other forms of feedback or discussion.
+type: "Feature"
+body:
+  - type: textarea
+    attributes:
+      label: Content
+      description: Write your feedback or discussion topic here.
+    validations:
+      required: true
