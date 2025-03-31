@@ -41,7 +41,7 @@ public class OreReadout implements ModInitializer {
         Path configPath = Paths.get(propertiesFilePath);
         if (!configPath.toFile().exists()) {
             try {
-                InputStream stream = OreReadout.class.getResourceAsStream("/data/ore-readout/default_config.properties");
+                InputStream stream = OreReadout.class.getResourceAsStream("/data/orereadout/default_config.properties");
                 Files.copy(stream, configPath);
                 LOG.info("Config file for ore-readout created in config/ore-readout.properties");
 
