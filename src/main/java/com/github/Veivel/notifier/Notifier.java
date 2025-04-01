@@ -4,8 +4,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.config.ModConfig;
-import com.github.Veivel.orereadout.OreReadout;
+import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.orereadout.Utils;
+import com.github.Veivel.perms.Perms;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,30 +22,28 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class Notifier {
-  private static final Logger LOGGER = OreReadout.LOGGER;
+  private static final Logger LOGGER = OreReadoutMod.LOGGER;
   private static ModConfig config = ConfigManager.getConfig();
 
   private Notifier() {}
 
+  // TODO: refactor to use Strategy or Interface for each readout destination
   public static void notify(String blockName, BlockPos pos, World world, PlayerEntity player) {
-    String viewReadoutPermissions = "ore-readout.view";
     String playerName = player.getName().getString();
+    // TODO: check for bypass
+
     String dimensionName = world.getRegistryKey().getValue().toString().replaceFirst("minecraft:", "");
 
     // send to server console
-    if (config.getSendToConsole()) {
+    if (config.isSendToConsole()) {
         LOGGER.info(
-            playerName + " mined " 
-            + blockName + " at [" 
-            + pos.getX() + " " 
-            + pos.getY() + " " 
-            + pos.getZ() + "] in " 
-            + dimensionName
+            "{} mined {} at [{} {} {}] in {}",
+            playerName, blockName, pos.getX(), pos.getY(), pos.getZ(), dimensionName
         );
     }
 
     // send to specified players via chat
-    if (config.getSendToIngame()) {
+    if (config.isSendToIngame()) {
         try {
             HoverEvent showText = new ShowText(
                 Utils.fmt("Click here to teleport to the location.", Formatting.GOLD)
@@ -76,13 +75,14 @@ public class Notifier {
                 String uuidStr = serverPlayerEntity.getUuidAsString();
                 
                 Permissions
-                .check(serverPlayerEntity.getUuid(), viewReadoutPermissions, false)
-                .thenAcceptAsync(hasPermission -> {
+                .check(serverPlayerEntity.getUuid(), Perms.VIEW_READOUT, false)
+                .thenAcceptAsync(hasPermissionBoolean -> {
                     // check for player's toggle settings
-                    Boolean hasToggledOff = false;
-                    Boolean hasKey = OreReadout.playerDisableViewMap.containsKey(uuidStr);
-                    if (hasKey) hasToggledOff = OreReadout.playerDisableViewMap.get(uuidStr);
+                    boolean hasPermission = Boolean.TRUE.equals(hasPermissionBoolean);
+                    boolean hasToggledOff = false;
+                    boolean hasKey = OreReadoutMod.playerDisableViewMap.containsKey(uuidStr);
 
+                    if (hasKey) hasToggledOff = OreReadoutMod.playerDisableViewMap.get(uuidStr);
                     if (hasPermission && !hasToggledOff) {
                         try {
                             serverPlayerEntity.sendMessage(mainText);
@@ -99,8 +99,8 @@ public class Notifier {
     }
 
     // send to discord webhook
-    if (config.getSendToDiscord()) {
-        OreReadout.discordWebhookSender.sendReadout(
+    if (config.isSendToDiscord()) {
+        OreReadoutMod.discordWebhookSender.sendReadout(
             playerName, 
             blockName, 
             pos.getX(), 

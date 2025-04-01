@@ -6,7 +6,12 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.logging.log4j.Logger;
+
+import com.github.Veivel.orereadout.OreReadoutMod;
+
 public class DiscordWebhookSender {
+    private static final Logger LOGGER = OreReadoutMod.LOGGER;
     private String webhookUrl = "";
 
     public DiscordWebhookSender(String webhookUrl) {
@@ -60,8 +65,7 @@ public class DiscordWebhookSender {
 
             int responseCode = conn.getResponseCode();
             if (responseCode < 200 || responseCode >= 300) {
-                // todo: use logger
-                System.err.println("Webhook request failed with response code: " + responseCode);
+                LOGGER.error("Webhook request failed with response code: {}", responseCode);
             }
 
             conn.disconnect();

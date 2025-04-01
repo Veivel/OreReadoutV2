@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
+import com.github.Veivel.perms.Perms;
 import com.mojang.brigadier.context.CommandContext;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
@@ -12,12 +13,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 
 public class Commands {
-    private static final Logger LOGGER = OreReadout.LOGGER;
-    static String togglePermissions = "ore-readout.toggle";
+    private static final Logger LOGGER = OreReadoutMod.LOGGER;
     
     private Commands() {}
 
-    public static int toggle(CommandContext<ServerCommandSource> context) {
+    public static int toggleReadouts(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
         if (!source.isExecutedByPlayer()) {
             LOGGER.info("This command can only be run by a player.");
@@ -26,7 +26,7 @@ public class Commands {
 
         ServerPlayerEntity player = source.getPlayer();
         String uuid = player.getUuidAsString();
-        boolean canToggle = Permissions.check(source, togglePermissions, false);
+        boolean canToggle = Permissions.check(source, Perms.TOGGLE, false);
         if (!canToggle) {
             source.sendMessage(
                 Utils
@@ -36,8 +36,8 @@ public class Commands {
             return 1;
         }
 
-        Map<String, Boolean> disableViewMap = OreReadout.playerDisableViewMap;
-        if (disableViewMap.containsKey(uuid) && disableViewMap.get(uuid)) {
+        Map<String, Boolean> disableViewMap = OreReadoutMod.playerDisableViewMap;
+        if (disableViewMap.containsKey(uuid) && Boolean.TRUE.equals(disableViewMap.get(uuid))) {
             disableViewMap.put(uuid, false);
             source.sendMessage(
                 Utils

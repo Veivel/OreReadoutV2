@@ -26,8 +26,8 @@ dependencies {
 
     // fabric permissions api (e.g. LuckPerms)
     // todo: use gradle.properties
-    modImplementation "me.lucko:fabric-permissions-api:0.3.3"
-    include "me.lucko:fabric-permissions-api:0.3.3"
+    modImplementation "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
+    include "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
 }
 
 processResources {
