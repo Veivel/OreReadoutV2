@@ -1,8 +1,8 @@
 ## Contributing
 
 Ore Readout V2 was picked up from the original OreReadout mod out of personal need and nothing else.
-If you find that Ore Readout V2 is helpful, and you want a change to be made, consider contributing 
-and make a Pull Request. Feel free to ping @Veivel or add as reviewer.
+If you find that Ore Readout V2 is helpful for you, and you want a change to be made, consider contributing 
+by making a Pull Request. Feel free to ping @Veivel or add as reviewer.
 
 ## Building from Source
 
