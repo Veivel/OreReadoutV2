@@ -1,4 +1,4 @@
-package com.github.Veivel.orereadout;
+package com.github.Veivel.notifier;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -13,8 +13,7 @@ public class DiscordWebhookSender {
       this.webhookUrl = webhookUrl;
     }
 
-    // TODO: make this send asynchronously?
-    public void sendOreReadout(String playerName, String minedItem, int x, int y, int z, String dimension) {
+    public void sendReadout(String playerName, String minedItem, int x, int y, int z, String dimension) {
         try {
             // build the JSON payload manually. see: https://toolscord.com/webhook
             StringBuilder jsonPayload = new StringBuilder();
@@ -61,6 +60,7 @@ public class DiscordWebhookSender {
 
             int responseCode = conn.getResponseCode();
             if (responseCode < 200 || responseCode >= 300) {
+                // todo: use logger
                 System.err.println("Webhook request failed with response code: " + responseCode);
             }
 

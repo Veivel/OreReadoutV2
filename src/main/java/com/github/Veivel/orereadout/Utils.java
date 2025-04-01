@@ -9,6 +9,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 
 public class Utils {
+		private Utils() {}
 
 		public static MutableText oreReadoutPrefix() {
 			return Text.of("🔔").copy().formatted(Formatting.AQUA).append(Utils.fmt(" » ", Formatting.GRAY));

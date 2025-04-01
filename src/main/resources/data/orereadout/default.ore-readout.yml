@@ -1,0 +1,11 @@
+readout_targets:
+  console: true
+  ingame: false
+  discord: false
+discord_webhook_url: https://discord.com/api/webhooks/xxx/xxx
+blocks:
+- diamond_ore
+- emerald_ore
+- deepslate_diamond_ore
+- deepslate_emerald_ore
+- ancient_debris
