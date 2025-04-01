@@ -24,7 +24,10 @@ public class MixinBlockBreak {
   private static final Logger LOGGER = OreReadoutMod.LOGGER;
   private static ModConfig config = ConfigManager.getConfig();
 
-  @Inject(method = "onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;", at = @At("HEAD"))
+  @Inject(
+    method = "onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;", 
+    at = @At("HEAD")
+  )
   public void onBroken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfoReturnable<?> ci) {
     Block block = state.getBlock();
     Map<String, Boolean> map = config.getBlockMap();
@@ -35,7 +38,7 @@ public class MixinBlockBreak {
 
     if (map.containsKey(blockName)) {
       LOGGER.debug("Sending notification!");
-      Notifier.notify(blockName, pos, world, player);
+      Notifier.log(blockName, pos, world, player);
     }
   }
 }
