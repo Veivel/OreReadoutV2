@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "orereadout",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "name": "OreReadoutV2",
   "description": "A simple Fabric mod to notify staff and server console when certain blocks (e.g. ores) are broken.",
   "authors": [
