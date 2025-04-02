@@ -10,16 +10,20 @@ import org.apache.logging.log4j.Logger;
 import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.notifier.DiscordWebhookSender;
+import com.github.Veivel.notifier.Notifier;
 import com.github.Veivel.perms.Perms;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class OreReadoutMod implements ModInitializer {
+    public static final int TICKS_PER_SECOND = 20;
     public static final Logger LOGGER = LogManager.getLogger();
     public static DiscordWebhookSender discordWebhookSender = null;
 
@@ -47,6 +51,17 @@ public class OreReadoutMod implements ModInitializer {
 
             dispatcher.getRoot().addChild(baseNode);
             baseNode.addChild(toggleCommandNode);
+        });
+
+        ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
+            int readoutWindowInSeconds = 5;
+            int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
+            if (tickDiff == 0) {
+                Notifier.notifyAll(server);
+                return;
+            } else {
+                return;
+            }
         });
     }
 

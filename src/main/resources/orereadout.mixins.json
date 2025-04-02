@@ -4,7 +4,8 @@
   "package": "com.github.Veivel.orereadout.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinBlockBreak"
+    "MixinBlockBreak",
+    "MixinBlockExploded"
   ],
   "injectors": {
     "defaultRequire": 1
