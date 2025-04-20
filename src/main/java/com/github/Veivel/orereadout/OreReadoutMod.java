@@ -24,61 +24,61 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 
 public class OreReadoutMod implements ModInitializer {
-    public static final int TICKS_PER_SECOND = 20;
-    public static final Logger LOGGER = LogManager.getLogger();
-    public static DiscordWebhookSender discordWebhookSender = null;
+  public static final int TICKS_PER_SECOND = 20;
+  public static final Logger LOGGER = LogManager.getLogger();
+  public static DiscordWebhookSender discordWebhookSender = null;
 
-    // map of player UUID (str) to boolean, whether they disabled ore readouts or not
-    public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
+  // map of player UUID (str) to boolean, whether they disabled ore readouts or not
+  public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
 
-    @Override
-    public void onInitialize() {
-        try {
-            initializeConfig();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
-                    .literal("ore")
-                    .requires(Permissions.require(Perms.ROOT, 2))
-                    .build();
-            LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
-                    .literal("toggle")
-                    .requires(Permissions.require(Perms.TOGGLE, 2))
-                    .executes(OreReadoutCommand::toggleReadouts)
-                    .build();
-            LiteralCommandNode<ServerCommandSource> reloadCommandNode = CommandManager
-                    .literal("reload")
-                    .requires(Permissions.require(Perms.RELOAD, 4))
-                    .executes(OreReadoutCommand::reload)
-                    .build();
-
-            dispatcher.getRoot().addChild(baseNode);
-            baseNode.addChild(toggleCommandNode);
-            baseNode.addChild(reloadCommandNode);
-        });
-
-        ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
-            int readoutWindowInSeconds = 7;
-            int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
-            if (tickDiff == 0) {
-                Notifier.notifyAll(server);
-                return;
-            } else {
-                return;
-            }
-        });
+  @Override
+  public void onInitialize() {
+    try {
+      initializeConfig();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
-    private static void initializeConfig() throws IOException {
-        ModConfigManager.load();
-        ModConfig config = ModConfigManager.getConfig();
-        discordWebhookSender = new DiscordWebhookSender(config.getDiscordWebhookUrl());
-        discordWebhookSender.testWebhook();
+    CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+      LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
+        .literal("ore")
+        .requires(Permissions.require(Perms.ROOT, 2))
+        .build();
+      LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
+        .literal("toggle")
+        .requires(Permissions.require(Perms.TOGGLE, 2))
+        .executes(OreReadoutCommand::toggleReadouts)
+        .build();
+      LiteralCommandNode<ServerCommandSource> reloadCommandNode = CommandManager
+        .literal("reload")
+        .requires(Permissions.require(Perms.RELOAD, 4))
+        .executes(OreReadoutCommand::reload)
+        .build();
 
-        String oreBlocksString = config.getBlockMap().keySet().toString();
-        LOGGER.info("Reading out the following blocks when mined: {}", oreBlocksString);
-    }
+      dispatcher.getRoot().addChild(baseNode);
+      baseNode.addChild(toggleCommandNode);
+      baseNode.addChild(reloadCommandNode);
+    });
+
+    ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
+      int readoutWindowInSeconds = 7;
+      int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
+      if (tickDiff == 0) {
+        Notifier.notifyAll(server);
+        return;
+      } else {
+        return;
+      }
+    });
+  }
+
+  private static void initializeConfig() throws IOException {
+      ModConfigManager.load();
+      ModConfig config = ModConfigManager.getConfig();
+      discordWebhookSender = new DiscordWebhookSender(config.getDiscordWebhookUrl());
+      discordWebhookSender.testWebhook();
+
+      String oreBlocksString = config.getBlockMap().keySet().toString();
+      LOGGER.info("Reading out the following blocks when mined: {}", oreBlocksString);
+  }
 }

@@ -100,7 +100,7 @@ public class ModConfig {
 
   @Override
   public String toString() {
-      Gson gson = new Gson();
-      return gson.toJson(this);
+    Gson gson = new Gson();
+    return gson.toJson(this);
   }
 }

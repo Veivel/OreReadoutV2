@@ -25,7 +25,7 @@ public class MixinBlockBreak {
   private static ModConfig config = ModConfigManager.getConfig();
 
   @Inject(
-    method = "onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;", 
+    method = "onBreak(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/entity/player/PlayerEntity;)Lnet/minecraft/block/BlockState;",
     at = @At("HEAD")
   )
   public void onBroken(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfoReturnable<?> ci) {

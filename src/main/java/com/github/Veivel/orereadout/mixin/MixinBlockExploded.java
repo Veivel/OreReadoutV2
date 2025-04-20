@@ -31,7 +31,7 @@ public class MixinBlockExploded {
   private static ModConfig config = ModConfigManager.getConfig();
 
   @Inject(
-    method = "onExploded(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/explosion/Explosion;Ljava/util/function/BiConsumer;)V", 
+    method = "onExploded(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/explosion/Explosion;Ljava/util/function/BiConsumer;)V",
     at = @At("HEAD")
   )
   public void onExploded(BlockState state, ServerWorld world, BlockPos pos, Explosion explosion, BiConsumer<ItemStack,BlockPos> stackMerger, CallbackInfo ci) {
@@ -39,9 +39,9 @@ public class MixinBlockExploded {
     Map<String, Boolean> map = config.getBlockMap();
     String mapKeySet = map.keySet().toString();
     String blockName = Registries.BLOCK.getId(block).toString().replaceFirst("minecraft:", "");
-    
+
     LOGGER.debug("Checking if block {} is in map of {}.", blockName, mapKeySet);
-    
+
     if (map.containsKey(blockName)) {
       LivingEntity entity = explosion.getCausingEntity();
       if (entity != null && entity.isPlayer()) {

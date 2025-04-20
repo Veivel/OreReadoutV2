@@ -17,7 +17,7 @@ import net.minecraft.util.Formatting;
 
 public class OreReadoutCommand {
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
-    
+
     private OreReadoutCommand() {}
 
     public static int reload(CommandContext<ServerCommandSource> context) {

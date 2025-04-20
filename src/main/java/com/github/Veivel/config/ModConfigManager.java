@@ -28,59 +28,59 @@ public class ModConfigManager {
     private ModConfigManager() {}
 
     public static void load() throws IOException {
-        LOGGER.info("Loading configuration for OreReadoutV2...");
+      LOGGER.info("Loading configuration for OreReadoutV2...");
 
-        if (OLD_CONFIG_PATH.toFile().exists()) {
-          LOGGER.warn("A deprecated ore-readout.properties file was found. This file will be ignored.");
-        }
-        
-        if (!CONFIG_PATH.toFile().exists()) {
-          LOGGER.info("Creating new configuration file for OreReadoutV2!");
-          writeDefaultConfig(CONFIG_PATH.toString());
-        }
+      if (OLD_CONFIG_PATH.toFile().exists()) {
+        LOGGER.warn("A deprecated ore-readout.properties file was found. This file will be ignored.");
+      }
 
-        Yaml yaml = new Yaml();
-        FileReader reader = new FileReader(CONFIG_PATH.toFile());
-        Map<String, Object> map = yaml.load(reader);
-        config.parseMap(map);
+      if (!CONFIG_PATH.toFile().exists()) {
+        LOGGER.info("Creating new configuration file for OreReadoutV2!");
+        writeDefaultConfig(CONFIG_PATH.toString());
+      }
 
-        Map<String, Boolean> blockMap = config.createBlockMapFromList(config.getBlocks());
-        config.setBlockMap(blockMap);
+      Yaml yaml = new Yaml();
+      FileReader reader = new FileReader(CONFIG_PATH.toFile());
+      Map<String, Object> map = yaml.load(reader);
+      config.parseMap(map);
 
-        LOGGER.debug(config);
+      Map<String, Boolean> blockMap = config.createBlockMapFromList(config.getBlocks());
+      config.setBlockMap(blockMap);
+
+      LOGGER.debug(config);
     }
 
     private static void writeDefaultConfig(String destinationConfigPath) {
-        ModConfig config = new ModConfig();
-        DumperOptions dumperOptions = new DumperOptions();
+      ModConfig config = new ModConfig();
+      DumperOptions dumperOptions = new DumperOptions();
 
-        dumperOptions.setIndent(2);
-        dumperOptions.setPrettyFlow(true);
-        dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        Representer representer = new Representer(dumperOptions);
-        representer.addClassTag(ReadoutTargetOptions.class, Tag.MAP);
+      dumperOptions.setIndent(2);
+      dumperOptions.setPrettyFlow(true);
+      dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+      Representer representer = new Representer(dumperOptions);
+      representer.addClassTag(ReadoutTargetOptions.class, Tag.MAP);
 
-        ReadoutTargetOptions readoutTargetConfig = new ReadoutTargetOptions(true, true, false);
-        config.setReadoutTargets(readoutTargetConfig);
-        List<String> blocks = List.of("diamond_ore", "ancient_debris", "deepslate_diamond_ore");
-        config.setBlocks(blocks);
-        config.setDiscordWebhookUrl("https://discord.com/api/webhooks/xxx/xxx");
+      ReadoutTargetOptions readoutTargetConfig = new ReadoutTargetOptions(true, true, false);
+      config.setReadoutTargets(readoutTargetConfig);
+      List<String> blocks = List.of("diamond_ore", "ancient_debris", "deepslate_diamond_ore");
+      config.setBlocks(blocks);
+      config.setDiscordWebhookUrl("https://discord.com/api/webhooks/xxx/xxx");
 
-        Yaml yaml = new Yaml(representer);
-        Map<String, Object> map = config.toMap();
-        String output = yaml.dump(map);
-        LOGGER.debug("YAML output: {}", output);
+      Yaml yaml = new Yaml(representer);
+      Map<String, Object> map = config.toMap();
+      String output = yaml.dump(map);
+      LOGGER.debug("YAML output: {}", output);
 
-        // Write the YAML output to a file
-        try (FileWriter writer = new FileWriter(destinationConfigPath)) {
-            writer.write(output);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+      // Write the YAML output to a file
+      try (FileWriter writer = new FileWriter(destinationConfigPath)) {
+        writer.write(output);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
 
     public static ModConfig getConfig() {
-        return config;
+      return config;
     }
 
 }
