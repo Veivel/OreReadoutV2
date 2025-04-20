@@ -11,6 +11,7 @@ import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.notifier.DiscordWebhookSender;
 import com.github.Veivel.notifier.Notifier;
+import com.github.Veivel.orereadout.command.OreReadoutCommand;
 import com.github.Veivel.perms.Perms;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
@@ -46,11 +47,17 @@ public class OreReadoutMod implements ModInitializer {
             LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
                     .literal("toggle")
                     .requires(Permissions.require(Perms.TOGGLE, 2))
-                    .executes(Commands::toggleReadouts)
+                    .executes(OreReadoutCommand::toggleReadouts)
+                    .build();
+            LiteralCommandNode<ServerCommandSource> reloadCommandNode = CommandManager
+                    .literal("reload")
+                    .requires(Permissions.require(Perms.RELOAD, 4))
+                    .executes(OreReadoutCommand::reload)
                     .build();
 
             dispatcher.getRoot().addChild(baseNode);
             baseNode.addChild(toggleCommandNode);
+            baseNode.addChild(reloadCommandNode);
         });
 
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {

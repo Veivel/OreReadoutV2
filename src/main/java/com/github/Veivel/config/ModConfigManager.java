@@ -17,13 +17,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+/** code adapted from https://github.com/DrexHD/Vanish/ */
 public class ModConfigManager {
-    // code adapted from https://github.com/DrexHD/Vanish/
-
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
     private static final Path OLD_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("ore-readout.properties");
-    private static final Path DEFAULT_CONFIG_PATH = Path.of("/data/config/default.ore-readout.yml");
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("ore-readout.yml");
+    // private static final Path DEFAULT_CONFIG_PATH = Path.of("/data/config/default.ore-readout.yml");
     private static ModConfig config = new ModConfig();
 
     private ModConfigManager() {}
@@ -32,12 +31,11 @@ public class ModConfigManager {
         LOGGER.info("Loading configuration for OreReadoutV2...");
 
         if (OLD_CONFIG_PATH.toFile().exists()) {
-          LOGGER.warn("A deprecated ore-readout.properties file was not found. This file will be ignored.");
+          LOGGER.warn("A deprecated ore-readout.properties file was found. This file will be ignored.");
         }
         
         if (!CONFIG_PATH.toFile().exists()) {
           LOGGER.info("Creating new configuration file for OreReadoutV2!");
-
           writeDefaultConfig(CONFIG_PATH.toString());
         }
 
