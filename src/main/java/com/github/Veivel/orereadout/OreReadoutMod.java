@@ -54,7 +54,7 @@ public class OreReadoutMod implements ModInitializer {
         });
 
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
-            int readoutWindowInSeconds = 5;
+            int readoutWindowInSeconds = 7;
             int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
             if (tickDiff == 0) {
                 Notifier.notifyAll(server);
@@ -69,6 +69,7 @@ public class OreReadoutMod implements ModInitializer {
         ConfigManager.load();
         ModConfig config = ConfigManager.getConfig();
         discordWebhookSender = new DiscordWebhookSender(config.getDiscordWebhookUrl());
+        discordWebhookSender.testWebhook();
 
         String oreBlocksString = config.getBlockMap().keySet().toString();
         LOGGER.info("Reading out the following blocks when mined: {}", oreBlocksString);

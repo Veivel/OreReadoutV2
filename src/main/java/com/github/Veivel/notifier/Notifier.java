@@ -54,8 +54,12 @@ public class Notifier {
         playersBlocksMined.forEach((playerName, blocksMined) -> {
             PlayerManager playerManager = server.getPlayerManager();
             ServerPlayerEntity player = playerManager.getPlayer(playerName);
-            World world = player.getWorld();
-            notify(blocksMined, world, player);
+            if (player == null) {
+                LOGGER.warn("Player {} does not exist or has disconnected.", playerName);
+            } else {
+                World world = player.getWorld();
+                notify(blocksMined, world, player);
+            }
         });
         playersBlocksMined.clear();
     }
@@ -72,7 +76,7 @@ public class Notifier {
             );
         }
 
-        // send to specified players via chat
+        // send to specified players via in-game chat
         if (config.isSendToIngame()) {
             try {
                 /** 1.21.5 */
@@ -146,9 +150,9 @@ public class Notifier {
             OreReadoutMod.discordWebhookSender.readOut(
                 playerName, 
                 quantity,
-                player.getBlockX(), 
-                player.getBlockY(), 
-                player.getBlockZ(), 
+                player.getBlockX(),
+                player.getBlockY(),
+                player.getBlockZ(),
                 dimensionName
             );
         }
