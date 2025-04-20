@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.Veivel.config.ConfigManager;
+import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.notifier.DiscordWebhookSender;
 import com.github.Veivel.notifier.Notifier;
@@ -66,8 +66,8 @@ public class OreReadoutMod implements ModInitializer {
     }
 
     private static void initializeConfig() throws IOException {
-        ConfigManager.load();
-        ModConfig config = ConfigManager.getConfig();
+        ModConfigManager.load();
+        ModConfig config = ModConfigManager.getConfig();
         discordWebhookSender = new DiscordWebhookSender(config.getDiscordWebhookUrl());
         discordWebhookSender.testWebhook();
 

@@ -51,7 +51,7 @@ public class DiscordWebhookSender {
                 .append("{")
                     .append("\"title\": \"\",")
                     .append("\"description\": \"")
-                    .append("Ore Readout V2 has configured succcessfully.\",")
+                    .append("Ore Readout V2 was configured successfully.\",")
                     .append("\"color\": 4352240,")
                     .append("\"footer\": {\"text\": \"\"},")
                     .append("\"author\": {\"name\": \"\"},")

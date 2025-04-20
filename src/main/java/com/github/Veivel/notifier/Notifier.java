@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import com.github.Veivel.config.ConfigManager;
+import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.orereadout.Utils;
@@ -35,7 +35,7 @@ import net.minecraft.world.World;
 
 public class Notifier {
   private static final Logger LOGGER = OreReadoutMod.LOGGER;
-  private static ModConfig config = ConfigManager.getConfig();
+  private static ModConfig config = ModConfigManager.getConfig();
   private static Map<String, Integer> playersBlocksMined = new HashMap<>();
 
     private Notifier() {}

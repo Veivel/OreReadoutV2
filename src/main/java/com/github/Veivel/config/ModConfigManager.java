@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-public class ConfigManager {
+public class ModConfigManager {
     // code adapted from https://github.com/DrexHD/Vanish/
 
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
@@ -26,7 +26,7 @@ public class ConfigManager {
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("ore-readout.yml");
     private static ModConfig config = new ModConfig();
 
-    private ConfigManager() {}
+    private ModConfigManager() {}
 
     public static void load() throws IOException {
         LOGGER.info("Loading configuration for OreReadoutV2...");
