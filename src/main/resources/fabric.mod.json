@@ -24,9 +24,9 @@
     "orereadout.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.0",
+    "fabricloader": ">=0.17.0",
     "fabric": ">=0.114.0",
-    "minecraft": ">=1.21.6-",
+    "minecraft": ">=1.21.9-",
     "fabric-permissions-api-v0": "*"
   }
 }
