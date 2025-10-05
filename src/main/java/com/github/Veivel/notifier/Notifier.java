@@ -57,7 +57,7 @@ public class Notifier {
           if (player == null) {
             LOGGER.warn("Player {} does not exist or has disconnected.", playerName);
           } else {
-            World world = player.getWorld();
+            World world = player.getEntityWorld();
             notify(blocksMined, world, player);
           }
         });
@@ -118,7 +118,8 @@ public class Notifier {
               .append(Utils.fmt(" in " + dimensionName + ".", Formatting.WHITE));
 
             // check perms for each player, send mainText if hasPermission
-            player.getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> {
+            MinecraftServer server = player.getEntityWorld().getServer();
+            server.getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> {
               String uuidStr = serverPlayerEntity.getUuidAsString();
 
               Permissions
