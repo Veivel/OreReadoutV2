@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.github.Veivel.orereadout.OreReadoutMod;
 
 public class DiscordWebhookSink {
-  private static final Logger LOGGER = OreReadoutMod.LOGGER;
+  private static final Logger logger = OreReadoutMod.LOGGER;
   private String webhookUrl = "";
 
   public DiscordWebhookSink(String webhookUrl) {
@@ -34,7 +34,7 @@ public class DiscordWebhookSink {
 
       int responseCode = conn.getResponseCode();
       if (responseCode < 200 || responseCode >= 300) {
-        LOGGER.error("Webhook request failed with response code: {}", responseCode);
+        logger.error("Webhook request failed with response code: {}", responseCode);
       }
 
       conn.disconnect();

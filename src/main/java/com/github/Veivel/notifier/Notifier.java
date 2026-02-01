@@ -32,6 +32,7 @@ public class Notifier {
     public static void flush() {
         MinecraftServer server = ServerContext.get();
         if (server == null) {
+          LOGGER.error("Could not find active MinecraftServer instance.");
           return;
         }
 
@@ -45,6 +46,8 @@ public class Notifier {
             Dispatcher.dispatch(blocksMined, world, player);
           }
         });
+
+        LOGGER.debug("Flushing playersBlocksMined map.");
         playersBlocksMined.clear();
     }
 }

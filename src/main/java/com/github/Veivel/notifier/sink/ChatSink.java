@@ -63,7 +63,7 @@ public class ChatSink {
 
       // main text
       Text mainText = TextFormat
-        .PREFIX
+        .getPrefix()
         .append(TextFormat.fmt(playerName, Formatting.AQUA))
         .append(TextFormat.fmt(" mined ", Formatting.WHITE))
         .append(TextFormat.fmt(quantity + " ores at ", Formatting.WHITE))
@@ -76,7 +76,9 @@ public class ChatSink {
 
         Permissions
         .check(serverPlayerEntity.getUuid(), Perms.VIEW_READOUT, false)
-        .thenAcceptAsync(hasPermissionBoolean -> {
+        .thenAccept(hasPermissionBoolean -> {
+          logger.debug("Permission check passed for player {} {}.", serverPlayerEntity.getName().getString(), uuidStr);
+
           // check for player's toggle settings
           boolean hasPermission = Boolean.TRUE.equals(hasPermissionBoolean);
           boolean hasToggledOff = false;

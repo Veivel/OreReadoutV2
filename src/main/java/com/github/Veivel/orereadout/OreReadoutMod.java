@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.context.ServerContext;
@@ -39,15 +40,23 @@ public class OreReadoutMod implements ModInitializer {
 
   @Override
   public void onInitialize() {
+    // set log level
+    Configurator.setLevel("orereadoutv2", org.apache.logging.log4j.Level.INFO);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Debug logging is enabled.");
+    }
+
     try {
       initializeConfig();
     } catch (IOException e) {
       e.printStackTrace();
     }
 
+    // inject server context
     ServerLifecycleEvents.SERVER_STARTED.register(ServerContext::set);
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerContext.clear());
 
+    // register commands
     CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
       LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
         .literal("ore")
@@ -69,6 +78,7 @@ public class OreReadoutMod implements ModInitializer {
       baseNode.addChild(reloadCommandNode);
     });
 
+    // flush notifier every 7 seconds
     ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
       int readoutWindowInSeconds = 7;
       int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
