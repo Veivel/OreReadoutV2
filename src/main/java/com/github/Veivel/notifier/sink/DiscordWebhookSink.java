@@ -1,4 +1,4 @@
-package com.github.Veivel.notifier;
+package com.github.Veivel.notifier.sink;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -10,11 +10,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.Veivel.orereadout.OreReadoutMod;
 
-public class DiscordWebhookSender {
+public class DiscordWebhookSink {
   private static final Logger LOGGER = OreReadoutMod.LOGGER;
   private String webhookUrl = "";
 
-  public DiscordWebhookSender(String webhookUrl) {
+  public DiscordWebhookSink(String webhookUrl) {
     this.webhookUrl = webhookUrl;
   }
 

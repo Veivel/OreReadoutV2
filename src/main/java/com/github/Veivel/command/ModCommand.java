@@ -27,7 +27,7 @@ public class ModCommand {
         if (!canReload) {
             source.sendMessage(
                 TextFormat
-                .oreReadoutPrefix()
+                .PREFIX
                 .append(TextFormat.fmt("You do not have the permissions for this.", Formatting.RED))
             );
             return 0;
@@ -37,13 +37,13 @@ public class ModCommand {
         try {
             source.sendMessage(
                 TextFormat
-                .oreReadoutPrefix()
+                .PREFIX
                 .append(TextFormat.fmt("Reloading OreReadoutV2's config...", Formatting.AQUA))
             );
             ModConfigManager.load();
             source.sendMessage(
                 TextFormat
-                .oreReadoutPrefix()
+                .PREFIX
                 .append(TextFormat.fmt("OreReadoutV2 reloaded!", Formatting.AQUA))
             );
             return 1;
@@ -51,7 +51,7 @@ public class ModCommand {
             // error occurred
             source.sendError(
                 TextFormat
-                .oreReadoutPrefix()
+                .PREFIX
                 .append(TextFormat.fmt("An error occurred while reloading the config, keeping old values.", Formatting.RED))
             );
             LOGGER.error("An error occurred while reloading the config, keeping old values.", e);
@@ -74,7 +74,7 @@ public class ModCommand {
         if (!canToggle) {
             source.sendMessage(
                 TextFormat
-                .oreReadoutPrefix()
+                .PREFIX
                 .append(TextFormat.fmt("You do not have the permissions for this.", Formatting.RED))
             );
             return 0;
@@ -86,14 +86,14 @@ public class ModCommand {
             disableViewMap.put(uuid, false);
             source.sendMessage(
                 TextFormat
-                .oreReadoutPrefix()
+                .PREFIX
                 .append(TextFormat.fmt("You will now receive ore readouts again.", Formatting.AQUA))
             );
         } else {
             disableViewMap.put(uuid, true);
             source.sendMessage(
                 TextFormat
-                .oreReadoutPrefix()
+                .PREFIX
                 .append(TextFormat.fmt("You will no longer receive ore readouts for this session.", Formatting.AQUA))
             );
         }

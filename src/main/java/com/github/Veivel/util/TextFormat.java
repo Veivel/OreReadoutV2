@@ -6,6 +6,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 
 public class TextFormat {
+    public static MutableText PREFIX = Text.of("🔔").copy().formatted(Formatting.AQUA).append(TextFormat.fmt(" » ", Formatting.GRAY));
 		private TextFormat() {}
 
     /* TODO: add util for sending preset formatting text */

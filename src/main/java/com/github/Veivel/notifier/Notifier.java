@@ -79,28 +79,17 @@ public class Notifier {
         // send to specified players via in-game chat
         if (config.isSendToIngame()) {
           try {
-            /** 1.21.5 */
             HoverEvent showText = new ShowText(
-              TextFormat.fmt("Click here to teleport to the player's logged location.", Formatting.GOLD)
+              TextFormat.fmt("Click to teleport to the location.", Formatting.GOLD)
             );
             ClickEvent suggestCommand = new SuggestCommand(
               String.format("/tp %d %d %d", player.getBlockX(), player.getBlockY(), player.getBlockZ())
             );
+
             // text that includes coordinates, click event, & hover event
             Style style = Style.EMPTY
               .withHoverEvent(showText)
               .withClickEvent(suggestCommand);
-
-            /** 1.21.4 (old fabric API) */
-            // Style style = Style.EMPTY
-            //     .withHoverEvent(new HoverEvent(
-            //         net.minecraft.text.HoverEvent.Action.SHOW_TEXT,
-            //         Utils.fmt("Click here to teleport to the location.", Formatting.GOLD)
-            //     ))
-            //     .withClickEvent(new ClickEvent(
-            //         Action.SUGGEST_COMMAND,
-            //         String.format("/tp %d %d %d", player.getBlockX(), player.getBlockY(), player.getBlockZ())
-            //     ));
 
             MutableText clickableText = TextFormat
               .fmt("[" + player.getBlockX() + " ", Formatting.AQUA)
@@ -110,7 +99,7 @@ public class Notifier {
 
             // main text
             Text mainText = TextFormat
-              .oreReadoutPrefix()
+              .PREFIX
               .append(TextFormat.fmt(playerName, Formatting.AQUA))
               .append(TextFormat.fmt(" mined ", Formatting.WHITE))
               .append(TextFormat.fmt(quantity + " ores at ", Formatting.WHITE))

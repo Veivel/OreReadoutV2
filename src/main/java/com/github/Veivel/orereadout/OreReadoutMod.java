@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.command.ModCommand;
 import com.github.Veivel.config.ModConfig;
-import com.github.Veivel.notifier.DiscordWebhookSender;
 import com.github.Veivel.notifier.Notifier;
+import com.github.Veivel.notifier.sink.DiscordWebhookSink;
 import com.github.Veivel.perms.Perms;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
@@ -26,7 +26,7 @@ import net.minecraft.server.command.ServerCommandSource;
 public class OreReadoutMod implements ModInitializer {
   public static final int TICKS_PER_SECOND = 20;
   public static final Logger LOGGER = LogManager.getLogger();
-  public static DiscordWebhookSender discordWebhookSender = null;
+  public static DiscordWebhookSink discordWebhookSender = null;
 
   // map of player UUID (str) to boolean, whether they disabled ore readouts or not
   public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
@@ -75,7 +75,7 @@ public class OreReadoutMod implements ModInitializer {
   private static void initializeConfig() throws IOException {
       ModConfigManager.load();
       ModConfig config = ModConfigManager.getConfig();
-      discordWebhookSender = new DiscordWebhookSender(config.getDiscordWebhookUrl());
+      discordWebhookSender = new DiscordWebhookSink(config.getDiscordWebhookUrl());
       discordWebhookSender.testWebhook();
 
       String oreBlocksString = config.getBlockMap().keySet().toString();
