@@ -12,29 +12,19 @@ import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.command.ModCommand;
 import com.github.Veivel.config.ModConfig;
-import com.github.Veivel.notifier.Notifier;
-import com.github.Veivel.notifier.sink.ChatSink;
-import com.github.Veivel.notifier.sink.ConsoleSink;
-import com.github.Veivel.notifier.sink.DiscordWebhookSink;
-import com.github.Veivel.perms.Perms;
-import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.github.Veivel.notifier.DispatchBuffer;
 
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
 
 public class OreReadoutMod implements ModInitializer {
   public static final int TICKS_PER_SECOND = 20;
   public static final Logger LOGGER = LogManager.getLogger("orereadoutv2");
-  public static DiscordWebhookSink discordWebhookSender;
-  public static ConsoleSink consoleSink;
-  public static ChatSink chatSink;
 
+  // TODO: refactor into a Store
   // map of player UUID (str) to boolean, whether they disabled ore readouts or not
   public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
 
@@ -57,35 +47,14 @@ public class OreReadoutMod implements ModInitializer {
     ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerContext.clear());
 
     // register commands
-    CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-      LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
-        .literal("ore")
-        .requires(Permissions.require(Perms.ROOT, 2))
-        .build();
-      LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
-        .literal("toggle")
-        .requires(Permissions.require(Perms.TOGGLE, 2))
-        .executes(ModCommand::toggleReadouts)
-        .build();
-      LiteralCommandNode<ServerCommandSource> reloadCommandNode = CommandManager
-        .literal("reload")
-        .requires(Permissions.require(Perms.RELOAD, 4))
-        .executes(ModCommand::reload)
-        .build();
-
-      dispatcher.getRoot().addChild(baseNode);
-      baseNode.addChild(toggleCommandNode);
-      baseNode.addChild(reloadCommandNode);
-    });
+    CommandRegistrationCallback.EVENT.register(ModCommand::register);
 
     // flush notifier every 7 seconds
     ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
       int readoutWindowInSeconds = 7; // TODO: make this configurable
       int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
       if (tickDiff == 0) {
-        Notifier.flush();
-        return;
-      } else {
+        DispatchBuffer.flush();
         return;
       }
     });
@@ -94,11 +63,6 @@ public class OreReadoutMod implements ModInitializer {
   private static void initializeConfig() throws IOException {
       ModConfigManager.load();
       ModConfig config = ModConfigManager.getConfig();
-
-      consoleSink = new ConsoleSink();
-      chatSink = new ChatSink();
-      discordWebhookSender = new DiscordWebhookSink(config.getDiscordWebhookUrl());
-      discordWebhookSender.testConnection();
 
       int blockMapSize = config.getBlockMap().size();
       LOGGER.info("{} blocks configured to trigger readouts.", blockMapSize);

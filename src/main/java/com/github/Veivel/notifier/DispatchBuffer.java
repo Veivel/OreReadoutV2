@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
+import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.orereadout.OreReadoutMod;
 
@@ -17,27 +18,27 @@ import net.minecraft.world.World;
 
 
 /**
- * Aggregates ore/block mining events per player and periodically relays
- * notifications to the Dispatcher.
- * <p>
- * Each player’s mined block count is accumulated during the readout window.
- * At the end of the window, {@link #flush()} dispatches notifications for all players
- * and then clears the record.
- * <p>
- * Uses the {@link Dispatcher} to relay batch totals to outputs.
+ * Buffers data to be dispatched using {@link #store}, then
+ * orchestrates read-outs by relaying it to
+ * {@link Dispatch} using {@link #flush}.
  */
-public class Notifier {
+public class DispatchBuffer {
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
     private static Map<String, Integer> playersBlocksMined = new HashMap<>();
+    private static Map<String, Boolean> map = ModConfigManager.getConfig().getBlockMap();
 
-    public static void store(String blockName, BlockPos pos, World world, PlayerEntity player) {
-        LOGGER.debug("Sending notification!");
-        String playerName = player.getName().getString();
-        Integer currentValue = playersBlocksMined.get(playerName);
-        if (currentValue == null) {
-          playersBlocksMined.put(playerName, 1);
-        } else {
-          playersBlocksMined.put(playerName, currentValue + 1);
+    private DispatchBuffer() {};
+
+    public static void append(String blockName, BlockPos pos, World world, PlayerEntity player) {
+      if (map.containsKey(blockName)) {
+          LOGGER.debug("Sending notification!");
+          String playerName = player.getName().getString();
+          Integer currentValue = playersBlocksMined.get(playerName);
+          if (currentValue == null) {
+            playersBlocksMined.put(playerName, 1);
+          } else {
+            playersBlocksMined.put(playerName, currentValue + 1);
+          }
         }
     }
 
@@ -55,7 +56,7 @@ public class Notifier {
             LOGGER.warn("Player {} does not exist or has disconnected.", playerName);
           } else {
             World world = player.getEntityWorld();
-            Dispatcher.dispatch(blocksMined, world, player);
+            Dispatch.invoke(blocksMined, world, player);
           }
         });
 

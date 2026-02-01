@@ -8,17 +8,43 @@ import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.perms.Perms;
 import com.github.Veivel.util.TextFormat;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
+import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 
 public class ModCommand {
-    private static final Logger LOGGER = OreReadoutMod.LOGGER;
+    private static final Logger logger = OreReadoutMod.LOGGER;
 
-    private ModCommand() {}
+    private ModCommand() {};
+
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess, RegistrationEnvironment environment) {
+      LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
+        .literal("ore")
+        .requires(Permissions.require(Perms.ROOT, 2))
+        .build();
+      LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
+        .literal("toggle")
+        .requires(Permissions.require(Perms.TOGGLE, 2))
+        .executes(ModCommand::toggleReadouts)
+        .build();
+      LiteralCommandNode<ServerCommandSource> reloadCommandNode = CommandManager
+        .literal("reload")
+        .requires(Permissions.require(Perms.RELOAD, 4))
+        .executes(ModCommand::reload)
+        .build();
+
+      dispatcher.getRoot().addChild(baseNode);
+      baseNode.addChild(toggleCommandNode);
+      baseNode.addChild(reloadCommandNode);
+    }
 
     public static int reload(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
