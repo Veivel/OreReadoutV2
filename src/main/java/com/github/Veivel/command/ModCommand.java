@@ -22,7 +22,7 @@ public class ModCommand {
 
     public static int reload(CommandContext<ServerCommandSource> context) {
         ServerCommandSource source = context.getSource();
-        boolean canReload = Permissions.check(source, Perms.TOGGLE, false);
+        boolean canReload = Permissions.check(source, Perms.RELOAD, false);
         // check for permissions
         if (!canReload) {
             source.sendMessage(
