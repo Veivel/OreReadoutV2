@@ -5,10 +5,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
 
-import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.context.ServerContext;
-import com.github.Veivel.config.ModConfig;
-import com.github.Veivel.notifier.sink.ChatSink;
 import com.github.Veivel.orereadout.OreReadoutMod;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,9 +17,7 @@ import net.minecraft.world.World;
 
 public class Notifier {
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
-    private static ModConfig config = ModConfigManager.getConfig();
     private static Map<String, Integer> playersBlocksMined = new HashMap<>();
-    private static final ChatSink CHAT_SINK = new ChatSink();
 
     public static void log(String blockName, BlockPos pos, World world, PlayerEntity player) {
         String playerName = player.getName().getString();
@@ -34,7 +29,7 @@ public class Notifier {
         }
     }
 
-    public static void flushReadouts() {
+    public static void flush() {
         MinecraftServer server = ServerContext.get();
         if (server == null) {
           return;
@@ -47,49 +42,9 @@ public class Notifier {
             LOGGER.warn("Player {} does not exist or has disconnected.", playerName);
           } else {
             World world = player.getEntityWorld();
-            notify(blocksMined, world, player);
+            Dispatcher.dispatch(blocksMined, world, player);
           }
         });
         playersBlocksMined.clear();
-    }
-
-    public static void notify(int quantity, World world, PlayerEntity player) {
-        String playerName = player.getName().getString();
-        String dimensionName = world.getRegistryKey().getValue().toString().replaceFirst("minecraft:", "");
-
-        // send to server console
-        if (config.isSendToConsole()) {
-          OreReadoutMod.consoleSink.readOut(
-            playerName,
-            quantity,player.getBlockX(),
-            player.getBlockY(),
-            player.getBlockZ(),
-            dimensionName
-          );
-        }
-
-        // send to specified players via in-game chat
-        if (config.isSendToIngame()) {
-          CHAT_SINK.readOut(
-            playerName,
-            quantity,
-            player.getBlockX(),
-            player.getBlockY(),
-            player.getBlockZ(),
-            dimensionName
-          );
-        }
-
-        // send to discord webhook
-        if (config.isSendToDiscord()) {
-            OreReadoutMod.discordWebhookSender.readOut(
-              playerName,
-              quantity,
-              player.getBlockX(),
-              player.getBlockY(),
-              player.getBlockZ(),
-              dimensionName
-            );
-        }
     }
 }

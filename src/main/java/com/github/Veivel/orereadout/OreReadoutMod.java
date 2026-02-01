@@ -30,9 +30,9 @@ import net.minecraft.server.command.ServerCommandSource;
 public class OreReadoutMod implements ModInitializer {
   public static final int TICKS_PER_SECOND = 20;
   public static final Logger LOGGER = LogManager.getLogger("orereadoutv2");
-  public static DiscordWebhookSink discordWebhookSender = null;
-  public static ConsoleSink consoleSink = null;
-  public static ChatSink chatSink = null;
+  public static DiscordWebhookSink discordWebhookSender;
+  public static ConsoleSink consoleSink;
+  public static ChatSink chatSink;
 
   // map of player UUID (str) to boolean, whether they disabled ore readouts or not
   public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
@@ -73,7 +73,7 @@ public class OreReadoutMod implements ModInitializer {
       int readoutWindowInSeconds = 7;
       int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
       if (tickDiff == 0) {
-        Notifier.flushReadouts();
+        Notifier.flush();
         return;
       } else {
         return;
@@ -84,13 +84,13 @@ public class OreReadoutMod implements ModInitializer {
   private static void initializeConfig() throws IOException {
       ModConfigManager.load();
       ModConfig config = ModConfigManager.getConfig();
-      discordWebhookSender = new DiscordWebhookSink(config.getDiscordWebhookUrl());
-      discordWebhookSender.testWebhook();
 
       consoleSink = new ConsoleSink();
       chatSink = new ChatSink();
+      discordWebhookSender = new DiscordWebhookSink(config.getDiscordWebhookUrl());
+      discordWebhookSender.testWebhook();
 
-      String oreBlocksString = config.getBlockMap().keySet().toString();
-      LOGGER.info("Reading out the following blocks when mined: {}", oreBlocksString);
+      int blockMapSize = config.getBlockMap().size();
+      LOGGER.info("{} blocks configured to trigger readouts.", blockMapSize);
   }
 }

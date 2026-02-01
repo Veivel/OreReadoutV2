@@ -59,15 +59,15 @@ public class ModConfigManager {
       dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
       Representer representer = new Representer(dumperOptions);
       representer.addClassTag(ReadoutTargetOptions.class, Tag.MAP);
+      Yaml yaml = new Yaml(representer, dumperOptions);
 
       ReadoutTargetOptions readoutTargetConfig = new ReadoutTargetOptions(true, true, false);
       config.setReadoutTargets(readoutTargetConfig);
       List<String> blocks = List.of("diamond_ore", "ancient_debris", "deepslate_diamond_ore");
       config.setBlocks(blocks);
       config.setDiscordWebhookUrl("https://discord.com/api/webhooks/xxx/xxx");
-
-      Yaml yaml = new Yaml(representer);
       Map<String, Object> map = config.toMap();
+
       String output = yaml.dump(map);
       LOGGER.debug("YAML output: {}", output);
 
