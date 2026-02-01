@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.orereadout.OreReadoutMod;
-import com.github.Veivel.orereadout.Utils;
 import com.github.Veivel.perms.Perms;
+import com.github.Veivel.util.TextFormat;
 
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.entity.player.PlayerEntity;
@@ -81,7 +81,7 @@ public class Notifier {
           try {
             /** 1.21.5 */
             HoverEvent showText = new ShowText(
-              Utils.fmt("Click here to teleport to the player's logged location.", Formatting.GOLD)
+              TextFormat.fmt("Click here to teleport to the player's logged location.", Formatting.GOLD)
             );
             ClickEvent suggestCommand = new SuggestCommand(
               String.format("/tp %d %d %d", player.getBlockX(), player.getBlockY(), player.getBlockZ())
@@ -102,20 +102,20 @@ public class Notifier {
             //         String.format("/tp %d %d %d", player.getBlockX(), player.getBlockY(), player.getBlockZ())
             //     ));
 
-            MutableText clickableText = Utils
+            MutableText clickableText = TextFormat
               .fmt("[" + player.getBlockX() + " ", Formatting.AQUA)
-              .append(Utils.fmt(player.getBlockY() + " ", Formatting.AQUA))
-              .append(Utils.fmt(player.getBlockZ() + "]", Formatting.AQUA))
+              .append(TextFormat.fmt(player.getBlockY() + " ", Formatting.AQUA))
+              .append(TextFormat.fmt(player.getBlockZ() + "]", Formatting.AQUA))
               .setStyle(style);
 
             // main text
-            Text mainText = Utils
+            Text mainText = TextFormat
               .oreReadoutPrefix()
-              .append(Utils.fmt(playerName, Formatting.AQUA))
-              .append(Utils.fmt(" mined ", Formatting.WHITE))
-              .append(Utils.fmt(quantity + " ores at ", Formatting.WHITE))
+              .append(TextFormat.fmt(playerName, Formatting.AQUA))
+              .append(TextFormat.fmt(" mined ", Formatting.WHITE))
+              .append(TextFormat.fmt(quantity + " ores at ", Formatting.WHITE))
               .append(clickableText)
-              .append(Utils.fmt(" in " + dimensionName + ".", Formatting.WHITE));
+              .append(TextFormat.fmt(" in " + dimensionName + ".", Formatting.WHITE));
 
             // check perms for each player, send mainText if hasPermission
             MinecraftServer server = player.getEntityWorld().getServer();

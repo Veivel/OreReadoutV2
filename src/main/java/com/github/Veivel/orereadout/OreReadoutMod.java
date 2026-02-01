@@ -8,10 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.command.ModCommand;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.notifier.DiscordWebhookSender;
 import com.github.Veivel.notifier.Notifier;
-import com.github.Veivel.orereadout.command.OreReadoutCommand;
 import com.github.Veivel.perms.Perms;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
@@ -47,12 +47,12 @@ public class OreReadoutMod implements ModInitializer {
       LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
         .literal("toggle")
         .requires(Permissions.require(Perms.TOGGLE, 2))
-        .executes(OreReadoutCommand::toggleReadouts)
+        .executes(ModCommand::toggleReadouts)
         .build();
       LiteralCommandNode<ServerCommandSource> reloadCommandNode = CommandManager
         .literal("reload")
         .requires(Permissions.require(Perms.RELOAD, 4))
-        .executes(OreReadoutCommand::reload)
+        .executes(ModCommand::reload)
         .build();
 
       dispatcher.getRoot().addChild(baseNode);

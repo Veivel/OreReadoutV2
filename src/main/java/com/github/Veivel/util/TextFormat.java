@@ -1,18 +1,20 @@
-package com.github.Veivel.orereadout;
+package com.github.Veivel.util;
 
 import net.minecraft.text.Text;
 
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
 
-public class Utils {
-		private Utils() {}
+public class TextFormat {
+		private TextFormat() {}
+
+    /* TODO: add util for sending preset formatting text */
 
 		/*
 		 * Returns the OreReadoutV2's prefix in the form of a net.minecraft.text.MutableText object.
 		 */
 		public static MutableText oreReadoutPrefix() {
-			return Text.of("🔔").copy().formatted(Formatting.AQUA).append(Utils.fmt(" » ", Formatting.GRAY));
+			return Text.of("🔔").copy().formatted(Formatting.AQUA).append(TextFormat.fmt(" » ", Formatting.GRAY));
 		}
 
 		/**
