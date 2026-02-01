@@ -15,11 +15,23 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+
+/**
+ * Aggregates ore/block mining events per player and periodically relays
+ * notifications to the Dispatcher.
+ * <p>
+ * Each player’s mined block count is accumulated during the readout window.
+ * At the end of the window, {@link #flush()} dispatches notifications for all players
+ * and then clears the record.
+ * <p>
+ * Uses the {@link Dispatcher} to relay batch totals to outputs.
+ */
 public class Notifier {
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
     private static Map<String, Integer> playersBlocksMined = new HashMap<>();
 
-    public static void log(String blockName, BlockPos pos, World world, PlayerEntity player) {
+    public static void store(String blockName, BlockPos pos, World world, PlayerEntity player) {
+        LOGGER.debug("Sending notification!");
         String playerName = player.getName().getString();
         Integer currentValue = playersBlocksMined.get(playerName);
         if (currentValue == null) {

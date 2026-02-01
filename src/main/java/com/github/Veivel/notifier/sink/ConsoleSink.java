@@ -4,19 +4,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.Veivel.orereadout.OreReadoutMod;
 
-public class ConsoleSink {
-  private Logger logger;
+public class ConsoleSink extends AbstractSink {
 
   public ConsoleSink() {
+    super();
     setLogger(OreReadoutMod.LOGGER);
-  }
-
-  public Logger getLogger() {
-    return this.logger;
-  }
-
-  public void setLogger(Logger logger) {
-    this.logger = logger;
   }
 
   public void readOut(String playerName, int quantity, int x, int y, int z, String dimension) {

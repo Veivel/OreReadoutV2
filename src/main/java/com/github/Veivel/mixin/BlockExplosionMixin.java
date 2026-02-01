@@ -45,8 +45,7 @@ public class BlockExplosionMixin {
     if (map.containsKey(blockName)) {
       LivingEntity entity = explosion.getCausingEntity();
       if (entity != null && entity.isPlayer()) {
-        LOGGER.debug("Sending notification!");
-        Notifier.log(blockName, pos, world, (PlayerEntity) entity);
+        Notifier.store(blockName, pos, world, (PlayerEntity) entity);
       }
     }
   }

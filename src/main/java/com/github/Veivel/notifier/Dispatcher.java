@@ -7,6 +7,9 @@ import com.github.Veivel.orereadout.OreReadoutMod;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 
+/**
+ * Dispatches the notification to the appropriate sinks.
+ */
 public class Dispatcher {
   private static ModConfig config = ModConfigManager.getConfig();
 

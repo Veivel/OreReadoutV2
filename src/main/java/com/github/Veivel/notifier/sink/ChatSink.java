@@ -2,8 +2,6 @@ package com.github.Veivel.notifier.sink;
 
 import com.github.Veivel.perms.Perms;
 
-import org.apache.logging.log4j.Logger;
-
 import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.util.TextFormat;
@@ -20,19 +18,11 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class ChatSink {
-  private Logger logger;
+public class ChatSink extends AbstractSink {
 
   public ChatSink() {
+    super();
     setLogger(OreReadoutMod.LOGGER);
-  }
-
-  public Logger getLogger() {
-    return this.logger;
-  }
-
-  public void setLogger(Logger logger) {
-    this.logger = logger;
   }
 
   public void readOut(String playerName, int quantity, int x, int y, int z, String dimension) {
@@ -43,32 +33,7 @@ public class ChatSink {
         return;
       }
 
-      HoverEvent showText = new ShowText(
-        TextFormat.fmt("Click to teleport to the location.", Formatting.GOLD)
-      );
-      ClickEvent suggestCommand = new SuggestCommand(
-        String.format("/tp %d %d %d", x, y, z)
-      );
-
-      // text that includes coordinates, click event, & hover event
-      Style style = Style.EMPTY
-        .withHoverEvent(showText)
-        .withClickEvent(suggestCommand);
-
-      MutableText clickableText = TextFormat
-        .fmt("[" + x + " ", Formatting.AQUA)
-        .append(TextFormat.fmt(y + " ", Formatting.AQUA))
-        .append(TextFormat.fmt(z + "]", Formatting.AQUA))
-        .setStyle(style);
-
-      // main text
-      Text mainText = TextFormat
-        .getPrefix()
-        .append(TextFormat.fmt(playerName, Formatting.AQUA))
-        .append(TextFormat.fmt(" mined ", Formatting.WHITE))
-        .append(TextFormat.fmt(quantity + " ores at ", Formatting.WHITE))
-        .append(clickableText)
-        .append(TextFormat.fmt(" in " + dimension + ".", Formatting.WHITE));
+      Text mainText = composeText(playerName, quantity, x, y, z, dimension);
 
       // check perms for each player, send mainText if hasPermission
       server.getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> {
@@ -77,7 +42,7 @@ public class ChatSink {
         Permissions
         .check(serverPlayerEntity.getUuid(), Perms.VIEW_READOUT, false)
         .thenAccept(hasPermissionBoolean -> {
-          logger.debug("Permission check passed for player {} {}.", serverPlayerEntity.getName().getString(), uuidStr);
+          getLogger().debug("Permission check passed for player {} {}.", serverPlayerEntity.getName().getString(), uuidStr);
 
           // check for player's toggle settings
           boolean hasPermission = Boolean.TRUE.equals(hasPermissionBoolean);
@@ -97,5 +62,36 @@ public class ChatSink {
     } catch(Exception e1) {
       e1.printStackTrace();
     }
+  }
+
+  private Text composeText(String playerName, int quantity, int x, int y, int z, String dimension) {
+    HoverEvent showText = new ShowText(
+      TextFormat.fmt("Click to teleport to the location.", Formatting.GOLD)
+    );
+    ClickEvent suggestCommand = new SuggestCommand(
+      String.format("/tp %d %d %d", x, y, z)
+    );
+
+    // text that includes coordinates, click event, & hover event
+    Style style = Style.EMPTY
+      .withHoverEvent(showText)
+      .withClickEvent(suggestCommand);
+
+    MutableText clickableText = TextFormat
+      .fmt("[" + x + " ", Formatting.AQUA)
+      .append(TextFormat.fmt(y + " ", Formatting.AQUA))
+      .append(TextFormat.fmt(z + "]", Formatting.AQUA))
+      .setStyle(style);
+
+    // main text
+    Text mainText = TextFormat
+      .getPrefix()
+      .append(TextFormat.fmt(playerName, Formatting.AQUA))
+      .append(TextFormat.fmt(" mined ", Formatting.WHITE))
+      .append(TextFormat.fmt(quantity + " ores at ", Formatting.WHITE))
+      .append(clickableText)
+      .append(TextFormat.fmt(" in " + dimension + ".", Formatting.WHITE));
+
+    return mainText;
   }
 }

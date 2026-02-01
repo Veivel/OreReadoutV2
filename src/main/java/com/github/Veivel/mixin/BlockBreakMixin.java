@@ -37,8 +37,7 @@ public class BlockBreakMixin {
     LOGGER.debug("Checking if block {} is in map of {}.", blockName, mapKeySet);
 
     if (map.containsKey(blockName)) {
-      LOGGER.debug("Sending notification!");
-      Notifier.log(blockName, pos, world, player);
+      Notifier.store(blockName, pos, world, player);
     }
   }
 }

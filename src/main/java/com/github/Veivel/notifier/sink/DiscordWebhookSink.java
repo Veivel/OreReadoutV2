@@ -6,15 +6,15 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.logging.log4j.Logger;
-
 import com.github.Veivel.orereadout.OreReadoutMod;
+import com.github.Veivel.util.DataFormat;
 
-public class DiscordWebhookSink {
-  private static final Logger logger = OreReadoutMod.LOGGER;
+public class DiscordWebhookSink extends AbstractSink {
   private String webhookUrl = "";
 
   public DiscordWebhookSink(String webhookUrl) {
+    super();
+    setLogger(OreReadoutMod.LOGGER);
     this.webhookUrl = webhookUrl;
   }
 
@@ -34,7 +34,7 @@ public class DiscordWebhookSink {
 
       int responseCode = conn.getResponseCode();
       if (responseCode < 200 || responseCode >= 300) {
-        logger.error("Webhook request failed with response code: {}", responseCode);
+        getLogger().error("Webhook request failed with response code: {}", responseCode);
       }
 
       conn.disconnect();
@@ -44,7 +44,7 @@ public class DiscordWebhookSink {
 
   }
 
-  public void testWebhook() {
+  public void testConnection() {
     StringBuilder jsonPayload = new StringBuilder();
     jsonPayload.append("{")
       .append("\"embeds\": [")
@@ -83,7 +83,7 @@ public class DiscordWebhookSink {
         .append("{")
           .append("\"title\": \"\",")
           .append("\"description\": \"")
-            .append(escapeJson(playerName))
+            .append(DataFormat.escapeJson(playerName))
             .append(" mined ")
             .append(quantity)
             .append(" ores at [`")
@@ -107,16 +107,5 @@ public class DiscordWebhookSink {
 
     String payloadString = jsonPayload.toString();
     sendPayload(payloadString);
-  }
-
-  /**
-   * Escapes special characters in a JSON string.
-   */
-  private static String escapeJson(String s) {
-    if (s == null) {
-      return "";
-    }
-    // Replace backslashes and double quotes.
-    return s.replace("\\", "\\\\").replace("\"", "\\\"");
   }
 }

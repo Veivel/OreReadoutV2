@@ -80,7 +80,7 @@ public class OreReadoutMod implements ModInitializer {
 
     // flush notifier every 7 seconds
     ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
-      int readoutWindowInSeconds = 7;
+      int readoutWindowInSeconds = 7; // TODO: make this configurable
       int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
       if (tickDiff == 0) {
         Notifier.flush();
@@ -98,7 +98,7 @@ public class OreReadoutMod implements ModInitializer {
       consoleSink = new ConsoleSink();
       chatSink = new ChatSink();
       discordWebhookSender = new DiscordWebhookSink(config.getDiscordWebhookUrl());
-      discordWebhookSender.testWebhook();
+      discordWebhookSender.testConnection();
 
       int blockMapSize = config.getBlockMap().size();
       LOGGER.info("{} blocks configured to trigger readouts.", blockMapSize);
