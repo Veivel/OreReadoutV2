@@ -6,39 +6,23 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 
 import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.config.ModConfig;
+import com.github.Veivel.notifier.sink.ChatSink;
 import com.github.Veivel.orereadout.OreReadoutMod;
-import com.github.Veivel.perms.Perms;
-import com.github.Veivel.util.TextFormat;
 
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-
-// 1.21.4
-// import net.minecraft.text.ClickEvent.Action;
-
-// 1.21.5
-import net.minecraft.text.ClickEvent.SuggestCommand;
-import net.minecraft.text.HoverEvent.ShowText;
-
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class Notifier {
-  private static final Logger LOGGER = OreReadoutMod.LOGGER;
-  private static ModConfig config = ModConfigManager.getConfig();
-  private static Map<String, Integer> playersBlocksMined = new HashMap<>();
-
-    private Notifier() {}
+    private static final Logger LOGGER = OreReadoutMod.LOGGER;
+    private static ModConfig config = ModConfigManager.getConfig();
+    private static Map<String, Integer> playersBlocksMined = new HashMap<>();
+    private static final ChatSink CHAT_SINK = new ChatSink();
 
     public static void log(String blockName, BlockPos pos, World world, PlayerEntity player) {
         String playerName = player.getName().getString();
@@ -50,7 +34,12 @@ public class Notifier {
         }
     }
 
-    public static void notifyAll(MinecraftServer server) {
+    public static void flushReadouts() {
+        MinecraftServer server = ServerContext.get();
+        if (server == null) {
+          return;
+        }
+
         playersBlocksMined.forEach((playerName, blocksMined) -> {
           PlayerManager playerManager = server.getPlayerManager();
           ServerPlayerEntity player = playerManager.getPlayer(playerName);
@@ -70,68 +59,25 @@ public class Notifier {
 
         // send to server console
         if (config.isSendToConsole()) {
-          LOGGER.info(
-            "{} mined {} ores at [{} {} {}] in {}",
-            playerName, quantity, player.getBlockX(), player.getBlockY(), player.getBlockZ(), dimensionName
+          OreReadoutMod.consoleSink.readOut(
+            playerName,
+            quantity,player.getBlockX(),
+            player.getBlockY(),
+            player.getBlockZ(),
+            dimensionName
           );
         }
 
         // send to specified players via in-game chat
         if (config.isSendToIngame()) {
-          try {
-            HoverEvent showText = new ShowText(
-              TextFormat.fmt("Click to teleport to the location.", Formatting.GOLD)
-            );
-            ClickEvent suggestCommand = new SuggestCommand(
-              String.format("/tp %d %d %d", player.getBlockX(), player.getBlockY(), player.getBlockZ())
-            );
-
-            // text that includes coordinates, click event, & hover event
-            Style style = Style.EMPTY
-              .withHoverEvent(showText)
-              .withClickEvent(suggestCommand);
-
-            MutableText clickableText = TextFormat
-              .fmt("[" + player.getBlockX() + " ", Formatting.AQUA)
-              .append(TextFormat.fmt(player.getBlockY() + " ", Formatting.AQUA))
-              .append(TextFormat.fmt(player.getBlockZ() + "]", Formatting.AQUA))
-              .setStyle(style);
-
-            // main text
-            Text mainText = TextFormat
-              .PREFIX
-              .append(TextFormat.fmt(playerName, Formatting.AQUA))
-              .append(TextFormat.fmt(" mined ", Formatting.WHITE))
-              .append(TextFormat.fmt(quantity + " ores at ", Formatting.WHITE))
-              .append(clickableText)
-              .append(TextFormat.fmt(" in " + dimensionName + ".", Formatting.WHITE));
-
-            // check perms for each player, send mainText if hasPermission
-            MinecraftServer server = player.getEntityWorld().getServer();
-            server.getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> {
-              String uuidStr = serverPlayerEntity.getUuidAsString();
-
-              Permissions
-              .check(serverPlayerEntity.getUuid(), Perms.VIEW_READOUT, false)
-              .thenAcceptAsync(hasPermissionBoolean -> {
-                // check for player's toggle settings
-                boolean hasPermission = Boolean.TRUE.equals(hasPermissionBoolean);
-                boolean hasToggledOff = false;
-                boolean hasKey = OreReadoutMod.playerDisableViewMap.containsKey(uuidStr);
-
-                if (hasKey) hasToggledOff = OreReadoutMod.playerDisableViewMap.get(uuidStr);
-                if (hasPermission && !hasToggledOff) {
-                  try {
-                    serverPlayerEntity.sendMessage(mainText);
-                  } catch(Exception e1) {
-                    e1.printStackTrace();
-                  }
-                }
-              });
-            });
-          } catch(Exception e1) {
-            e1.printStackTrace();
-          }
+          CHAT_SINK.readOut(
+            playerName,
+            quantity,
+            player.getBlockX(),
+            player.getBlockY(),
+            player.getBlockZ(),
+            dimensionName
+          );
         }
 
         // send to discord webhook

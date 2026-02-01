@@ -8,9 +8,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.command.ModCommand;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.notifier.Notifier;
+import com.github.Veivel.notifier.sink.ChatSink;
+import com.github.Veivel.notifier.sink.ConsoleSink;
 import com.github.Veivel.notifier.sink.DiscordWebhookSink;
 import com.github.Veivel.perms.Perms;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -18,6 +21,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
@@ -25,8 +29,10 @@ import net.minecraft.server.command.ServerCommandSource;
 
 public class OreReadoutMod implements ModInitializer {
   public static final int TICKS_PER_SECOND = 20;
-  public static final Logger LOGGER = LogManager.getLogger();
+  public static final Logger LOGGER = LogManager.getLogger("orereadoutv2");
   public static DiscordWebhookSink discordWebhookSender = null;
+  public static ConsoleSink consoleSink = null;
+  public static ChatSink chatSink = null;
 
   // map of player UUID (str) to boolean, whether they disabled ore readouts or not
   public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
@@ -38,6 +44,9 @@ public class OreReadoutMod implements ModInitializer {
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    ServerLifecycleEvents.SERVER_STARTED.register(ServerContext::set);
+    ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerContext.clear());
 
     CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
       LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
@@ -64,7 +73,7 @@ public class OreReadoutMod implements ModInitializer {
       int readoutWindowInSeconds = 7;
       int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
       if (tickDiff == 0) {
-        Notifier.notifyAll(server);
+        Notifier.flushReadouts();
         return;
       } else {
         return;
@@ -77,6 +86,9 @@ public class OreReadoutMod implements ModInitializer {
       ModConfig config = ModConfigManager.getConfig();
       discordWebhookSender = new DiscordWebhookSink(config.getDiscordWebhookUrl());
       discordWebhookSender.testWebhook();
+
+      consoleSink = new ConsoleSink();
+      chatSink = new ChatSink();
 
       String oreBlocksString = config.getBlockMap().keySet().toString();
       LOGGER.info("Reading out the following blocks when mined: {}", oreBlocksString);
