@@ -2,49 +2,51 @@ package com.github.Veivel.config;
 
 import com.google.gson.Gson;
 
-public class ReadoutTargetOptions { // TODO: refactor to be flat
+public class ReadoutTargetOptions {
 
-  private boolean console;
-  private boolean ingame;
-  private boolean discord;
+    // TODO: refactor to be flat
 
-  public ReadoutTargetOptions(
-    boolean sendToConsole,
-    boolean sendToIngame,
-    boolean sendToDiscord
-  ) {
-    console = sendToConsole;
-    ingame = sendToIngame;
-    discord = sendToDiscord;
-  }
+    private boolean console;
+    private boolean ingame;
+    private boolean discord;
 
-  public boolean getConsole() {
-    return console;
-  }
+    public ReadoutTargetOptions(
+        boolean sendToConsole,
+        boolean sendToIngame,
+        boolean sendToDiscord
+    ) {
+        console = sendToConsole;
+        ingame = sendToIngame;
+        discord = sendToDiscord;
+    }
 
-  public void setConsole(boolean console) {
-    this.console = console;
-  }
+    public boolean getConsole() {
+        return console;
+    }
 
-  public boolean getIngame() {
-    return ingame;
-  }
+    public void setConsole(boolean console) {
+        this.console = console;
+    }
 
-  public void setIngame(boolean ingame) {
-    this.ingame = ingame;
-  }
+    public boolean getIngame() {
+        return ingame;
+    }
 
-  public boolean getDiscord() {
-    return discord;
-  }
+    public void setIngame(boolean ingame) {
+        this.ingame = ingame;
+    }
 
-  public void setDiscord(boolean discord) {
-    this.discord = discord;
-  }
+    public boolean getDiscord() {
+        return discord;
+    }
 
-  @Override
-  public String toString() {
-    Gson gson = new Gson();
-    return gson.toJson(this);
-  }
+    public void setDiscord(boolean discord) {
+        this.discord = discord;
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
 }

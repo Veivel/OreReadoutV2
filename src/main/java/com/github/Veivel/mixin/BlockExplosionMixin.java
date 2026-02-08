@@ -20,27 +20,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractBlock.class)
 public class BlockExplosionMixin {
 
-  @Inject(
-    method = "onExploded(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/explosion/Explosion;Ljava/util/function/BiConsumer;)V",
-    at = @At("HEAD")
-  )
-  public void onExploded(
-    BlockState state,
-    ServerWorld world,
-    BlockPos pos,
-    Explosion explosion,
-    BiConsumer<ItemStack, BlockPos> stackMerger,
-    CallbackInfo ci
-  ) {
-    Block block = state.getBlock();
-    String blockName = Registries.BLOCK
-      .getId(block)
-      .toString()
-      .replaceFirst("minecraft:", "");
+    @Inject(
+        method = "onExploded(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/explosion/Explosion;Ljava/util/function/BiConsumer;)V",
+        at = @At("HEAD")
+    )
+    public void onExploded(
+        BlockState state,
+        ServerWorld world,
+        BlockPos pos,
+        Explosion explosion,
+        BiConsumer<ItemStack, BlockPos> stackMerger,
+        CallbackInfo ci
+    ) {
+        Block block = state.getBlock();
+        String blockName = Registries.BLOCK.getId(block)
+            .toString()
+            .replaceFirst("minecraft:", "");
 
-    LivingEntity entity = explosion.getCausingEntity();
-    if (entity != null && entity.isPlayer()) {
-      DispatchBuffer.append(blockName, pos, world, (PlayerEntity) entity);
+        LivingEntity entity = explosion.getCausingEntity();
+        if (entity != null && entity.isPlayer()) {
+            DispatchBuffer.append(blockName, pos, world, (PlayerEntity) entity);
+        }
     }
-  }
 }

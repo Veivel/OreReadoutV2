@@ -12,19 +12,19 @@ import net.minecraft.server.MinecraftServer;
  */
 public final class ServerContext {
 
-  private static volatile MinecraftServer server;
+    private static volatile MinecraftServer server;
 
-  private ServerContext() {}
+    private ServerContext() {}
 
-  public static void set(MinecraftServer server) {
-    ServerContext.server = server;
-  }
+    public static void set(MinecraftServer server) {
+        ServerContext.server = server;
+    }
 
-  public static void clear() {
-    ServerContext.server = null;
-  }
+    public static void clear() {
+        ServerContext.server = null;
+    }
 
-  public static MinecraftServer get() {
-    return server;
-  }
+    public static MinecraftServer get() {
+        return server;
+    }
 }

@@ -34,24 +34,22 @@ dependencies {
     include "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
 }
 
+// https://github.com/diffplug/spotless/blob/main/plugin-gradle/README.md
 spotless {
   java {
-    // Use the default importOrder configuration
     importOrder()
-
     removeUnusedImports()
-    forbidWildcardImports() // or expandWildcardImports, see below
+    forbidWildcardImports()
     forbidModuleImports()
 
     // Cleanthat will refactor your code, but it may break your style: apply it before your formatter
-    // cleanthat()          // has its own section below
+    // cleanthat()
 
-    // Choose one of these formatters.
-    googleJavaFormat()   // has its own section below
+    // Formatter
+    prettier(['prettier': '3.8.1', 'prettier-plugin-java': '2.8.1'])
+        .config(['parser': 'java', 'tabWidth': 4, 'plugins': ['prettier-plugin-java']])
 
-    formatAnnotations()  // fixes formatting of type annotations, see below
-
-    // licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+    formatAnnotations()
   }
 }
 
