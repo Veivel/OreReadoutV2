@@ -5,6 +5,7 @@ plugins {
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "0.8.4"
     id 'org.jetbrains.changelog' version '2.2.0'
+    id 'com.diffplug.spotless' version '8.2.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_21
@@ -33,6 +34,27 @@ dependencies {
     include "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
 }
 
+spotless {
+  java {
+    // Use the default importOrder configuration
+    importOrder()
+
+    removeUnusedImports()
+    forbidWildcardImports() // or expandWildcardImports, see below
+    forbidModuleImports()
+
+    // Cleanthat will refactor your code, but it may break your style: apply it before your formatter
+    // cleanthat()          // has its own section below
+
+    // Choose one of these formatters.
+    googleJavaFormat()   // has its own section below
+
+    formatAnnotations()  // fixes formatting of type annotations, see below
+
+    // licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+  }
+}
+
 processResources {
     inputs.property "version", project.version
 
@@ -44,6 +66,10 @@ processResources {
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+}
+
+tasks.named("check").configure {
+  dependsOn("spotlessCheck")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
