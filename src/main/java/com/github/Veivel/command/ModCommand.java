@@ -21,7 +21,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Formatting;
 
 public class ModCommand {
-    private static final Logger logger = OreReadoutMod.LOGGER;
+    private static final Logger LOGGER = OreReadoutMod.LOGGER;
 
     private ModCommand() {};
 
