@@ -24,8 +24,6 @@ public class ModConfigManager {
     private static final Path CONFIG_PATH = FabricLoader.getInstance()
         .getConfigDir()
         .resolve("ore-readout.yml");
-    // private static final Path DEFAULT_CONFIG_PATH =
-    // Path.of("/data/config/default.ore-readout.yml");
     private static ModConfig config = new ModConfig();
 
     private ModConfigManager() {}
@@ -33,12 +31,14 @@ public class ModConfigManager {
     public static void load() throws IOException {
         LOGGER.info("Loading configuration for OreReadoutV2...");
 
+        // Warn if old config exists (ignore)
         if (OLD_CONFIG_PATH.toFile().exists()) {
             LOGGER.warn(
                 "A deprecated ore-readout.properties file was found. This file will be ignored."
             );
         }
 
+        // First-time setup, create new config file
         if (!CONFIG_PATH.toFile().exists()) {
             LOGGER.info("Creating new configuration file for OreReadoutV2!");
             writeDefaultConfig(CONFIG_PATH.toString());
@@ -61,6 +61,7 @@ public class ModConfigManager {
         ModConfig config = new ModConfig();
         DumperOptions dumperOptions = new DumperOptions();
 
+        // yaml dumper config
         dumperOptions.setIndent(2);
         dumperOptions.setPrettyFlow(true);
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
@@ -68,6 +69,7 @@ public class ModConfigManager {
         representer.addClassTag(ReadoutTargetOptions.class, Tag.MAP);
         Yaml yaml = new Yaml(representer, dumperOptions);
 
+        // default values
         ReadoutTargetOptions readoutTargetConfig = new ReadoutTargetOptions(
             true,
             true,

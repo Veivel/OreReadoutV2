@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Buffers data to be dispatched using {@link #store}, then orchestrates
+ * Buffers events to the store using {@link #append}, then orchestrates
  * read-outs by relaying it to {@link Dispatch} using {@link #flush}.
  */
 public class DispatchBuffer {

@@ -3,9 +3,6 @@ package com.github.Veivel.config;
 import com.google.gson.Gson;
 
 public class ReadoutTargetOptions {
-
-    // TODO: refactor to be flat
-
     private boolean console;
     private boolean ingame;
     private boolean discord;

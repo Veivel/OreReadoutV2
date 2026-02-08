@@ -22,11 +22,6 @@ public class OreReadoutMod implements ModInitializer {
     public static final int TICKS_PER_SECOND = 20;
     public static final Logger LOGGER = LogManager.getLogger("orereadoutv2");
 
-    // TODO: refactor into a Store
-    // map of player UUID (str) to boolean, whether they disabled ore readouts or
-    // not
-    public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
-
     @Override
     public void onInitialize() {
         // set log level

@@ -3,6 +3,7 @@ package com.github.Veivel.command;
 import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.perms.Perms;
+import com.github.Veivel.store.PlayerConfigStore;
 import com.github.Veivel.util.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -126,13 +127,13 @@ public class ModCommand {
         }
 
         // check current status, then toggle
-        Map<String, Boolean> disableViewMap =
-            OreReadoutMod.playerDisableViewMap;
+        Map<String, Boolean> chatReadoutEnabledByPlayer =
+            PlayerConfigStore.getChatReadoutEnabledByPlayer();
         if (
-            disableViewMap.containsKey(uuid) &&
-            Boolean.TRUE.equals(disableViewMap.get(uuid))
+            chatReadoutEnabledByPlayer.containsKey(uuid) &&
+            Boolean.FALSE.equals(chatReadoutEnabledByPlayer.get(uuid))
         ) {
-            disableViewMap.put(uuid, false);
+            chatReadoutEnabledByPlayer.put(uuid, true);
             source.sendMessage(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
@@ -142,7 +143,7 @@ public class ModCommand {
                 )
             );
         } else {
-            disableViewMap.put(uuid, true);
+            chatReadoutEnabledByPlayer.put(uuid, false);
             source.sendMessage(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
