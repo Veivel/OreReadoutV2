@@ -1,14 +1,14 @@
 package com.github.Veivel.notifier.sink;
 
+import com.github.Veivel.config.ModConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.Veivel.config.ModConfig;
-
 public class SinkManager {
+
   private static List<AbstractSink> sinks = new ArrayList<AbstractSink>();
 
-  private SinkManager() {};
+  private SinkManager() {}
 
   public static void init(ModConfig config) {
     if (config.isSendToConsole()) {
@@ -20,13 +20,22 @@ public class SinkManager {
       sinks.add(chatSink);
     }
     if (config.isSendToDiscord()) {
-      DiscordWebhookSink discordSink = new DiscordWebhookSink(config.getDiscordWebhookUrl());
+      DiscordWebhookSink discordSink = new DiscordWebhookSink(
+        config.getDiscordWebhookUrl()
+      );
       discordSink.testConnection();
       sinks.add(discordSink);
     }
   }
 
-  public static void emit(String playerName, int quantity, int x, int y, int z, String dimension) {
+  public static void emit(
+    String playerName,
+    int quantity,
+    int x,
+    int y,
+    int z,
+    String dimension
+  ) {
     for (AbstractSink sink : sinks) {
       sink.readOut(playerName, quantity, x, y, z, dimension);
     }

@@ -5,10 +5,13 @@ import net.minecraft.server.MinecraftServer;
 /**
  * Holds the active {@link MinecraftServer} instance for this mod.
  *
- * <p>Populated by {@code ServerLifecycleEvents.SERVER_STARTED} and cleared by
- * {@code ServerLifecycleEvents.SERVER_STOPPED}.</p>
+ * <p>
+ * Populated by {@code ServerLifecycleEvents.SERVER_STARTED} and cleared by
+ * {@code
+ * ServerLifecycleEvents.SERVER_STOPPED}.
  */
 public final class ServerContext {
+
   private static volatile MinecraftServer server;
 
   private ServerContext() {}

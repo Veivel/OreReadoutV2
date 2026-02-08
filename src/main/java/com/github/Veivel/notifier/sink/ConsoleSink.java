@@ -1,8 +1,7 @@
 package com.github.Veivel.notifier.sink;
 
-import org.apache.logging.log4j.Logger;
-
 import com.github.Veivel.orereadout.OreReadoutMod;
+import org.apache.logging.log4j.Logger;
 
 public class ConsoleSink extends AbstractSink {
 
@@ -11,11 +10,23 @@ public class ConsoleSink extends AbstractSink {
     setLogger(OreReadoutMod.LOGGER);
   }
 
-  public void readOut(String playerName, int quantity, int x, int y, int z, String dimension) {
+  public void readOut(
+    String playerName,
+    int quantity,
+    int x,
+    int y,
+    int z,
+    String dimension
+  ) {
     Logger log = getLogger();
     log.info(
       "{} mined {} ores at [{} {} {}] in {}",
-      playerName, quantity, x, y, z, dimension
+      playerName,
+      quantity,
+      x,
+      y,
+      z,
+      dimension
     );
   }
 }

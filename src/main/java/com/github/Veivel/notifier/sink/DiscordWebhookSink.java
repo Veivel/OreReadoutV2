@@ -1,15 +1,15 @@
 package com.github.Veivel.notifier.sink;
 
+import com.github.Veivel.orereadout.OreReadoutMod;
+import com.github.Veivel.util.DataFormat;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-import com.github.Veivel.orereadout.OreReadoutMod;
-import com.github.Veivel.util.DataFormat;
-
 public class DiscordWebhookSink extends AbstractSink {
+
   private String webhookUrl = "";
 
   public DiscordWebhookSink(String webhookUrl) {
@@ -34,32 +34,33 @@ public class DiscordWebhookSink extends AbstractSink {
 
       int responseCode = conn.getResponseCode();
       if (responseCode < 200 || responseCode >= 300) {
-        getLogger().error("Webhook request failed with response code: {}", responseCode);
+        getLogger()
+          .error("Webhook request failed with response code: {}", responseCode);
       }
 
       conn.disconnect();
     } catch (Exception e) {
       e.printStackTrace();
     }
-
   }
 
   public void testConnection() {
     StringBuilder jsonPayload = new StringBuilder();
-    jsonPayload.append("{")
+    jsonPayload
+      .append("{")
       .append("\"embeds\": [")
-        .append("{")
-          .append("\"title\": \"\",")
-          .append("\"description\": \"")
-          .append("Ore Readout V2 was configured successfully.\",")
-          .append("\"color\": 4352240,")
-          .append("\"footer\": {\"text\": \"\"},")
-          .append("\"author\": {\"name\": \"\"},")
-          .append("\"fields\": []")
-        .append("}")
+      .append("{")
+      .append("\"title\": \"\",")
+      .append("\"description\": \"")
+      .append("Ore Readout V2 was configured successfully.\",")
+      .append("\"color\": 4352240,")
+      .append("\"footer\": {\"text\": \"\"},")
+      .append("\"author\": {\"name\": \"\"},")
+      .append("\"fields\": []")
+      .append("}")
       .append("],")
       .append("\"content\": \"\"")
-    .append("}");
+      .append("}");
 
     String payloadString = jsonPayload.toString();
     sendPayload(payloadString);
@@ -75,35 +76,43 @@ public class DiscordWebhookSink extends AbstractSink {
    * @param z
    * @param dimension
    */
-  public void readOut(String playerName, int quantity, int x, int y, int z, String dimension) {
+  public void readOut(
+    String playerName,
+    int quantity,
+    int x,
+    int y,
+    int z,
+    String dimension
+  ) {
     // build the JSON payload manually. see: https://toolscord.com/webhook
     StringBuilder jsonPayload = new StringBuilder();
-    jsonPayload.append("{")
+    jsonPayload
+      .append("{")
       .append("\"embeds\": [")
-        .append("{")
-          .append("\"title\": \"\",")
-          .append("\"description\": \"")
-            .append(DataFormat.escapeJson(playerName))
-            .append(" mined ")
-            .append(quantity)
-            .append(" ores at [`")
-            .append(x)
-            .append(" ")
-            .append(y)
-            .append(" ")
-            .append(z)
-            .append("`]")
-            .append(" in ")
-            .append(dimension)
-            .append(". \",")
-          .append("\"color\": 4352240,")
-          .append("\"footer\": {\"text\": \"\"},")
-          .append("\"author\": {\"name\": \"\"},")
-          .append("\"fields\": []")
-        .append("}")
+      .append("{")
+      .append("\"title\": \"\",")
+      .append("\"description\": \"")
+      .append(DataFormat.escapeJson(playerName))
+      .append(" mined ")
+      .append(quantity)
+      .append(" ores at [`")
+      .append(x)
+      .append(" ")
+      .append(y)
+      .append(" ")
+      .append(z)
+      .append("`]")
+      .append(" in ")
+      .append(dimension)
+      .append(". \",")
+      .append("\"color\": 4352240,")
+      .append("\"footer\": {\"text\": \"\"},")
+      .append("\"author\": {\"name\": \"\"},")
+      .append("\"fields\": []")
+      .append("}")
       .append("],")
       .append("\"content\": \"\"")
-    .append("}");
+      .append("}");
 
     String payloadString = jsonPayload.toString();
     sendPayload(payloadString);

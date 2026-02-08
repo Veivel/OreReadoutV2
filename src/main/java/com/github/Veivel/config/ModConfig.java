@@ -1,13 +1,13 @@
 package com.github.Veivel.config;
 
+import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 public class ModConfig {
+
   private static final String DISCORD_WEBHOOK_URL_KEY = "discordWebhookUrl";
   private static final String BLOCKS_KEY = "blocks";
   private static final String READOUT_TARGETS_KEY = "readoutTargets";
@@ -88,12 +88,18 @@ public class ModConfig {
     }
     if (map.containsKey(READOUT_TARGETS_KEY)) {
       // assuming type-cast is OK
-      Map<String, Object> readoutMap = (Map<String, Object>) map.get(READOUT_TARGETS_KEY);
+      Map<String, Object> readoutMap = (Map<String, Object>) map.get(
+        READOUT_TARGETS_KEY
+      );
 
       boolean discord = Boolean.TRUE.equals(readoutMap.get("discord"));
       boolean console = Boolean.TRUE.equals(readoutMap.get("console"));
       boolean ingame = Boolean.TRUE.equals(readoutMap.get("ingame"));
-      ReadoutTargetOptions readoutTargets = new ReadoutTargetOptions(console, ingame, discord);
+      ReadoutTargetOptions readoutTargets = new ReadoutTargetOptions(
+        console,
+        ingame,
+        discord
+      );
       setReadoutTargets(readoutTargets);
     }
   }

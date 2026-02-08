@@ -1,6 +1,7 @@
 package com.github.Veivel.perms;
 
 public final class Perms {
+
   private Perms() {}
 
   // root permission for all commands
