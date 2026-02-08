@@ -36,7 +36,7 @@ public class ModCommand {
         LiteralCommandNode<ServerCommandSource> toggleCommandNode =
             CommandManager.literal("toggle")
                 .requires(Permissions.require(Perms.TOGGLE, 2))
-                .executes(ModCommand::toggleReadouts)
+                .executes(ModCommand::toggleChatReadoutsBySelf)
                 .build();
         LiteralCommandNode<ServerCommandSource> reloadCommandNode =
             CommandManager.literal("reload")
@@ -100,7 +100,7 @@ public class ModCommand {
         }
     }
 
-    public static int toggleReadouts(
+    public static int toggleChatReadoutsBySelf(
         CommandContext<ServerCommandSource> context
     ) {
         // command must be run by player, not from console

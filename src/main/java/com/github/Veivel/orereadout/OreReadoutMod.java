@@ -6,8 +6,6 @@ import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.notifier.DispatchBuffer;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -50,7 +48,8 @@ public class OreReadoutMod implements ModInitializer {
 
         // flush notifier every 7 seconds
         ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
-            int readoutWindowInSeconds = 7; // TODO: make this configurable
+            ModConfig config = ModConfigManager.getConfig();
+            int readoutWindowInSeconds = config.getReadoutWindowInSeconds();
             int tickDiff =
                 server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
             if (tickDiff == 0) {

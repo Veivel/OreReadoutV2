@@ -8,14 +8,16 @@ import java.util.Map;
 
 public class ModConfig {
 
-    private static final String DISCORD_WEBHOOK_URL_KEY = "discordWebhookUrl";
-    private static final String BLOCKS_KEY = "blocks";
-    private static final String READOUT_TARGETS_KEY = "readoutTargets";
+    public static final String DISCORD_WEBHOOK_URL_KEY = "discordWebhookUrl";
+    public static final String BLOCKS_KEY = "blocks";
+    public static final String READOUT_TARGETS_KEY = "readoutTargets";
+    public static final String READOUT_WINDOW_KEY = "readoutWindowInSeconds";
 
     private ReadoutTargetOptions readoutTargetConfig;
     private String discordWebhookUrl;
     private List<String> blocks;
     private Map<String, Boolean> blockMap;
+    private Integer readoutWindowInSeconds;
 
     public ReadoutTargetOptions getReadoutTargets() {
         return readoutTargetConfig;
@@ -43,6 +45,14 @@ public class ModConfig {
 
     public void setDiscordWebhookUrl(String discordWebhookUrl) {
         this.discordWebhookUrl = discordWebhookUrl;
+    }
+
+    public Integer getReadoutWindowInSeconds() {
+        return this.readoutWindowInSeconds;
+    }
+
+    public void setReadoutWindowInSeconds(int seconds) {
+        this.readoutWindowInSeconds = seconds;
     }
 
     public List<String> getBlocks() {
@@ -85,7 +95,13 @@ public class ModConfig {
         if (map.containsKey(BLOCKS_KEY)) {
             // assuming type-cast is OK
             setBlocks((List<String>) map.get(BLOCKS_KEY));
+            Map<String, Boolean> blockMap = createBlockMapFromList(
+                getBlocks()
+            );
+            setBlockMap(blockMap);
         }
+
+
         if (map.containsKey(READOUT_TARGETS_KEY)) {
             // assuming type-cast is OK
             Map<String, Object> readoutMap = (Map<String, Object>) map.get(
@@ -101,6 +117,14 @@ public class ModConfig {
                 discord
             );
             setReadoutTargets(readoutTargets);
+        }
+
+        if (map.containsKey(READOUT_WINDOW_KEY)) {
+            String secondsStr = map.get(READOUT_WINDOW_KEY).toString();
+            setReadoutWindowInSeconds(Integer.parseInt(secondsStr));
+        } else {
+            // default settings
+            setReadoutWindowInSeconds(7);
         }
     }
 

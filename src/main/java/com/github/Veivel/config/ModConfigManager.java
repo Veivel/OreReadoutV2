@@ -17,6 +17,7 @@ import org.yaml.snakeyaml.representer.Representer;
 /** code adapted from https://github.com/DrexHD/Vanish/ */
 public class ModConfigManager {
 
+    private static ModConfig config = new ModConfig();
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
     private static final Path OLD_CONFIG_PATH = FabricLoader.getInstance()
         .getConfigDir()
@@ -24,7 +25,6 @@ public class ModConfigManager {
     private static final Path CONFIG_PATH = FabricLoader.getInstance()
         .getConfigDir()
         .resolve("ore-readout.yml");
-    private static ModConfig config = new ModConfig();
 
     private ModConfigManager() {}
 
@@ -47,12 +47,16 @@ public class ModConfigManager {
         Yaml yaml = new Yaml();
         FileReader reader = new FileReader(CONFIG_PATH.toFile());
         Map<String, Object> map = yaml.load(reader);
+        
+        // manual handling of incomplete YAML
+        if (!map.containsKey(ModConfig.READOUT_WINDOW_KEY)) {
+            LOGGER.warn(
+                "The {} configuration was not found", ModConfig.READOUT_WINDOW_KEY
+            );
+        }
+        
+        // populate ModConfig object
         config.parseMap(map);
-
-        Map<String, Boolean> blockMap = config.createBlockMapFromList(
-            config.getBlocks()
-        );
-        config.setBlockMap(blockMap);
 
         LOGGER.debug(config);
     }
