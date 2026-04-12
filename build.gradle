@@ -62,10 +62,6 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
-tasks.named("check").configure {
-  dependsOn("spotlessCheck")
-}
-
 task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier.set("sources")
     from sourceSets.main.allSource

@@ -47,14 +47,15 @@ public class ModConfigManager {
         Yaml yaml = new Yaml();
         FileReader reader = new FileReader(CONFIG_PATH.toFile());
         Map<String, Object> map = yaml.load(reader);
-        
+
         // manual handling of incomplete YAML
         if (!map.containsKey(ModConfig.READOUT_WINDOW_KEY)) {
             LOGGER.warn(
-                "The {} configuration was not found", ModConfig.READOUT_WINDOW_KEY
+                "The {} configuration was not found",
+                ModConfig.READOUT_WINDOW_KEY
             );
         }
-        
+
         // populate ModConfig object
         config.parseMap(map);
 

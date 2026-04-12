@@ -3,6 +3,7 @@ package com.github.Veivel.config;
 import com.google.gson.Gson;
 
 public class ReadoutTargetOptions {
+
     private boolean console;
     private boolean ingame;
     private boolean discord;

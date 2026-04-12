@@ -1,12 +1,11 @@
 package com.github.Veivel.notifier.sink;
 
-import java.util.Map;
-
 import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.perms.Perms;
 import com.github.Veivel.store.PlayerConfigStore;
 import com.github.Veivel.util.TextFormat;
+import java.util.Map;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.ClickEvent;
@@ -74,11 +73,11 @@ public class ChatSink extends AbstractSink {
                             hasPermissionBoolean
                         );
                         boolean hasChatReadoutEnabled = true;
-                        Map<String, Boolean> chatReadoutEnabledByPlayer = PlayerConfigStore.getChatReadoutEnabledByPlayer();
-                        boolean hasKey =
-                            chatReadoutEnabledByPlayer.containsKey(
-                                uuidStr
-                            );
+                        Map<String, Boolean> chatReadoutEnabledByPlayer =
+                            PlayerConfigStore.getChatReadoutEnabledByPlayer();
+                        boolean hasKey = chatReadoutEnabledByPlayer.containsKey(
+                            uuidStr
+                        );
 
                         if (hasKey) hasChatReadoutEnabled =
                             chatReadoutEnabledByPlayer.get(uuidStr);

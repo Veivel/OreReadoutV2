@@ -95,12 +95,9 @@ public class ModConfig {
         if (map.containsKey(BLOCKS_KEY)) {
             // assuming type-cast is OK
             setBlocks((List<String>) map.get(BLOCKS_KEY));
-            Map<String, Boolean> blockMap = createBlockMapFromList(
-                getBlocks()
-            );
+            Map<String, Boolean> blockMap = createBlockMapFromList(getBlocks());
             setBlockMap(blockMap);
         }
-
 
         if (map.containsKey(READOUT_TARGETS_KEY)) {
             // assuming type-cast is OK
