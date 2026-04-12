@@ -8,14 +8,14 @@ import com.github.Veivel.util.TextFormat;
 import java.util.Map;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.ClickEvent.SuggestCommand;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.ShowText;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.ClickEvent.SuggestCommand;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.HoverEvent.ShowText;
+import net.minecraft.network.chat.MutableText;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.ChatFormatting;
 
 public class ChatSink extends AbstractSink {
 
@@ -106,7 +106,7 @@ public class ChatSink extends AbstractSink {
         HoverEvent showText = new ShowText(
             TextFormat.fmt(
                 "Click to teleport to the location.",
-                Formatting.GOLD
+                ChatFormatting.GOLD
             )
         );
         ClickEvent suggestCommand = new SuggestCommand(
@@ -120,19 +120,19 @@ public class ChatSink extends AbstractSink {
 
         MutableText clickableText = TextFormat.fmt(
             "[" + x + " ",
-            Formatting.AQUA
+            ChatFormatting.AQUA
         )
-            .append(TextFormat.fmt(y + " ", Formatting.AQUA))
-            .append(TextFormat.fmt(z + "]", Formatting.AQUA))
+            .append(TextFormat.fmt(y + " ", ChatFormatting.AQUA))
+            .append(TextFormat.fmt(z + "]", ChatFormatting.AQUA))
             .setStyle(style);
 
         // main text
         Text mainText = TextFormat.getPrefix()
-            .append(TextFormat.fmt(playerName, Formatting.AQUA))
-            .append(TextFormat.fmt(" mined ", Formatting.WHITE))
-            .append(TextFormat.fmt(quantity + " ores at ", Formatting.WHITE))
+            .append(TextFormat.fmt(playerName, ChatFormatting.AQUA))
+            .append(TextFormat.fmt(" mined ", ChatFormatting.WHITE))
+            .append(TextFormat.fmt(quantity + " ores at ", ChatFormatting.WHITE))
             .append(clickableText)
-            .append(TextFormat.fmt(" in " + dimension + ".", Formatting.WHITE));
+            .append(TextFormat.fmt(" in " + dimension + ".", ChatFormatting.WHITE));
 
         return mainText;
     }

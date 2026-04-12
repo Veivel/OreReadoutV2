@@ -15,7 +15,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
 import org.apache.logging.log4j.Logger;
 
 public class ModCommand {
@@ -58,7 +58,7 @@ public class ModCommand {
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "You do not have the permissions for this.",
-                        Formatting.RED
+                        ChatFormatting.RED
                     )
                 )
             );
@@ -71,14 +71,14 @@ public class ModCommand {
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "Reloading OreReadoutV2's config...",
-                        Formatting.AQUA
+                        ChatFormatting.AQUA
                     )
                 )
             );
             ModConfigManager.load();
             source.sendMessage(
                 TextFormat.getPrefix().append(
-                    TextFormat.fmt("OreReadoutV2 reloaded!", Formatting.AQUA)
+                    TextFormat.fmt("OreReadoutV2 reloaded!", ChatFormatting.AQUA)
                 )
             );
             return 1;
@@ -88,7 +88,7 @@ public class ModCommand {
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "An error occurred while reloading the config, keeping old values.",
-                        Formatting.RED
+                        ChatFormatting.RED
                     )
                 )
             );
@@ -119,7 +119,7 @@ public class ModCommand {
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "You do not have the permissions for this.",
-                        Formatting.RED
+                        ChatFormatting.RED
                     )
                 )
             );
@@ -138,7 +138,7 @@ public class ModCommand {
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "You will now receive ore readouts again.",
-                        Formatting.AQUA
+                        ChatFormatting.AQUA
                     )
                 )
             );
@@ -148,7 +148,7 @@ public class ModCommand {
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "You will no longer receive ore readouts for this session.",
-                        Formatting.AQUA
+                        ChatFormatting.AQUA
                     )
                 )
             );

@@ -1,15 +1,13 @@
 package com.github.Veivel.util;
 
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.ChatFormatting;
 
 public class TextFormat {
 
-    public static final MutableText PREFIX = Text.of("🔔")
-        .copy()
-        .formatted(Formatting.AQUA)
-        .append(TextFormat.fmt(" » ", Formatting.GRAY));
+    public static final FormattedText PREFIX = FormattedText.of("🔔")
+        .formatted(ChatFormatting.AQUA)
+        .append(TextFormat.fmt(" » ", ChatFormatting.GRAY));
 
     private TextFormat() {}
 
@@ -19,8 +17,8 @@ public class TextFormat {
      * Returns the OreReadoutV2's prefix in the form of a
      * net.minecraft.text.MutableText object.
      */
-    public static MutableText getPrefix() {
-        return PREFIX.copy();
+    public static FormattedText getPrefix() {
+        return PREFIX;
     }
 
     /**
@@ -29,9 +27,10 @@ public class TextFormat {
      * @param str
      *            The main text content in string form
      * @param formatting
-     *            a `net.minecraft.util.Formatting` object (e.g. Formatting.AQUA)
+     *            a `net.minecraft.util.Formatting` object (e.g. ChatFormatting.AQUA)
      */
-    public static MutableText fmt(String str, Formatting formatting) {
-        return Text.of(str).copy().formatted(formatting);
+    public static FormattedText fmt(String str, ChatFormatting formatting) {
+        // TODO: Use `formatting`.
+        return FormattedText.of(str);
     }
 }

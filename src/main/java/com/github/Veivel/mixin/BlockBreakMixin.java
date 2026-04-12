@@ -4,9 +4,8 @@ import com.github.Veivel.notifier.DispatchBuffer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.registry.Registries;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,14 +19,14 @@ public class BlockBreakMixin {
         at = @At("HEAD")
     )
     public void onBroken(
-        World world,
+        Level world,
         BlockPos pos,
         BlockState state,
-        PlayerEntity player,
+        Player player,
         CallbackInfoReturnable<?> ci
     ) {
-        Block block = state.getBlock();
-        String blockName = Registries.BLOCK.getId(block)
+        String blockName = state.getBlock()
+            .getName()
             .toString()
             .replaceFirst("minecraft:", "");
 
