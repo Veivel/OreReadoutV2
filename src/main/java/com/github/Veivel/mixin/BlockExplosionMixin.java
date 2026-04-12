@@ -2,22 +2,21 @@ package com.github.Veivel.mixin;
 
 import com.github.Veivel.notifier.DispatchBuffer;
 import java.util.function.BiConsumer;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Explosion;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(AbstractBlock.class)
+@Mixin(Block.class)
 public class BlockExplosionMixin {
 
     @Inject(
@@ -26,20 +25,21 @@ public class BlockExplosionMixin {
     )
     public void onExploded(
         BlockState state,
-        ServerWorld world,
+        ServerLevel world,
         BlockPos pos,
         Explosion explosion,
         BiConsumer<ItemStack, BlockPos> stackMerger,
         CallbackInfo ci
     ) {
-        Block block = state.getBlock();
-        String blockName = Registries.BLOCK.getId(block)
+        String blockName = state.getBlock()
+            .getName()
             .toString()
             .replaceFirst("minecraft:", "");
 
-        LivingEntity entity = explosion.getCausingEntity();
-        if (entity != null && entity.isPlayer()) {
-            DispatchBuffer.append(blockName, pos, world, (PlayerEntity) entity);
+        LivingEntity entity = explosion.getIndirectSourceEntity(); // TODO: direct or indirect?
+        Boolean isPlayer = entity.getType() == EntityType.PLAYER;
+        if (entity != null && isPlayer) {
+            DispatchBuffer.append(blockName, pos, world, (Player) entity);
         }
     }
 }

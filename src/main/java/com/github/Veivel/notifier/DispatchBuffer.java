@@ -5,12 +5,12 @@ import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.entity.player.PlayerEntity;
+
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.Logger;
 
 /**
@@ -29,8 +29,8 @@ public class DispatchBuffer {
     public static void append(
         String blockName,
         BlockPos pos,
-        World world,
-        PlayerEntity player
+        Level world,
+        Player player
     ) {
         if (map.containsKey(blockName)) {
             LOGGER.debug("Sending notification!");
@@ -52,15 +52,15 @@ public class DispatchBuffer {
         }
 
         playersBlocksMined.forEach((playerName, blocksMined) -> {
-            PlayerManager playerManager = server.getPlayerManager();
-            ServerPlayerEntity player = playerManager.getPlayer(playerName);
+            PlayerList playerManager = server.getPlayerList();
+            Player player = playerManager.getPlayer(playerName);
             if (player == null) {
                 LOGGER.warn(
                     "Player {} does not exist or has disconnected.",
                     playerName
                 );
             } else {
-                World world = player.getEntityWorld();
+                Level world = player.getLivingEntity().level();
                 Dispatch.invoke(blocksMined, world, player);
             }
         });
