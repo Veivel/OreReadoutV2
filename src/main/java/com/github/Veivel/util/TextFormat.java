@@ -19,7 +19,7 @@ public class TextFormat {
      * net.minecraft.text.MutableText object.
      */
     public static MutableComponent getPrefix() {
-        return PREFIX;
+        return PREFIX.copy();
     }
 
     /**
