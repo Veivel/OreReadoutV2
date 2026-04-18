@@ -31,8 +31,13 @@ public class DispatchBuffer {
         Level world,
         Player player
     ) {
+        LOGGER.debug(
+            "Acknowledging event for {} by {}...",
+            blockName,
+            player.getPlainTextName()
+        );
         if (map.containsKey(blockName)) {
-            LOGGER.debug("Sending notification!");
+            LOGGER.debug("Updating playersBlocksMined map.");
             String playerName = player.getName().getString();
             Integer currentValue = playersBlocksMined.get(playerName);
             if (currentValue == null) {
@@ -64,7 +69,10 @@ public class DispatchBuffer {
             }
         });
 
-        LOGGER.debug("Flushing playersBlocksMined map.");
+        LOGGER.debug(
+            "Flushing playersBlocksMined map of size {}...",
+            playersBlocksMined.size()
+        );
         playersBlocksMined.clear();
     }
 }

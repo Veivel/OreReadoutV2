@@ -30,9 +30,8 @@ public class BlockExplosionMixin {
     ) {
         String blockName = state
             .getBlock()
-            .getName()
-            .toString()
-            .replaceFirst("minecraft:", "");
+            .getDescriptionId()
+            .replaceFirst("block.minecraft.", "");
 
         LivingEntity entity = explosion.getIndirectSourceEntity(); // TODO: direct or indirect?
         Boolean isPlayer = entity.getType() == EntityType.PLAYER;

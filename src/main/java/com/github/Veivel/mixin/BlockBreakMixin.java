@@ -28,9 +28,8 @@ public class BlockBreakMixin {
     ) {
         String blockName = state
             .getBlock()
-            .getName()
-            .toString()
-            .replaceFirst("minecraft:", "");
+            .getDescriptionId()
+            .replaceFirst("block.minecraft.", "");
 
         DispatchBuffer.append(blockName, pos, world, player);
     }

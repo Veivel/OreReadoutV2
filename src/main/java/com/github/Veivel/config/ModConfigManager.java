@@ -59,6 +59,7 @@ public class ModConfigManager {
         // populate ModConfig object
         config.parseMap(map);
 
+        LOGGER.info("Config for OreReadoutV2 loaded!");
         LOGGER.debug(config);
     }
 
