@@ -7,15 +7,14 @@ import com.github.Veivel.store.PlayerConfigStore;
 import com.github.Veivel.util.TextFormat;
 import java.util.Map;
 import me.lucko.fabric.api.permissions.v0.Permissions;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.ClickEvent.SuggestCommand;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.HoverEvent.ShowText;
-import net.minecraft.network.chat.MutableText;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.ChatFormatting;
+import net.minecraft.server.MinecraftServer;
 
 public class ChatSink extends AbstractSink {
 
@@ -41,7 +40,7 @@ public class ChatSink extends AbstractSink {
                 return;
             }
 
-            Text mainText = composeText(
+            MutableComponent mainText = composeText(
                 playerName,
                 quantity,
                 x,
@@ -52,13 +51,13 @@ public class ChatSink extends AbstractSink {
 
             // check perms for each player, send mainText if hasPermission
             server
-                .getPlayerManager()
                 .getPlayerList()
+                .getPlayers()
                 .forEach(serverPlayerEntity -> {
-                    String uuidStr = serverPlayerEntity.getUuidAsString();
+                    String uuidStr = serverPlayerEntity.getUUID().toString();
 
                     Permissions.check(
-                        serverPlayerEntity.getUuid(),
+                        serverPlayerEntity.getUUID(),
                         Perms.VIEW_READOUT,
                         false
                     ).thenAccept(hasPermissionBoolean -> {
@@ -83,7 +82,7 @@ public class ChatSink extends AbstractSink {
                             chatReadoutEnabledByPlayer.get(uuidStr);
                         if (hasPermission && hasChatReadoutEnabled) {
                             try {
-                                serverPlayerEntity.sendMessage(mainText);
+                                serverPlayerEntity.sendSystemMessage(mainText);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
                             }
@@ -95,7 +94,7 @@ public class ChatSink extends AbstractSink {
         }
     }
 
-    private Text composeText(
+    private MutableComponent composeText(
         String playerName,
         int quantity,
         int x,
@@ -118,7 +117,7 @@ public class ChatSink extends AbstractSink {
             suggestCommand
         );
 
-        MutableText clickableText = TextFormat.fmt(
+        MutableComponent clickableText = TextFormat.fmt(
             "[" + x + " ",
             ChatFormatting.AQUA
         )
@@ -127,12 +126,16 @@ public class ChatSink extends AbstractSink {
             .setStyle(style);
 
         // main text
-        Text mainText = TextFormat.getPrefix()
+        MutableComponent mainText = TextFormat.getPrefix()
             .append(TextFormat.fmt(playerName, ChatFormatting.AQUA))
             .append(TextFormat.fmt(" mined ", ChatFormatting.WHITE))
-            .append(TextFormat.fmt(quantity + " ores at ", ChatFormatting.WHITE))
+            .append(
+                TextFormat.fmt(quantity + " ores at ", ChatFormatting.WHITE)
+            )
             .append(clickableText)
-            .append(TextFormat.fmt(" in " + dimension + ".", ChatFormatting.WHITE));
+            .append(
+                TextFormat.fmt(" in " + dimension + ".", ChatFormatting.WHITE)
+            );
 
         return mainText;
     }

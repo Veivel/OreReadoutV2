@@ -52,7 +52,8 @@ public class OreReadoutMod implements ModInitializer {
             ModConfig config = ModConfigManager.getConfig();
             int readoutWindowInSeconds = config.getReadoutWindowInSeconds();
             int tickDiff =
-                server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
+                server.getTickCount() %
+                (TICKS_PER_SECOND * readoutWindowInSeconds); // TODO: test if getTickCount is logically correct or not
             if (tickDiff == 0) {
                 DispatchBuffer.flush();
                 return;

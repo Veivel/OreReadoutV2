@@ -9,7 +9,8 @@ public class Dispatch {
 
     public static void invoke(int quantity, Level world, Player player) {
         String playerName = player.getName().getString();
-        String dimensionName = world.toString() // TODO: test if this outputs the correct string or not (Level == World?)
+        String dimensionName = world
+            .toString() // TODO: test if this outputs the correct string or not (Level == World?)
             .toString()
             .replaceFirst("minecraft:", "");
 

@@ -5,11 +5,10 @@ import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.Logger;
 
