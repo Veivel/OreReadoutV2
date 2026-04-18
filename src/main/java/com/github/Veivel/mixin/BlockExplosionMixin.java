@@ -9,21 +9,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Block.class)
+@Mixin(BlockBehaviour.class)
 public class BlockExplosionMixin {
 
-    @Inject(
-        method = "onExploded(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/explosion/Explosion;Ljava/util/function/BiConsumer;)V",
-        at = @At("HEAD")
-    )
-    public void onExploded(
+    @Inject(method = "onExplosionHit", at = @At("HEAD"))
+    public void onExplosionHit(
         BlockState state,
         ServerLevel world,
         BlockPos pos,
