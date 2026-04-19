@@ -1,6 +1,6 @@
 package com.github.Veivel.mixin;
 
-import com.github.Veivel.notifier.DispatchBuffer;
+import com.github.Veivel.notifier.EventBuffer;
 import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -28,16 +28,11 @@ public class BlockExplosionMixin {
         BiConsumer<ItemStack, BlockPos> stackMerger,
         CallbackInfo ci
     ) {
-        String blockName = state
-            .getBlock()
-            .getDescriptionId()
-            .replaceFirst("block.minecraft.", "");
-
         // Indirect source finds the source at the root of the explosion chain
         LivingEntity entity = explosion.getIndirectSourceEntity();
         Boolean isPlayer = entity.getType() == EntityType.PLAYER;
         if (entity != null && isPlayer) {
-            DispatchBuffer.append(blockName, pos, world, (Player) entity);
+            EventBuffer.append(state, pos, world, (Player) entity);
         }
     }
 }

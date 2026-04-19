@@ -10,27 +10,34 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+
 import org.apache.logging.log4j.Logger;
 
 /**
  * Buffers events to the store using {@link #append}, then orchestrates
  * read-outs by relaying it to {@link Dispatch} using {@link #flush}.
  */
-public class DispatchBuffer {
+public class EventBuffer {
 
     private static final Logger LOGGER = OreReadoutMod.LOGGER;
     private static Map<String, Integer> playersBlocksMined = new HashMap<>();
     private static Map<String, Boolean> map =
         ModConfigManager.getConfig().getBlockMap();
 
-    private DispatchBuffer() {}
+    private EventBuffer() {}
 
     public static void append(
-        String blockName,
+        BlockState state,
         BlockPos pos,
         Level world,
         Player player
     ) {
+        String blockName = state
+            .getBlock()
+            .getDescriptionId()
+            .replaceFirst("block.minecraft.", "");
+
         LOGGER.debug(
             "Acknowledging event for {} by {}...",
             blockName,

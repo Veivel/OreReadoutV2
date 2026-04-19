@@ -1,4 +1,4 @@
-package com.github.Veivel.notifier.sink;
+package com.github.Veivel.notifier.target;
 
 import com.github.Veivel.context.ServerContext;
 import com.github.Veivel.event.ReadoutEvent;
@@ -17,9 +17,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
 
-public class ChatSink extends AbstractSink {
+public class ChatTarget extends AbstractTarget {
 
-    public ChatSink() {
+    public ChatTarget() {
         super();
         setLogger(OreReadoutMod.LOGGER);
     }

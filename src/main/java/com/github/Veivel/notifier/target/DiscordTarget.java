@@ -1,4 +1,4 @@
-package com.github.Veivel.notifier.sink;
+package com.github.Veivel.notifier.target;
 
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.orereadout.OreReadoutMod;
@@ -9,11 +9,11 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-public class DiscordWebhookSink extends AbstractSink {
+public class DiscordTarget extends AbstractTarget {
 
     private String webhookUrl = "";
 
-    public DiscordWebhookSink(String webhookUrl) {
+    public DiscordTarget(String webhookUrl) {
         super();
         setLogger(OreReadoutMod.LOGGER);
         this.webhookUrl = webhookUrl;

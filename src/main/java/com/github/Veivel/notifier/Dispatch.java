@@ -1,7 +1,8 @@
 package com.github.Veivel.notifier;
 
 import com.github.Veivel.event.ReadoutEvent;
-import com.github.Veivel.notifier.sink.SinkManager;
+import com.github.Veivel.notifier.target.TargetManager;
+
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -25,6 +26,6 @@ public class Dispatch {
             dimensionName
         );
         event.truncateCoordinates();
-        SinkManager.emit(event);
+        TargetManager.emit(event);
     }
 }

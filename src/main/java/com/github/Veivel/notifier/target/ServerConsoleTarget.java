@@ -1,12 +1,12 @@
-package com.github.Veivel.notifier.sink;
+package com.github.Veivel.notifier.target;
 
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import org.apache.logging.log4j.Logger;
 
-public class ConsoleSink extends AbstractSink {
+public class ServerConsoleTarget extends AbstractTarget {
 
-    public ConsoleSink() {
+    public ServerConsoleTarget() {
         super();
         setLogger(OreReadoutMod.LOGGER);
     }

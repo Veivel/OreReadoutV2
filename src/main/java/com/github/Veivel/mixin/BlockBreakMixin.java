@@ -1,6 +1,6 @@
 package com.github.Veivel.mixin;
 
-import com.github.Veivel.notifier.DispatchBuffer;
+import com.github.Veivel.notifier.EventBuffer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,11 +26,6 @@ public class BlockBreakMixin {
         ItemStack destroyWith,
         CallbackInfo ci
     ) {
-        String blockName = state
-            .getBlock()
-            .getDescriptionId()
-            .replaceFirst("block.minecraft.", "");
-
-        DispatchBuffer.append(blockName, pos, world, player);
+        EventBuffer.append(state, pos, world, player);
     }
 }

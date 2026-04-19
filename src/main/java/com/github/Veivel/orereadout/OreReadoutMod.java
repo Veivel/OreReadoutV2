@@ -4,8 +4,9 @@ import com.github.Veivel.command.ModCommand;
 import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.context.ServerContext;
-import com.github.Veivel.notifier.DispatchBuffer;
-import com.github.Veivel.notifier.sink.SinkManager;
+import com.github.Veivel.notifier.EventBuffer;
+import com.github.Veivel.notifier.target.TargetManager;
+
 import java.io.IOException;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -55,7 +56,7 @@ public class OreReadoutMod implements ModInitializer {
                 server.getTickCount() %
                 (TICKS_PER_SECOND * readoutWindowInSeconds);
             if (tickDiff == 0) {
-                DispatchBuffer.flush();
+                EventBuffer.flush();
                 return;
             }
         });
@@ -65,7 +66,7 @@ public class OreReadoutMod implements ModInitializer {
         ModConfigManager.load();
         ModConfig config = ModConfigManager.getConfig();
 
-        SinkManager.init(config);
+        TargetManager.init(config);
 
         int blockMapSize = config.getBlockMap().size();
         LOGGER.info("{} blocks configured to trigger readouts.", blockMapSize);
