@@ -30,8 +30,7 @@ public class BlockExplosionMixin {
     ) {
         // Indirect source finds the source at the root of the explosion chain
         LivingEntity entity = explosion.getIndirectSourceEntity();
-        Boolean isPlayer = entity.getType() == EntityType.PLAYER;
-        if (entity != null && isPlayer) {
+        if (entity != null && entity.getType() == EntityType.PLAYER) {
             EventBuffer.append(state, pos, world, (Player) entity);
         }
     }
