@@ -31,7 +31,6 @@ public class TextFormat {
      *            a `net.minecraft.util.Formatting` object (e.g. ChatFormatting.AQUA)
      */
     public static MutableComponent fmt(String str, ChatFormatting formatting) {
-        // TODO: Use `formatting`.
-        return Component.literal(str);
+        return Component.literal(str).withStyle(formatting);
     }
 }
