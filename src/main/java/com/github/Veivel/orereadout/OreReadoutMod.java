@@ -26,7 +26,7 @@ public class OreReadoutMod implements ModInitializer {
         // set log level
         Configurator.setLevel(
             "orereadoutv2",
-            org.apache.logging.log4j.Level.DEBUG
+            org.apache.logging.log4j.Level.INFO
         );
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Debug logging is enabled.");

@@ -1,5 +1,6 @@
 package com.github.Veivel.notifier.sink;
 
+import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.util.DataFormat;
 import java.io.OutputStream;
@@ -78,14 +79,7 @@ public class DiscordWebhookSink extends AbstractSink {
      * @param z
      * @param dimension
      */
-    public void readOut(
-        String playerName,
-        int quantity,
-        int x,
-        int y,
-        int z,
-        String dimension
-    ) {
+    public void sendReadout(ReadoutEvent event) {
         // build the JSON payload manually. see: https://toolscord.com/webhook
         StringBuilder jsonPayload = new StringBuilder();
         jsonPayload
@@ -94,18 +88,18 @@ public class DiscordWebhookSink extends AbstractSink {
             .append("{")
             .append("\"title\": \"\",")
             .append("\"description\": \"")
-            .append(DataFormat.escapeJson(playerName))
+            .append(DataFormat.escapeJson(event.playerName))
             .append(" mined ")
-            .append(quantity)
+            .append(event.quantity)
             .append(" ores at [`")
-            .append(x)
+            .append(event.x)
             .append(" ")
-            .append(y)
+            .append(event.y)
             .append(" ")
-            .append(z)
+            .append(event.z)
             .append("`]")
             .append(" in ")
-            .append(dimension)
+            .append(event.dimension)
             .append(". \",")
             .append("\"color\": 4352240,")
             .append("\"footer\": {\"text\": \"\"},")

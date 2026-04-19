@@ -1,5 +1,6 @@
 package com.github.Veivel.notifier.sink;
 
+import com.github.Veivel.event.ReadoutEvent;
 import org.apache.logging.log4j.Logger;
 
 /** Abstract base class for all sink implementations. */
@@ -17,12 +18,5 @@ public abstract class AbstractSink {
         this.logger = logger;
     }
 
-    public abstract void readOut(
-        String playerName,
-        int quantity,
-        int x,
-        int y,
-        int z,
-        String dimension
-    );
+    public abstract void sendReadout(ReadoutEvent event);
 }

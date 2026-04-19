@@ -1,6 +1,7 @@
 package com.github.Veivel.notifier.sink;
 
 import com.github.Veivel.context.ServerContext;
+import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.perms.Perms;
 import com.github.Veivel.store.PlayerConfigStore;
@@ -23,14 +24,7 @@ public class ChatSink extends AbstractSink {
         setLogger(OreReadoutMod.LOGGER);
     }
 
-    public void readOut(
-        String playerName,
-        int quantity,
-        int x,
-        int y,
-        int z,
-        String dimension
-    ) {
+    public void sendReadout(ReadoutEvent event) {
         try {
             MinecraftServer server = ServerContext.get();
             if (server == null) {
@@ -41,12 +35,12 @@ public class ChatSink extends AbstractSink {
             }
 
             MutableComponent mainText = composeText(
-                playerName,
-                quantity,
-                x,
-                y,
-                z,
-                dimension
+                event.playerName,
+                event.quantity,
+                event.x,
+                event.y,
+                event.z,
+                event.dimension
             );
 
             // check perms for each player, send mainText if hasPermission
@@ -97,9 +91,9 @@ public class ChatSink extends AbstractSink {
     private MutableComponent composeText(
         String playerName,
         int quantity,
-        int x,
-        int y,
-        int z,
+        double x,
+        double y,
+        double z,
         String dimension
     ) {
         HoverEvent showText = new ShowText(
@@ -109,7 +103,7 @@ public class ChatSink extends AbstractSink {
             )
         );
         ClickEvent suggestCommand = new SuggestCommand(
-            String.format("/tp %d %d %d", x, y, z)
+            String.format("/tp %.2f %.2f %.2f", x, y, z)
         );
 
         // text that includes coordinates, click event, & hover event

@@ -1,6 +1,7 @@
 package com.github.Veivel.notifier.sink;
 
 import com.github.Veivel.config.ModConfig;
+import com.github.Veivel.event.ReadoutEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +29,9 @@ public class SinkManager {
         }
     }
 
-    public static void emit(
-        String playerName,
-        int quantity,
-        int x,
-        int y,
-        int z,
-        String dimension
-    ) {
+    public static void emit(ReadoutEvent event) {
         for (AbstractSink sink : sinks) {
-            sink.readOut(playerName, quantity, x, y, z, dimension);
+            sink.sendReadout(event);
         }
     }
 }
