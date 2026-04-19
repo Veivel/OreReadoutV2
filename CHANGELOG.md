@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.1.4] - 2026-04-12
 ### Changed
 - Added configurable notification windows
+- Updated to 26.1
 
 ## [2.1.3] - 2025-06-19
 ### Changed
