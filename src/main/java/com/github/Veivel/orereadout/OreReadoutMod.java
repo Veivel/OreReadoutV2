@@ -1,84 +1,73 @@
 package com.github.Veivel.orereadout;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.command.ModCommand;
 import com.github.Veivel.config.ModConfig;
-import com.github.Veivel.notifier.DiscordWebhookSender;
-import com.github.Veivel.notifier.Notifier;
-import com.github.Veivel.orereadout.command.OreReadoutCommand;
-import com.github.Veivel.perms.Perms;
-import com.mojang.brigadier.tree.LiteralCommandNode;
-
-import me.lucko.fabric.api.permissions.v0.Permissions;
+import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.context.ServerContext;
+import com.github.Veivel.notifier.DispatchBuffer;
+import com.github.Veivel.notifier.sink.SinkManager;
+import java.io.IOException;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 public class OreReadoutMod implements ModInitializer {
-  public static final int TICKS_PER_SECOND = 20;
-  public static final Logger LOGGER = LogManager.getLogger();
-  public static DiscordWebhookSender discordWebhookSender = null;
 
-  // map of player UUID (str) to boolean, whether they disabled ore readouts or not
-  public static Map<String, Boolean> playerDisableViewMap = new HashMap<>();
+    public static final int TICKS_PER_SECOND = 20;
+    public static final Logger LOGGER = LogManager.getLogger("orereadoutv2");
 
-  @Override
-  public void onInitialize() {
-    try {
-      initializeConfig();
-    } catch (IOException e) {
-      e.printStackTrace();
+    @Override
+    public void onInitialize() {
+        // set log level
+        Configurator.setLevel(
+            "orereadoutv2",
+            org.apache.logging.log4j.Level.INFO
+        );
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Debug logging is enabled.");
+        }
+
+        try {
+            initializeConfig();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // inject server context
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerContext::set);
+        ServerLifecycleEvents.SERVER_STOPPED.register(server ->
+            ServerContext.clear()
+        );
+
+        // register commands
+        CommandRegistrationCallback.EVENT.register(ModCommand::register);
+
+        // flush notifier every 7 seconds
+        ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
+            ModConfig config = ModConfigManager.getConfig();
+            int readoutWindowInSeconds = config.getReadoutWindowInSeconds();
+            int tickDiff =
+                server.getTickCount() %
+                (TICKS_PER_SECOND * readoutWindowInSeconds);
+            if (tickDiff == 0) {
+                DispatchBuffer.flush();
+                return;
+            }
+        });
     }
 
-    CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-      LiteralCommandNode<ServerCommandSource> baseNode = CommandManager
-        .literal("ore")
-        .requires(Permissions.require(Perms.ROOT, 2))
-        .build();
-      LiteralCommandNode<ServerCommandSource> toggleCommandNode = CommandManager
-        .literal("toggle")
-        .requires(Permissions.require(Perms.TOGGLE, 2))
-        .executes(OreReadoutCommand::toggleReadouts)
-        .build();
-      LiteralCommandNode<ServerCommandSource> reloadCommandNode = CommandManager
-        .literal("reload")
-        .requires(Permissions.require(Perms.RELOAD, 4))
-        .executes(OreReadoutCommand::reload)
-        .build();
+    private static void initializeConfig() throws IOException {
+        ModConfigManager.load();
+        ModConfig config = ModConfigManager.getConfig();
 
-      dispatcher.getRoot().addChild(baseNode);
-      baseNode.addChild(toggleCommandNode);
-      baseNode.addChild(reloadCommandNode);
-    });
+        SinkManager.init(config);
 
-    ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
-      int readoutWindowInSeconds = 7;
-      int tickDiff = server.getTicks() % (TICKS_PER_SECOND * readoutWindowInSeconds);
-      if (tickDiff == 0) {
-        Notifier.notifyAll(server);
-        return;
-      } else {
-        return;
-      }
-    });
-  }
-
-  private static void initializeConfig() throws IOException {
-      ModConfigManager.load();
-      ModConfig config = ModConfigManager.getConfig();
-      discordWebhookSender = new DiscordWebhookSender(config.getDiscordWebhookUrl());
-      discordWebhookSender.testWebhook();
-
-      String oreBlocksString = config.getBlockMap().keySet().toString();
-      LOGGER.info("Reading out the following blocks when mined: {}", oreBlocksString);
-  }
+        int blockMapSize = config.getBlockMap().size();
+        LOGGER.info("{} blocks configured to trigger readouts.", blockMapSize);
+    }
 }
