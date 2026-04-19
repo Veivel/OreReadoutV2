@@ -33,7 +33,8 @@ public class BlockExplosionMixin {
             .getDescriptionId()
             .replaceFirst("block.minecraft.", "");
 
-        LivingEntity entity = explosion.getIndirectSourceEntity(); // TODO: direct or indirect?
+        // Indirect source finds the source at the root of the explosion chain
+        LivingEntity entity = explosion.getIndirectSourceEntity();
         Boolean isPlayer = entity.getType() == EntityType.PLAYER;
         if (entity != null && isPlayer) {
             DispatchBuffer.append(blockName, pos, world, (Player) entity);

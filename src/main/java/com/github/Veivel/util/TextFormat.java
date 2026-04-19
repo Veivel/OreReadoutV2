@@ -12,8 +12,6 @@ public class TextFormat {
 
     private TextFormat() {}
 
-    /* TODO: add util for sending preset formatting text */
-
     /*
      * Returns the OreReadoutV2's prefix in the form of a
      * net.minecraft.text.MutableText object.
