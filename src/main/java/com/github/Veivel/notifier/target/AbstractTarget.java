@@ -6,16 +6,12 @@ import org.apache.logging.log4j.Logger;
 /** Abstract base class for all sink implementations. */
 public abstract class AbstractTarget {
 
-    private Logger logger;
+    private final Logger logger;
+    private final String targetCode;
 
-    public AbstractTarget() {}
-
-    public Logger getLogger() {
-        return this.logger;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
+    public AbstractTarget() {
+        this.logger = null;
+        this.targetCode = "";
     }
 
     public abstract void sendReadout(ReadoutEvent event);

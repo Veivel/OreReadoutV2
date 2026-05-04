@@ -1,12 +1,11 @@
 package com.github.Veivel.notifier.target;
 
-import com.github.Veivel.context.ServerContext;
+import com.github.Veivel.command.ModPermission;
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.orereadout.OreReadoutMod;
-import com.github.Veivel.perms.Perms;
-import com.github.Veivel.store.PlayerConfigStore;
+import com.github.Veivel.server.PreferenceManager;
+import com.github.Veivel.server.ServerContext;
 import com.github.Veivel.util.TextFormat;
-import java.util.Map;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
@@ -16,21 +15,22 @@ import net.minecraft.network.chat.HoverEvent.ShowText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ChatTarget extends AbstractTarget {
 
-    public ChatTarget() {
-        super();
-        setLogger(OreReadoutMod.LOGGER);
-    }
+    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final String targetCode = "server_chat";
+    private PreferenceManager preferenceManager;
+
+    public ChatTarget(PreferenceManager preferenceManager) {}
 
     public void sendReadout(ReadoutEvent event) {
         try {
             MinecraftServer server = ServerContext.get();
             if (server == null) {
-                getLogger().error(
-                    "Could not find active MinecraftServer instance."
-                );
+                logger.error("Could not find active MinecraftServer instance.");
                 return;
             }
 
@@ -52,10 +52,10 @@ public class ChatTarget extends AbstractTarget {
 
                     Permissions.check(
                         serverPlayerEntity.getUUID(),
-                        Perms.VIEW_READOUT,
+                        ModPermission.VIEW_READOUT,
                         false
                     ).thenAccept(hasPermissionBoolean -> {
-                        getLogger().debug(
+                        logger.debug(
                             "Permission check passed for player {} {}.",
                             serverPlayerEntity.getName().getString(),
                             uuidStr
@@ -65,16 +65,13 @@ public class ChatTarget extends AbstractTarget {
                         boolean hasPermission = Boolean.TRUE.equals(
                             hasPermissionBoolean
                         );
-                        boolean hasChatReadoutEnabled = true;
-                        Map<String, Boolean> chatReadoutEnabledByPlayer =
-                            PlayerConfigStore.getChatReadoutEnabledByPlayer();
-                        boolean hasKey = chatReadoutEnabledByPlayer.containsKey(
-                            uuidStr
-                        );
-
-                        if (hasKey) hasChatReadoutEnabled =
-                            chatReadoutEnabledByPlayer.get(uuidStr);
-                        if (hasPermission && hasChatReadoutEnabled) {
+                        boolean hasReadoutEnabled =
+                            (boolean) preferenceManager.get(
+                                uuidStr,
+                                "chat-readout",
+                                true
+                            );
+                        if (hasPermission && hasReadoutEnabled) {
                             try {
                                 serverPlayerEntity.sendSystemMessage(mainText);
                             } catch (Exception e1) {

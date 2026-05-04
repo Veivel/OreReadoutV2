@@ -8,21 +8,24 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DiscordTarget extends AbstractTarget {
 
+    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final String targetCode = "discord_webhook";
     private String webhookUrl = "";
 
     public DiscordTarget(String webhookUrl) {
-        super();
-        setLogger(OreReadoutMod.LOGGER);
         this.webhookUrl = webhookUrl;
     }
 
     private void sendPayload(String payloadString) {
+        // TODO: make this send async rather than sync
         try {
             // Send the JSON payload via HTTP POST
-            URL url = new URI(this.webhookUrl).toURL();
+            URL url = new URI(webhookUrl).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
@@ -35,7 +38,7 @@ public class DiscordTarget extends AbstractTarget {
 
             int responseCode = conn.getResponseCode();
             if (responseCode < 200 || responseCode >= 300) {
-                getLogger().error(
+                logger.error(
                     "Webhook request failed with response code: {}",
                     responseCode
                 );

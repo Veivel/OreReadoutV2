@@ -2,13 +2,11 @@ package com.github.Veivel.command;
 
 import com.github.Veivel.config.ModConfigManager;
 import com.github.Veivel.orereadout.OreReadoutMod;
-import com.github.Veivel.perms.Perms;
-import com.github.Veivel.store.PlayerConfigStore;
+import com.github.Veivel.server.PreferenceManager;
 import com.github.Veivel.util.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import java.util.Map;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
@@ -17,15 +15,24 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.Commands.CommandSelection;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.player.Player;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ModCommand {
+public class ModCommandManager {
 
-    private static final Logger LOGGER = OreReadoutMod.LOGGER;
+    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private ModConfigManager configManager;
+    private PreferenceManager preferenceManager;
 
-    private ModCommand() {}
+    public ModCommandManager(
+        ModConfigManager configManager,
+        PreferenceManager preferenceManager
+    ) {
+        this.configManager = configManager;
+        this.preferenceManager = preferenceManager;
+    }
 
-    public static void register(
+    public void register(
         CommandDispatcher<CommandSourceStack> dispatcher,
         CommandBuildContext registryAccess,
         CommandSelection environment
@@ -34,25 +41,31 @@ public class ModCommand {
             "ore"
         )
             .requires(
-                Permissions.require(Perms.ROOT, PermissionLevel.MODERATORS)
+                Permissions.require(
+                    ModPermission.ROOT,
+                    PermissionLevel.MODERATORS
+                )
             )
             .build();
         LiteralCommandNode<CommandSourceStack> toggleCommandNode =
             Commands.literal("toggle")
                 .requires(
                     Permissions.require(
-                        Perms.TOGGLE,
+                        ModPermission.TOGGLE,
                         PermissionLevel.MODERATORS
                     )
                 )
-                .executes(ModCommand::toggleChatReadoutsBySelf)
+                .executes(this::toggleChatReadoutsBySelf)
                 .build();
         LiteralCommandNode<CommandSourceStack> reloadCommandNode =
             Commands.literal("reload")
                 .requires(
-                    Permissions.require(Perms.RELOAD, PermissionLevel.ADMINS)
+                    Permissions.require(
+                        ModPermission.RELOAD,
+                        PermissionLevel.ADMINS
+                    )
                 )
-                .executes(ModCommand::reload)
+                .executes(this::reload)
                 .build();
 
         dispatcher.getRoot().addChild(baseNode);
@@ -60,9 +73,13 @@ public class ModCommand {
         baseNode.addChild(reloadCommandNode);
     }
 
-    public static int reload(CommandContext<CommandSourceStack> context) {
+    public int reload(CommandContext<CommandSourceStack> context) {
         CommandSourceStack source = context.getSource();
-        boolean canReload = Permissions.check(source, Perms.RELOAD, false);
+        boolean canReload = Permissions.check(
+            source,
+            ModPermission.RELOAD,
+            false
+        );
         // check for permissions
         if (!canReload) {
             source.sendFailure(
@@ -87,7 +104,7 @@ public class ModCommand {
                     )
                 )
             );
-            ModConfigManager.load();
+            configManager.load();
             source.sendSystemMessage(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
@@ -107,7 +124,7 @@ public class ModCommand {
                     )
                 )
             );
-            LOGGER.error(
+            logger.error(
                 "An error occurred while reloading the config, keeping old values.",
                 e
             );
@@ -115,20 +132,24 @@ public class ModCommand {
         }
     }
 
-    public static int toggleChatReadoutsBySelf(
+    public int toggleChatReadoutsBySelf(
         CommandContext<CommandSourceStack> context
     ) {
         // command must be run by player, not from console
         CommandSourceStack source = context.getSource();
         if (!source.isPlayer()) {
-            LOGGER.info("This command can only be run by a player.");
+            logger.info("This command can only be run by a player.");
             return 0;
         }
 
         // check for permissions
         Player player = source.getPlayer();
-        String uuid = player.getUUID().toString();
-        boolean canToggle = Permissions.check(source, Perms.TOGGLE, false);
+        String uuidStr = player.getUUID().toString();
+        boolean canToggle = Permissions.check(
+            source,
+            ModPermission.TOGGLE,
+            false
+        );
         if (!canToggle) {
             source.sendFailure(
                 TextFormat.getPrefix().append(
@@ -142,27 +163,27 @@ public class ModCommand {
         }
 
         // check current status, then toggle
-        Map<String, Boolean> chatReadoutEnabledByPlayer =
-            PlayerConfigStore.getChatReadoutEnabledByPlayer();
-        if (
-            chatReadoutEnabledByPlayer.containsKey(uuid) &&
-            Boolean.FALSE.equals(chatReadoutEnabledByPlayer.get(uuid))
-        ) {
-            chatReadoutEnabledByPlayer.put(uuid, true);
+        boolean hasReadoutEnabled = (boolean) preferenceManager.get(
+            uuidStr,
+            "chat-readout",
+            true
+        );
+        if (hasReadoutEnabled) {
+            preferenceManager.put(uuidStr, "chat-readout", false);
             source.sendFailure(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
-                        "You will now receive ore readouts again.",
+                        "You will no longer receive ore readouts for this session.",
                         ChatFormatting.AQUA
                     )
                 )
             );
         } else {
-            chatReadoutEnabledByPlayer.put(uuid, false);
+            preferenceManager.put(uuidStr, "chat-readout", true);
             source.sendFailure(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
-                        "You will no longer receive ore readouts for this session.",
+                        "You will now receive ore readouts again.",
                         ChatFormatting.AQUA
                     )
                 )

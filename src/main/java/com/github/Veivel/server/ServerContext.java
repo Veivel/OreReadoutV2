@@ -1,4 +1,4 @@
-package com.github.Veivel.context;
+package com.github.Veivel.server;
 
 import net.minecraft.server.MinecraftServer;
 

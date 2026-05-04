@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import net.fabricmc.loader.api.FabricLoader;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -17,8 +18,8 @@ import org.yaml.snakeyaml.representer.Representer;
 /** code adapted from https://github.com/DrexHD/Vanish/ */
 public class ModConfigManager {
 
-    private static ModConfig config = new ModConfig();
-    private static final Logger LOGGER = OreReadoutMod.LOGGER;
+    private ModConfig config;
+    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
     private static final Path OLD_CONFIG_PATH = FabricLoader.getInstance()
         .getConfigDir()
         .resolve("ore-readout.properties");
@@ -26,21 +27,23 @@ public class ModConfigManager {
         .getConfigDir()
         .resolve("ore-readout.yml");
 
-    private ModConfigManager() {}
+    public ModConfigManager() {
+        this.config = new ModConfig();
+    }
 
-    public static void load() throws IOException {
-        LOGGER.info("Loading configuration for OreReadoutV2...");
+    public void load() throws IOException {
+        logger.info("Loading configuration for OreReadoutV2...");
 
         // Warn if old config exists (ignore)
         if (OLD_CONFIG_PATH.toFile().exists()) {
-            LOGGER.warn(
+            logger.warn(
                 "A deprecated ore-readout.properties file was found. This file will be ignored."
             );
         }
 
         // First-time setup, create new config file
         if (!CONFIG_PATH.toFile().exists()) {
-            LOGGER.info("Creating new configuration file for OreReadoutV2!");
+            logger.info("Creating new configuration file for OreReadoutV2!");
             writeDefaultConfig(CONFIG_PATH.toString());
         }
 
@@ -50,20 +53,20 @@ public class ModConfigManager {
 
         // manual handling of incomplete YAML
         if (!map.containsKey(ModConfig.READOUT_WINDOW_KEY)) {
-            LOGGER.warn(
+            logger.warn(
                 "The {} configuration was not found",
                 ModConfig.READOUT_WINDOW_KEY
             );
         }
 
         // populate ModConfig object
-        config.parseMap(map);
+        this.config.parseMap(map);
 
-        LOGGER.info("Config for OreReadoutV2 loaded!");
-        LOGGER.debug(config);
+        logger.info("Config for OreReadoutV2 loaded!");
+        logger.debug(this.config);
     }
 
-    private static void writeDefaultConfig(String destinationConfigPath) {
+    private void writeDefaultConfig(String destinationConfigPath) {
         ModConfig config = new ModConfig();
         DumperOptions dumperOptions = new DumperOptions();
 
@@ -92,7 +95,7 @@ public class ModConfigManager {
         Map<String, Object> map = config.toMap();
 
         String output = yaml.dump(map);
-        LOGGER.debug("YAML output: {}", output);
+        logger.debug("YAML output: {}", output);
 
         // Write the YAML output to a file
         try (FileWriter writer = new FileWriter(destinationConfigPath)) {
@@ -102,7 +105,7 @@ public class ModConfigManager {
         }
     }
 
-    public static ModConfig getConfig() {
+    public ModConfig getConfig() {
         return config;
     }
 }
