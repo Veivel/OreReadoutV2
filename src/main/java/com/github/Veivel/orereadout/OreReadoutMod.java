@@ -82,7 +82,6 @@ public class OreReadoutMod implements ModInitializer {
         }
         if (config.isSendToIngame()) {
             ChatTarget chatTarget = new ChatTarget(preferenceManager);
-            // TODO: fix chatTarget not emitting
             registry.register(chatTarget);
         }
         if (config.isSendToDiscord()) {

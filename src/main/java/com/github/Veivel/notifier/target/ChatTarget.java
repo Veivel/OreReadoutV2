@@ -24,7 +24,9 @@ public class ChatTarget extends AbstractTarget {
     private final String targetCode = "server_chat";
     private PreferenceManager preferenceManager;
 
-    public ChatTarget(PreferenceManager preferenceManager) {}
+    public ChatTarget(PreferenceManager preferenceManager) {
+        this.preferenceManager = preferenceManager;
+    }
 
     public void sendReadout(ReadoutEvent event) {
         try {
@@ -49,7 +51,6 @@ public class ChatTarget extends AbstractTarget {
                 .getPlayers()
                 .forEach(serverPlayerEntity -> {
                     String uuidStr = serverPlayerEntity.getUUID().toString();
-
                     Permissions.check(
                         serverPlayerEntity.getUUID(),
                         ModPermission.VIEW_READOUT,
@@ -65,12 +66,14 @@ public class ChatTarget extends AbstractTarget {
                         boolean hasPermission = Boolean.TRUE.equals(
                             hasPermissionBoolean
                         );
+                        logger.debug("Permission check {}", hasPermission);
                         boolean hasReadoutEnabled =
                             (boolean) preferenceManager.get(
                                 uuidStr,
                                 "chat-readout",
                                 true
                             );
+                        logger.debug("Preference check {}", hasReadoutEnabled);
                         if (hasPermission && hasReadoutEnabled) {
                             try {
                                 serverPlayerEntity.sendSystemMessage(mainText);

@@ -1,10 +1,14 @@
 package com.github.Veivel.server;
 
+import com.github.Veivel.orereadout.OreReadoutMod;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PreferenceManager {
 
+    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
     private Map<String, Map<String, Object>> data;
 
     public PreferenceManager() {
@@ -38,10 +42,17 @@ public class PreferenceManager {
         if (value == null) {
             return defaultValue;
         }
-        return (Object) value;
+        return value;
     }
 
     public Object get(String playerUuidString, String key) {
+        logger.debug(
+            String.format(
+                "Fetching preference key %s for player %s...",
+                key,
+                playerUuidString
+            )
+        );
         if (!data.containsKey(playerUuidString)) {
             return null;
         }
