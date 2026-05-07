@@ -3,8 +3,8 @@ package com.github.Veivel.notifier.target;
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.util.DataFormat;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
@@ -16,19 +16,28 @@ public class DiscordTarget extends AbstractTarget {
 
     private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
     private final String targetCode = "discord_webhook";
-    private String webhookUrl = "";
+    private HttpClient httpClient; // reusable HttpClient instance
+    private URI webhookUri;
 
-    public DiscordTarget(String webhookUrl) {
-        this.webhookUrl = webhookUrl;
+    public DiscordTarget(String webhookUrlString) {
+        try {
+            this.webhookUri = new URI(webhookUrlString);
+            this.httpClient = HttpClient.newHttpClient();
+        } catch (URISyntaxException e) {
+            logger.error(e);
+        }
     }
 
+    /**
+    * The underlying method that sends the payload `payloadString`
+    * as a POST request to the webhook URL determined during
+    * initialization.
+    */
     private void sendPayload(String payloadString) {
         try {
             // Build HTTP request with JSON payload and timeout
-            URI uri = new URI(webhookUrl);
-            HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
+                .uri(webhookUri)
                 .headers("Content-Type", "application/json")
                 .headers("Sender-Application", "ore-readout-v2")
                 .timeout(Duration.ofSeconds(10))
@@ -36,19 +45,19 @@ public class DiscordTarget extends AbstractTarget {
                 .build();
 
             // Send the HTTP POST request asynchronously
-            client
+            httpClient
                 .sendAsync(request, BodyHandlers.ofString())
                 .handleAsync((response, exception) -> {
+                    // Log response or error asynchronously
                     if (exception != null) {
                         logger.error(
                             "Failed to send Discord webhook, exception: {}",
-                            exception.getMessage()
+                            exception
                         );
                         return false;
                     } else if (
-                        response.statusCode() < HttpResponseStatus.OK.code() ||
-                        response.statusCode() >=
-                        HttpResponseStatus.BAD_REQUEST.code()
+                        response.statusCode() < 200 ||
+                        response.statusCode() >= 400
                     ) {
                         logger.error(
                             "Failed to send Discord webhook, response: {}",
@@ -57,14 +66,19 @@ public class DiscordTarget extends AbstractTarget {
                         return false;
                     } else {
                         logger.debug(
-                            "Sent Discord webhook with response: {}",
+                            "Received response from Discord webhook request: {}",
                             response.body()
                         );
                         return true;
                     }
                 });
+
+            logger.debug(
+                "Sent Discord webhook! Returning without HTTP response."
+            );
+            return;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 
