@@ -30,7 +30,7 @@ public class OreReadoutMod implements ModInitializer {
     @Override
     public void onInitialize() {
         // set log level
-        initLogging(Level.INFO);
+        initLogging(Level.DEBUG);
 
         ModConfigManager configManager = new ModConfigManager();
         try {
@@ -44,9 +44,9 @@ public class OreReadoutMod implements ModInitializer {
             configManager,
             preferenceManager
         );
-        TargetRegistry targetRegistry = new TargetRegistry();
-        EventBuffer.init(configManager, targetRegistry);
         ModConfig config = configManager.getConfig();
+        TargetRegistry targetRegistry = new TargetRegistry();
+        EventBuffer.init(config, targetRegistry);
         this.initTargets(targetRegistry, config, preferenceManager);
 
         // inject server context

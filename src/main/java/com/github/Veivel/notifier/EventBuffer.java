@@ -1,12 +1,13 @@
 package com.github.Veivel.notifier;
 
-import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.config.ModConfig;
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.notifier.target.TargetRegistry;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.ServerContext;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
@@ -25,16 +26,13 @@ public class EventBuffer {
     private static final Logger logger = LogManager.getLogger(
         OreReadoutMod.MOD_NAME
     );
-    private static Map<String, Integer> playersBlocksMined = new HashMap<>();
-    private static volatile TargetRegistry registry;
-    private static volatile Map<String, Boolean> map;
+    private static Map<String, Integer> eventCountMap = new HashMap<>();
+    private static volatile Map<String, Boolean> blockMap;
+    private static volatile TargetRegistry targetRegistry;
 
-    public static void init(
-        ModConfigManager configManager,
-        TargetRegistry targetRegistry
-    ) {
-        map = configManager.getConfig().getBlockMap();
-        registry = targetRegistry;
+    public static void init(ModConfig config, TargetRegistry targetRegistry) {
+        EventBuffer.blockMap = config.getBlockMap();
+        EventBuffer.targetRegistry = targetRegistry;
         logger.debug("EventBuffer initialized.");
     }
 
@@ -54,14 +52,17 @@ public class EventBuffer {
             blockName,
             player.getPlainTextName()
         );
-        if (map.containsKey(blockName)) {
-            logger.debug("Updating playersBlocksMined map.");
-            String playerName = player.getName().getString();
-            Integer currentValue = playersBlocksMined.get(playerName);
+        if (blockMap.containsKey(blockName)) {
+            logger.debug("Updating eventCountMap map.");
+
+            // We use UUID over username because playerManager.getPlayer(UUID)
+            // is much faster [O(1)] than playerManager.getPlayer(username) [O(n)].
+            String uuidString = player.getStringUUID();
+            Integer currentValue = eventCountMap.get(uuidString);
             if (currentValue == null) {
-                playersBlocksMined.put(playerName, 1);
+                eventCountMap.put(uuidString, 1);
             } else {
-                playersBlocksMined.put(playerName, currentValue + 1);
+                eventCountMap.put(uuidString, currentValue + 1);
             }
         }
     }
@@ -73,13 +74,15 @@ public class EventBuffer {
             return;
         }
 
-        playersBlocksMined.forEach((playerName, blocksMined) -> {
+        eventCountMap.forEach((playerUuidString, blocksMined) -> {
             PlayerList playerManager = server.getPlayerList();
-            Player player = playerManager.getPlayer(playerName);
+            Player player = playerManager.getPlayer(
+                UUID.fromString(playerUuidString)
+            );
             if (player == null) {
                 logger.warn(
                     "Player {} does not exist or has disconnected.",
-                    playerName
+                    playerUuidString
                 );
             } else {
                 Level world = player.getLivingEntity().level();
@@ -88,10 +91,10 @@ public class EventBuffer {
         });
 
         logger.debug(
-            "Flushing playersBlocksMined map of size {}...",
-            playersBlocksMined.size()
+            "Flushing eventCountMap map of size {}...",
+            eventCountMap.size()
         );
-        playersBlocksMined.clear();
+        eventCountMap.clear();
     }
 
     /** Dispatches the notification to the appropriate sinks. */
@@ -112,6 +115,6 @@ public class EventBuffer {
             dimensionName
         );
         event.truncateCoordinates();
-        registry.emit(event);
+        targetRegistry.emit(event);
     }
 }

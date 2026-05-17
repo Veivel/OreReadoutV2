@@ -29,10 +29,10 @@ public class DiscordTarget extends AbstractTarget {
     }
 
     /**
-    * The underlying method that sends the payload `payloadString`
-    * as a POST request to the webhook URL determined during
-    * initialization.
-    */
+     * The underlying method that sends the payload `payloadString`
+     * as a POST request to the webhook URL determined during
+     * initialization.
+     */
     private void sendPayload(String payloadString) {
         try {
             // Build HTTP request with JSON payload and timeout
