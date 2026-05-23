@@ -1,20 +1,19 @@
 package com.github.Veivel.orereadout;
 
 import com.github.Veivel.command.ModCommandManager;
-import com.github.Veivel.config.ModConfig;
-import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.config.ConfigManager;
+import com.github.Veivel.config.YamlConfigManager;
 import com.github.Veivel.notifier.EventBuffer;
-import com.github.Veivel.notifier.target.ChatTarget;
-import com.github.Veivel.notifier.target.DiscordTarget;
-import com.github.Veivel.notifier.target.ServerConsoleTarget;
 import com.github.Veivel.notifier.target.TargetRegistry;
 import com.github.Veivel.server.PreferenceManager;
 import com.github.Veivel.server.ServerContext;
 import java.io.IOException;
+import java.nio.file.Path;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -32,73 +31,58 @@ public class OreReadoutMod implements ModInitializer {
         // set log level
         initLogging(Level.DEBUG);
 
-        ModConfigManager configManager = new ModConfigManager();
         try {
-            this.initConfig(configManager);
+            Path configPath = FabricLoader.getInstance()
+                .getConfigDir()
+                .resolve(MOD_NAME + ".yaml");
+            ConfigManager configManager = new YamlConfigManager(configPath);
+            // int blockSetSize = config.readoutBlockSet().size();
+            // logger.info("{} blocks configured to trigger readouts.", blockSetSize);
+
+            PreferenceManager preferenceManager = new PreferenceManager();
+            ModCommandManager commandManager = new ModCommandManager(
+                configManager,
+                preferenceManager
+            );
+            TargetRegistry targetRegistry = new TargetRegistry(
+                configManager,
+                preferenceManager
+            );
+            EventBuffer.init(configManager, targetRegistry);
+
+            // Load config and all its consumers
+            configManager.load();
+
+            // inject server context
+            ServerLifecycleEvents.SERVER_STARTED.register(ServerContext::set);
+            ServerLifecycleEvents.SERVER_STOPPED.register(server ->
+                ServerContext.clear()
+            );
+
+            // register commands
+            CommandRegistrationCallback.EVENT.register(
+                commandManager::register
+            );
+
+            // flush notifier every few seconds, as dictated by the config
+            ServerTickEvents.END_SERVER_TICK.register(
+                (MinecraftServer server) -> {
+                    // TODO: move listener to ServerContext?
+                    int readoutWindowInSeconds = configManager
+                        .get()
+                        .readoutWindowInSeconds();
+                    int tickDiff =
+                        server.getTickCount() %
+                        (TICKS_PER_SECOND * readoutWindowInSeconds);
+                    if (tickDiff == 0) {
+                        EventBuffer.flush();
+                        return;
+                    }
+                }
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        PreferenceManager preferenceManager = new PreferenceManager();
-        ModCommandManager commandManager = new ModCommandManager(
-            configManager,
-            preferenceManager
-        );
-        ModConfig config = configManager.getConfig();
-        TargetRegistry targetRegistry = new TargetRegistry();
-        EventBuffer.init(config, targetRegistry);
-        this.initTargets(targetRegistry, config, preferenceManager);
-
-        // inject server context
-        ServerLifecycleEvents.SERVER_STARTED.register(ServerContext::set);
-        ServerLifecycleEvents.SERVER_STOPPED.register(server ->
-            ServerContext.clear()
-        );
-
-        // register commands
-        CommandRegistrationCallback.EVENT.register(commandManager::register);
-
-        // flush notifier every few seconds, dictated by readoutWindowInSeconds config
-        ServerTickEvents.END_SERVER_TICK.register((MinecraftServer server) -> {
-            int readoutWindowInSeconds = config.getReadoutWindowInSeconds();
-            int tickDiff =
-                server.getTickCount() %
-                (TICKS_PER_SECOND * readoutWindowInSeconds);
-            if (tickDiff == 0) {
-                EventBuffer.flush();
-                return;
-            }
-        });
-    }
-
-    private void initTargets(
-        TargetRegistry registry,
-        ModConfig config,
-        PreferenceManager preferenceManager
-    ) {
-        if (config.isSendToConsole()) {
-            ServerConsoleTarget consoleTarget = new ServerConsoleTarget();
-            registry.register(consoleTarget);
-        }
-        if (config.isSendToIngame()) {
-            ChatTarget chatTarget = new ChatTarget(preferenceManager);
-            registry.register(chatTarget);
-        }
-        if (config.isSendToDiscord()) {
-            DiscordTarget discordTarget = new DiscordTarget(
-                config.getDiscordWebhookUrl()
-            );
-            discordTarget.testConnection();
-            registry.register(discordTarget);
-        }
-    }
-
-    private void initConfig(ModConfigManager configManager) throws IOException {
-        configManager.load();
-        ModConfig config = configManager.getConfig();
-
-        int blockMapSize = config.getBlockMap().size();
-        logger.info("{} blocks configured to trigger readouts.", blockMapSize);
     }
 
     private void initLogging(Level logLevel) {

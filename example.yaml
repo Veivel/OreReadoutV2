@@ -1,0 +1,17 @@
+config_version: 3
+
+targets:
+  - name: discord
+    enabled: true
+    webhook_url: https://discord.com/api/webhooks/xxxxxxxxxxx
+  - name: server-chat
+    enabled: true
+  - name: server-console
+    enabled: true
+
+readout_blocks:
+  - coal_ore
+  - deepslate_coal_ore
+  - lapis_lazuli_ore
+
+readout_window_in_seconds: 5

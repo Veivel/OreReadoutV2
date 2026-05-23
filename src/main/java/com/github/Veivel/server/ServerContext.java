@@ -27,4 +27,6 @@ public final class ServerContext {
     public static MinecraftServer get() {
         return server;
     }
+
+    public static void tick() {}
 }

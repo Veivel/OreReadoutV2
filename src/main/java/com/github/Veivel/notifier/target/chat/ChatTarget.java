@@ -1,7 +1,9 @@
-package com.github.Veivel.notifier.target;
+package com.github.Veivel.notifier.target.chat;
 
 import com.github.Veivel.command.ModPermission;
 import com.github.Veivel.event.ReadoutEvent;
+import com.github.Veivel.notifier.target.Target;
+import com.github.Veivel.notifier.target.TargetConfig;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.PreferenceManager;
 import com.github.Veivel.server.ServerContext;
@@ -18,13 +20,14 @@ import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ChatTarget extends AbstractTarget {
+public class ChatTarget implements Target {
 
     private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
-    private final String targetCode = "server_chat";
     private PreferenceManager preferenceManager;
+    private ChatConfig config;
 
-    public ChatTarget(PreferenceManager preferenceManager) {
+    public ChatTarget(ChatConfig config, PreferenceManager preferenceManager) {
+        this.config = config;
         this.preferenceManager = preferenceManager;
     }
 
@@ -132,5 +135,15 @@ public class ChatTarget extends AbstractTarget {
             );
 
         return mainText;
+    }
+
+    @Override
+    public String getName() {
+        return "server_chat";
+    }
+
+    @Override
+    public TargetConfig getConfig() {
+        return config;
     }
 }

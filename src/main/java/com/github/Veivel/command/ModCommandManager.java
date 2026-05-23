@@ -1,6 +1,6 @@
 package com.github.Veivel.command;
 
-import com.github.Veivel.config.ModConfigManager;
+import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.PreferenceManager;
 import com.github.Veivel.util.TextFormat;
@@ -21,11 +21,11 @@ import org.apache.logging.log4j.Logger;
 public class ModCommandManager {
 
     private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
-    private ModConfigManager configManager;
+    private ConfigManager configManager;
     private PreferenceManager preferenceManager;
 
     public ModCommandManager(
-        ModConfigManager configManager,
+        ConfigManager configManager,
         PreferenceManager preferenceManager
     ) {
         this.configManager = configManager;

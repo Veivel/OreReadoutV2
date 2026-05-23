@@ -1,133 +1,22 @@
 package com.github.Veivel.config;
 
-import com.google.gson.Gson;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.Veivel.notifier.target.TargetConfig;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-public class ModConfig {
+/**
+ * An immutable record containing the mod's Config object.
+ * It is not persistent; the record will be replaced with a new on reload.
+ * <br/>
+ * All error-handling, loading, and serializing are handled by the Manager.
+ */
+public record ModConfig(
+    @JsonProperty("config_version") Integer configVersion,
 
-    public static final String DISCORD_WEBHOOK_URL_KEY = "discordWebhookUrl";
-    public static final String BLOCKS_KEY = "blocks";
-    public static final String READOUT_TARGETS_KEY = "readoutTargets";
-    public static final String READOUT_WINDOW_KEY = "readoutWindowInSeconds";
+    @JsonProperty("targets") List<TargetConfig> targetList,
 
-    private ReadoutTargetOptions readoutTargetConfig;
-    private String discordWebhookUrl;
-    private List<String> blocks;
-    private Map<String, Boolean> blockMap;
-    private Integer readoutWindowInSeconds;
+    @JsonProperty("readout_blocks") Set<String> readoutBlockSet,
 
-    public ReadoutTargetOptions getReadoutTargets() {
-        return readoutTargetConfig;
-    }
-
-    public boolean isSendToConsole() {
-        return readoutTargetConfig.getConsole();
-    }
-
-    public boolean isSendToIngame() {
-        return readoutTargetConfig.getIngame();
-    }
-
-    public boolean isSendToDiscord() {
-        return readoutTargetConfig.getDiscord();
-    }
-
-    public void setReadoutTargets(ReadoutTargetOptions readoutTargetConfig) {
-        this.readoutTargetConfig = readoutTargetConfig;
-    }
-
-    public String getDiscordWebhookUrl() {
-        return discordWebhookUrl;
-    }
-
-    public void setDiscordWebhookUrl(String discordWebhookUrl) {
-        this.discordWebhookUrl = discordWebhookUrl;
-    }
-
-    public Integer getReadoutWindowInSeconds() {
-        return this.readoutWindowInSeconds;
-    }
-
-    public void setReadoutWindowInSeconds(int seconds) {
-        this.readoutWindowInSeconds = seconds;
-    }
-
-    public List<String> getBlocks() {
-        return blocks;
-    }
-
-    public void setBlocks(List<String> blocks) {
-        this.blocks = blocks;
-    }
-
-    public Map<String, Boolean> getBlockMap() {
-        return blockMap;
-    }
-
-    public void setBlockMap(Map<String, Boolean> blockMap) {
-        this.blockMap = blockMap;
-    }
-
-    public Map<String, Boolean> createBlockMapFromList(List<String> blocks) {
-        HashMap<String, Boolean> resultMap = new HashMap<>();
-        blocks.forEach(key -> resultMap.put(key, true));
-
-        return resultMap;
-    }
-
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(READOUT_TARGETS_KEY, getReadoutTargets());
-        map.put(BLOCKS_KEY, getBlocks());
-        map.put(DISCORD_WEBHOOK_URL_KEY, getDiscordWebhookUrl());
-
-        return map;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void parseMap(Map<String, Object> map) {
-        if (map.containsKey(DISCORD_WEBHOOK_URL_KEY)) {
-            setDiscordWebhookUrl((String) map.get(DISCORD_WEBHOOK_URL_KEY));
-        }
-        if (map.containsKey(BLOCKS_KEY)) {
-            // assuming type-cast is OK
-            setBlocks((List<String>) map.get(BLOCKS_KEY));
-            Map<String, Boolean> blockMap = createBlockMapFromList(getBlocks());
-            setBlockMap(blockMap);
-        }
-
-        if (map.containsKey(READOUT_TARGETS_KEY)) {
-            // assuming type-cast is OK
-            Map<String, Object> readoutMap = (Map<String, Object>) map.get(
-                READOUT_TARGETS_KEY
-            );
-
-            boolean discord = Boolean.TRUE.equals(readoutMap.get("discord"));
-            boolean console = Boolean.TRUE.equals(readoutMap.get("console"));
-            boolean ingame = Boolean.TRUE.equals(readoutMap.get("ingame"));
-            ReadoutTargetOptions readoutTargets = new ReadoutTargetOptions(
-                console,
-                ingame,
-                discord
-            );
-            setReadoutTargets(readoutTargets);
-        }
-
-        if (map.containsKey(READOUT_WINDOW_KEY)) {
-            String secondsStr = map.get(READOUT_WINDOW_KEY).toString();
-            setReadoutWindowInSeconds(Integer.parseInt(secondsStr));
-        } else {
-            // default settings
-            setReadoutWindowInSeconds(7);
-        }
-    }
-
-    @Override
-    public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-}
+    @JsonProperty("readout_window_in_seconds") Integer readoutWindowInSeconds
+) {}

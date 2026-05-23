@@ -1,12 +1,13 @@
 package com.github.Veivel.notifier;
 
-import com.github.Veivel.config.ModConfig;
+import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.notifier.target.TargetRegistry;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.ServerContext;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
@@ -19,7 +20,9 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Buffers events to the store using {@link #append}, then orchestrates
- * read-outs by relaying it to private method {@link #dispatch}, via {@link #flush}.
+ * read-outs by relaying it to private method {@link #dispatch}, via {@link #flush}
+ *
+ * Static "global" class.
  */
 public class EventBuffer {
 
@@ -27,13 +30,24 @@ public class EventBuffer {
         OreReadoutMod.MOD_NAME
     );
     private static Map<String, Integer> eventCountMap = new HashMap<>();
-    private static volatile Map<String, Boolean> blockMap;
+    private static volatile Set<String> blockMap;
+    private static volatile ConfigManager configManager;
     private static volatile TargetRegistry targetRegistry;
 
-    public static void init(ModConfig config, TargetRegistry targetRegistry) {
-        EventBuffer.blockMap = config.getBlockMap();
-        EventBuffer.targetRegistry = targetRegistry;
+    private static void load() {
+        EventBuffer.blockMap = configManager.get().readoutBlockSet();
         logger.debug("EventBuffer initialized.");
+    }
+
+    public static void init(
+        ConfigManager configManager,
+        TargetRegistry targetRegistry
+    ) {
+        EventBuffer.configManager = configManager;
+        EventBuffer.targetRegistry = targetRegistry;
+        configManager.onAfterReload(() -> {
+            load();
+        });
     }
 
     public static void append(
@@ -52,7 +66,7 @@ public class EventBuffer {
             blockName,
             player.getPlainTextName()
         );
-        if (blockMap.containsKey(blockName)) {
+        if (blockMap.contains(blockName)) {
             logger.debug("Updating eventCountMap map.");
 
             // We use UUID over username because playerManager.getPlayer(UUID)

@@ -1,6 +1,8 @@
-package com.github.Veivel.notifier.target;
+package com.github.Veivel.notifier.target.discord;
 
 import com.github.Veivel.event.ReadoutEvent;
+import com.github.Veivel.notifier.target.Target;
+import com.github.Veivel.notifier.target.TargetConfig;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.util.DataFormat;
 import java.net.URI;
@@ -12,16 +14,17 @@ import java.time.Duration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class DiscordTarget extends AbstractTarget {
+public class DiscordTarget implements Target {
 
     private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
-    private final String targetCode = "discord_webhook";
     private HttpClient httpClient; // reusable HttpClient instance
     private URI webhookUri;
+    private DiscordConfig config;
 
-    public DiscordTarget(String webhookUrlString) {
+    public DiscordTarget(DiscordConfig config) {
         try {
-            this.webhookUri = new URI(webhookUrlString);
+            this.config = config;
+            this.webhookUri = new URI(config.webhookUrl());
             this.httpClient = HttpClient.newHttpClient();
         } catch (URISyntaxException e) {
             logger.error(e);
@@ -147,5 +150,15 @@ public class DiscordTarget extends AbstractTarget {
 
         String payloadString = jsonPayload.toString();
         sendPayload(payloadString);
+    }
+
+    @Override
+    public String getName() {
+        return "discord";
+    }
+
+    @Override
+    public TargetConfig getConfig() {
+        return config;
     }
 }

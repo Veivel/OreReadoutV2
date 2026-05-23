@@ -1,16 +1,20 @@
-package com.github.Veivel.notifier.target;
+package com.github.Veivel.notifier.target.console;
 
 import com.github.Veivel.event.ReadoutEvent;
+import com.github.Veivel.notifier.target.Target;
+import com.github.Veivel.notifier.target.TargetConfig;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ServerConsoleTarget extends AbstractTarget {
+public class ServerConsoleTarget implements Target {
 
     private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
-    private final String targetCode = "server_console";
+    private ServerConsoleConfig config;
 
-    public ServerConsoleTarget() {}
+    public ServerConsoleTarget(ServerConsoleConfig config) {
+        this.config = config;
+    }
 
     public void sendReadout(ReadoutEvent event) {
         // The main Logger happens to log to the server console
@@ -23,5 +27,15 @@ public class ServerConsoleTarget extends AbstractTarget {
             event.z,
             event.dimension
         );
+    }
+
+    @Override
+    public String getName() {
+        return "server_console";
+    }
+
+    @Override
+    public TargetConfig getConfig() {
+        return config;
     }
 }

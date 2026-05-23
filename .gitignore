@@ -23,3 +23,5 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 .DS_Store
+
+.claude
