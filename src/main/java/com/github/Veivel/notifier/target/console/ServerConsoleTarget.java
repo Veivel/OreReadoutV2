@@ -30,11 +30,6 @@ public class ServerConsoleTarget implements Target {
     }
 
     @Override
-    public String getName() {
-        return "server_console";
-    }
-
-    @Override
     public TargetConfig getConfig() {
         return config;
     }

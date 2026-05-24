@@ -9,7 +9,5 @@ public interface Target {
     // TODO: implement health check fo all targets, run during init
     // public boolean healthCheck();
 
-    public String getName();
-
     public TargetConfig getConfig();
 }

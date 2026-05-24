@@ -153,11 +153,6 @@ public class DiscordTarget implements Target {
     }
 
     @Override
-    public String getName() {
-        return "discord";
-    }
-
-    @Override
     public TargetConfig getConfig() {
         return config;
     }

@@ -65,11 +65,16 @@ public class ChatTarget implements Target {
                             uuidStr
                         );
 
-                        // check for player's toggle settings
+                        // Double check permission (not sure if redundant or not)
                         boolean hasPermission = Boolean.TRUE.equals(
                             hasPermissionBoolean
                         );
                         logger.debug("Permission check {}", hasPermission);
+                        if (!hasPermission) {
+                            return;
+                        }
+
+                        // Check for player's toggle settings
                         boolean hasReadoutEnabled =
                             (boolean) preferenceManager.get(
                                 uuidStr,
@@ -77,12 +82,14 @@ public class ChatTarget implements Target {
                                 true
                             );
                         logger.debug("Preference check {}", hasReadoutEnabled);
-                        if (hasPermission && hasReadoutEnabled) {
-                            try {
-                                serverPlayerEntity.sendSystemMessage(mainText);
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
-                            }
+                        if (!hasReadoutEnabled) {
+                            return;
+                        }
+
+                        try {
+                            serverPlayerEntity.sendSystemMessage(mainText);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
                         }
                     });
                 });
@@ -94,9 +101,9 @@ public class ChatTarget implements Target {
     private MutableComponent composeText(
         String playerName,
         int quantity,
-        double x,
-        double y,
-        double z,
+        int x,
+        int y,
+        int z,
         String dimension
     ) {
         HoverEvent showText = new ShowText(
@@ -106,7 +113,7 @@ public class ChatTarget implements Target {
             )
         );
         ClickEvent suggestCommand = new SuggestCommand(
-            String.format("/tp %.2f %.2f %.2f", x, y, z)
+            String.format("/tp %d %d %d", x, y, z)
         );
 
         // text that includes coordinates, click event, & hover event
@@ -135,11 +142,6 @@ public class ChatTarget implements Target {
             );
 
         return mainText;
-    }
-
-    @Override
-    public String getName() {
-        return "server_chat";
     }
 
     @Override

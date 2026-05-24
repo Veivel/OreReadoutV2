@@ -128,7 +128,6 @@ public class EventBuffer {
             player.getZ(),
             dimensionName
         );
-        event.truncateCoordinates();
         targetRegistry.emit(event);
     }
 }

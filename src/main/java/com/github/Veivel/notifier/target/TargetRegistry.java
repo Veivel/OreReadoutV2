@@ -48,10 +48,10 @@ public class TargetRegistry {
     }
 
     public void load() {
-        List<TargetConfig> targetConfigs = configManager.get().targetList();
+        List<TargetConfig> targetConfigs = configManager.get().targets();
         targetConfigs.forEach(targetConfig -> {
             String targetName = targetConfig.name();
-            if (factories.containsKey(targetName)) {
+            if (factories.containsKey(targetName) && targetConfig.enabled()) {
                 Function<TargetConfig, Target> factory = factories.get(
                     targetName
                 );

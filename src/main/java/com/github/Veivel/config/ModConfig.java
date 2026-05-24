@@ -14,7 +14,7 @@ import java.util.Set;
 public record ModConfig(
     @JsonProperty("config_version") Integer configVersion,
 
-    @JsonProperty("targets") List<TargetConfig> targetList,
+    @JsonProperty("targets") List<TargetConfig> targets,
 
     @JsonProperty("readout_blocks") Set<String> readoutBlockSet,
 

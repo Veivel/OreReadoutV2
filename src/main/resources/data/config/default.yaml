@@ -1,0 +1,25 @@
+config_version: 3
+
+targets:
+  - name: discord
+    enabled: false
+    webhook_url: ""
+  - name: server-chat
+    enabled: true
+    notification_sound: false
+  - name: server-console
+    enabled: true
+
+readout_blocks:
+  - lapis_lazuli_ore
+  - deepslate_lapis_lazuli_ore
+  - gold_ore
+  - deepslate_gold_ore
+  - nether_gold_ore
+  - diamond_ore
+  - deepslate_diamond_ore
+  - emerald_ore
+  - deepslate_emerald_ore
+  - ancient_debris
+
+readout_window_in_seconds: 5

@@ -36,8 +36,6 @@ public class OreReadoutMod implements ModInitializer {
                 .getConfigDir()
                 .resolve(MOD_NAME + ".yaml");
             ConfigManager configManager = new YamlConfigManager(configPath);
-            // int blockSetSize = config.readoutBlockSet().size();
-            // logger.info("{} blocks configured to trigger readouts.", blockSetSize);
 
             PreferenceManager preferenceManager = new PreferenceManager();
             ModCommandManager commandManager = new ModCommandManager(
