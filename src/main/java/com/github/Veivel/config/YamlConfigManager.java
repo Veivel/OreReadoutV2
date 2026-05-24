@@ -1,14 +1,14 @@
 package com.github.Veivel.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,6 +23,8 @@ public class YamlConfigManager implements ConfigManager {
     public static final String READOUT_BLOCKS_KEY = "readout_blocks";
     public static final String READOUT_TARGETS_KEY = "targets";
     public static final String READOUT_WINDOW_KEY = "readout_window_seconds";
+    public static final String DEFAULT_CONFIG_RESOURCE =
+        "data/config/default.yaml";
 
     public YamlConfigManager(Path path) {
         configPath = path;
@@ -34,12 +36,30 @@ public class YamlConfigManager implements ConfigManager {
         // First-time setup, create new config file
         if (!configPath.toFile().exists()) {
             logger.info("Creating new configuration file for OreReadoutV2!");
-            writeDefaultConfig(configPath.toString());
+            writeDefaultConfig(DEFAULT_CONFIG_RESOURCE);
         }
 
-        this.config = parseRawMap();
+        try {
+            this.config = readConfig();
+        } catch (IOException e) {
+            logger.error(
+                String.format(
+                    "OreReadoutV2 config file {} could not be loaded.",
+                    configPath.toString()
+                )
+            );
+            throw e;
+        }
 
-        logger.info("Config for OreReadoutV2 loaded!");
+        int blockCount = this.config.readoutBlockSet().size();
+        int targetCount = this.config.targets().size();
+        logger.info(
+            String.format(
+                "Config for OreReadoutV2 loaded with {} blocks for readout and {} targets!",
+                blockCount,
+                targetCount
+            )
+        );
         logger.debug(this.config);
 
         // Run all `onAfterReload` listeners
@@ -55,40 +75,8 @@ public class YamlConfigManager implements ConfigManager {
         return this.config;
     }
 
-    private ModConfig parseRawMap() {
-        // int version = 3;
-        // if (map.containsKey("config_version")) {
-        //     String versionString = map.get("config_version").toString();
-        //     version = Integer.parseInt(versionString);
-        // }
-
-        // Map<String, TargetConfig> targets = new HashMap<String, TargetConfig>();
-        // if (map.containsKey(READOUT_TARGETS_KEY)) {
-        //     Map<String, Object> targetsRaw = (Map<String, Object>) map.get(
-        //         READOUT_TARGETS_KEY
-        //     );
-        //     targetsRaw.forEach((targetName, targetObject) -> {
-        //         targets.put(targetName, (TargetConfig) targetObject);
-        //     });
-        // }
-
-        // Set<String> blockSet = null;
-        // if (map.containsKey(READOUT_BLOCKS_KEY)) {
-        //     List<String> blockList = (List<String>) map.get(READOUT_BLOCKS_KEY);
-        //     blockSet = HashSet.newHashSet(blockList.size());
-        //     blockSet.addAll(blockList);
-        // }
-
-        // int readoutWindow = 7;
-        // if (map.containsKey(READOUT_WINDOW_KEY)) {
-        //     String readoutWindowString = map.get(READOUT_WINDOW_KEY).toString();
-        //     readoutWindow = Integer.parseInt(readoutWindowString);
-        // }
-
+    private ModConfig readConfig() throws IOException {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        // mapper = mapper.setPropertyNamingStrategy(
-        //     PropertyNamingStrategies.SNAKE_CASE
-        // );
         try {
             ModConfig config = mapper.readValue(
                 configPath.toFile(),
@@ -96,13 +84,32 @@ public class YamlConfigManager implements ConfigManager {
             );
             return config;
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw e;
         }
     }
 
-    private void writeDefaultConfig(String destinationConfigPath) {
-        // TODO: fix, copy example.yaml to destination
-        throw new NotImplementedException("Config is not present");
+    private void writeDefaultConfig(String internalResourceName) {
+        Path destinationPath = configPath;
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            InputStream stream = classLoader.getResourceAsStream(
+                internalResourceName
+            );
+            Files.copy(stream, destinationPath);
+        } catch (NullPointerException e) {
+            logger.error(
+                "Could not obtain obtain default config YAML as stream: {}",
+                e.getMessage()
+            );
+        } catch (IOException e) {
+            // Also catches FileAlreadyExistsException
+            logger.error(
+                String.format(
+                    "Could not write default config YAML at {}: {}",
+                    destinationPath.toString(),
+                    e.getMessage()
+                )
+            );
+        }
     }
 }
