@@ -99,7 +99,7 @@ public class EventBuffer {
                     playerUuidString
                 );
             } else {
-                Level world = player.getLivingEntity().level();
+                Level world = player.level();
                 dispatch(blocksMined, world, player);
             }
         });

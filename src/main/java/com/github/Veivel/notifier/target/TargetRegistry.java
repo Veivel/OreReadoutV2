@@ -79,11 +79,8 @@ public class TargetRegistry {
 
     public void register(Target target) {
         logger.debug(
-            String.format(
-                "Registering target %s...",
-                target.getClass().getName(),
-                null
-            )
+            "Registering target to TargetRegistry: {}",
+            target.getClass().getName()
         );
         targets.add(target);
         size += 1;

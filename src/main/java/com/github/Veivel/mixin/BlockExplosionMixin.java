@@ -4,7 +4,6 @@ import com.github.Veivel.notifier.EventBuffer;
 import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +34,7 @@ public class BlockExplosionMixin {
             explosion.getBlockInteraction() != BlockInteraction.TRIGGER_BLOCK
         ) {
             LivingEntity entity = explosion.getIndirectSourceEntity(); // Indirect source finds the source at the root of the explosion chain
-            if (entity != null && entity.getType() == EntityType.PLAYER) {
+            if (entity != null && entity instanceof Player) {
                 EventBuffer.append(state, pos, world, (Player) entity);
             }
         }
