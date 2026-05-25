@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,10 +29,15 @@ public class BlockExplosionMixin {
         BiConsumer<ItemStack, BlockPos> stackMerger,
         CallbackInfo ci
     ) {
-        // Indirect source finds the source at the root of the explosion chain
-        LivingEntity entity = explosion.getIndirectSourceEntity();
-        if (entity != null && entity.getType() == EntityType.PLAYER) {
-            EventBuffer.append(state, pos, world, (Player) entity);
+        // Mimics the same check in BlockBehaviour.onExplosionHit()
+        if (
+            !state.isAir() &&
+            explosion.getBlockInteraction() != BlockInteraction.TRIGGER_BLOCK
+        ) {
+            LivingEntity entity = explosion.getIndirectSourceEntity(); // Indirect source finds the source at the root of the explosion chain
+            if (entity != null && entity.getType() == EntityType.PLAYER) {
+                EventBuffer.append(state, pos, world, (Player) entity);
+            }
         }
     }
 }
