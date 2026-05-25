@@ -170,7 +170,7 @@ public class ModCommandManager {
         );
         if (hasReadoutEnabled) {
             preferenceManager.put(uuidStr, "chat-readout", false);
-            source.sendFailure(
+            source.sendSystemMessage(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "You will no longer receive ore readouts for this session.",
@@ -180,7 +180,7 @@ public class ModCommandManager {
             );
         } else {
             preferenceManager.put(uuidStr, "chat-readout", true);
-            source.sendFailure(
+            source.sendSystemMessage(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
                         "You will now receive ore readouts again.",

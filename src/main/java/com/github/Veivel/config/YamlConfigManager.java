@@ -43,10 +43,8 @@ public class YamlConfigManager implements ConfigManager {
             this.config = readConfig();
         } catch (IOException e) {
             logger.error(
-                String.format(
-                    "OreReadoutV2 config file {} could not be loaded.",
-                    configPath.toString()
-                )
+                "OreReadoutV2 config file {} could not be loaded.",
+                configPath.toString()
             );
             throw e;
         }
@@ -54,11 +52,9 @@ public class YamlConfigManager implements ConfigManager {
         int blockCount = this.config.readoutBlockSet().size();
         int targetCount = this.config.targets().size();
         logger.info(
-            String.format(
-                "Config for OreReadoutV2 loaded with {} blocks for readout and {} targets!",
-                blockCount,
-                targetCount
-            )
+            "Config for OreReadoutV2 loaded with {} blocks for readout and {} targets!",
+            blockCount,
+            targetCount
         );
         logger.debug(this.config);
 
@@ -104,11 +100,9 @@ public class YamlConfigManager implements ConfigManager {
         } catch (IOException e) {
             // Also catches FileAlreadyExistsException
             logger.error(
-                String.format(
-                    "Could not write default config YAML at {}: {}",
-                    destinationPath.toString(),
-                    e.getMessage()
-                )
+                "Could not write default config YAML at {}: {}",
+                destinationPath.toString(),
+                e.getMessage()
             );
         }
     }

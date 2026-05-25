@@ -137,7 +137,7 @@ public class DiscordTarget implements Target {
             .append(event.z)
             .append("`]")
             .append(" in ")
-            .append(event.dimension)
+            .append(DataFormat.escapeJson(event.dimension))
             .append(". \",")
             .append("\"color\": 4352240,")
             .append("\"footer\": {\"text\": \"\"},")
