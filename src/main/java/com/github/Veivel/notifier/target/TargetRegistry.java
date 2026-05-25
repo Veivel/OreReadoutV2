@@ -78,6 +78,10 @@ public class TargetRegistry {
     }
 
     public void register(Target target) {
+        if (!target.healthCheck()) {
+            logger.error("Health check for target {} failed, skipping.", target.getClass().getName());
+            return;
+        }
         logger.debug(
             "Registering target to TargetRegistry: {}",
             target.getClass().getName()

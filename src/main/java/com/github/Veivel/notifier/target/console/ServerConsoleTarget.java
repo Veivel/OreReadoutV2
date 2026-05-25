@@ -16,6 +16,13 @@ public class ServerConsoleTarget implements Target {
         this.config = config;
     }
 
+    public boolean healthCheck() {
+        if (config == null) {
+            return false;
+        }
+        return true;
+    }
+
     public void sendReadout(ReadoutEvent event) {
         // The main Logger happens to log to the server console
         logger.info(

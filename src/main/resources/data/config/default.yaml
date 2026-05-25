@@ -23,3 +23,5 @@ readout_blocks:
   - ancient_debris
 
 readout_window_in_seconds: 5
+
+debug_mode: false

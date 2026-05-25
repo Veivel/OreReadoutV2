@@ -36,7 +36,7 @@ public class DiscordTarget implements Target {
      * as a POST request to the webhook URL determined during
      * initialization.
      */
-    private void sendPayload(String payloadString) {
+    private void sendPayload(String payloadString) throws Exception {
         try {
             // Build HTTP request with JSON payload and timeout
             HttpRequest request = HttpRequest.newBuilder()
@@ -82,10 +82,19 @@ public class DiscordTarget implements Target {
             return;
         } catch (Exception e) {
             logger.error(e);
+            throw e;
         }
     }
 
-    public void testConnection() {
+    public boolean healthCheck() {
+        if (config == null) {
+            return false;
+        } else if (webhookUri == null) {
+            return false;
+        } else if (httpClient == null || httpClient.isTerminated()) {
+            return false;
+        }
+
         StringBuilder jsonPayload = new StringBuilder();
         jsonPayload
             .append("{")
@@ -104,7 +113,13 @@ public class DiscordTarget implements Target {
             .append("}");
 
         String payloadString = jsonPayload.toString();
-        sendPayload(payloadString);
+
+        try {
+            sendPayload(payloadString);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -149,7 +164,12 @@ public class DiscordTarget implements Target {
             .append("}");
 
         String payloadString = jsonPayload.toString();
-        sendPayload(payloadString);
+
+        try {
+            sendPayload(payloadString);
+        } catch (Exception e) {
+            logger.error(e);
+        }
     }
 
     @Override

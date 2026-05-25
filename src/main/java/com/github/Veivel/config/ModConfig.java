@@ -18,5 +18,7 @@ public record ModConfig(
 
     @JsonProperty("readout_blocks") Set<String> readoutBlockSet,
 
-    @JsonProperty("readout_window_in_seconds") Integer readoutWindowInSeconds
+    @JsonProperty("readout_window_in_seconds") Integer readoutWindowInSeconds,
+
+    @JsonProperty("debug_mode") boolean debugMode
 ) {}

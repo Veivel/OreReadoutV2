@@ -3,6 +3,7 @@ package com.github.Veivel.orereadout;
 import com.github.Veivel.command.ModCommandManager;
 import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.config.YamlConfigManager;
+import com.github.Veivel.logger.ModLogInitializer;
 import com.github.Veivel.notifier.EventBuffer;
 import com.github.Veivel.notifier.target.TargetRegistry;
 import com.github.Veivel.server.PreferenceManager;
@@ -15,22 +16,14 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
 
 public class OreReadoutMod implements ModInitializer {
 
     public static final String MOD_NAME = "ore-readout-v2";
     private static final int TICKS_PER_SECOND = 20;
-    private static Logger logger = LogManager.getLogger(MOD_NAME);
 
     @Override
     public void onInitialize() {
-        // set log level
-        initLogging(Level.DEBUG);
-
         try {
             Path configPath = FabricLoader.getInstance()
                 .getConfigDir()
@@ -46,6 +39,7 @@ public class OreReadoutMod implements ModInitializer {
                 configManager,
                 preferenceManager
             );
+            new ModLogInitializer(MOD_NAME, configManager); // Don't save to variable
             EventBuffer.init(configManager, targetRegistry);
 
             // Load config and all its consumers
@@ -80,13 +74,6 @@ public class OreReadoutMod implements ModInitializer {
             );
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void initLogging(Level logLevel) {
-        Configurator.setLevel(MOD_NAME, logLevel);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Debug logging is enabled.");
         }
     }
 }

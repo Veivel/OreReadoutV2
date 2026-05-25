@@ -98,6 +98,21 @@ public class ChatTarget implements Target {
         }
     }
 
+    public boolean healthCheck() {
+        if (config == null) {
+            return false;
+        } else if (preferenceManager == null) {
+            return false;
+        }
+
+        MinecraftServer server = ServerContext.get();
+        if (server == null) {
+            return false;
+        }
+
+        return true;
+    }
+
     private MutableComponent composeText(
         String playerName,
         int quantity,
