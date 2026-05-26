@@ -1,6 +1,9 @@
 package com.github.Veivel.mixin;
 
-import com.github.Veivel.notifier.EventBuffer;
+import com.github.Veivel.event.MixinEvent;
+import com.github.Veivel.event.MixinEventAdapter;
+import com.github.Veivel.notifier.EventBufferRelay;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +29,7 @@ public class BlockBreakMixin {
         ItemStack destroyWith,
         CallbackInfo ci
     ) {
-        EventBuffer.append(state, pos, world, player);
+        MixinEvent mixinEvent = MixinEventAdapter.from(state, pos, world, player);
+        EventBufferRelay.checkAndBuffer(mixinEvent);
     }
 }

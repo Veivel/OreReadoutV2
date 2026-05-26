@@ -1,75 +1,62 @@
 package com.github.Veivel.notifier;
 
 import com.github.Veivel.config.ConfigManager;
+import com.github.Veivel.event.MixinEvent;
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.logger.ModLogger;
 import com.github.Veivel.notifier.target.TargetRegistry;
-import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.ServerContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.Logger;
 
 /**
  * Buffers events to the store using {@link #append}, then orchestrates
- * read-outs by relaying it to private method {@link #dispatch}, via {@link #flush}
- *
- * Static "global" class.
+ * read-outs by calling {@link #dispatch} via {@link #flush}.
  */
 public class EventBuffer {
 
-    private static final Logger logger = ModLogger.get();
-    private static Map<String, Integer> eventCountMap = new HashMap<>();
-    private static volatile Set<String> blockMap;
-    private static volatile ConfigManager configManager;
-    private static volatile TargetRegistry targetRegistry;
+    private final Logger logger = ModLogger.get();
+    private Map<String, Integer> eventCountMap = new HashMap<>();
+    private Set<String> blockMap;
+    private ConfigManager configManager;
+    private TargetRegistry targetRegistry;
 
-    private static void load() {
-        EventBuffer.blockMap = configManager.get().readoutBlockSet();
-        logger.debug("EventBuffer initialized.");
-    }
-
-    public static void init(
+    public EventBuffer(
         ConfigManager configManager,
         TargetRegistry targetRegistry
     ) {
-        EventBuffer.configManager = configManager;
-        EventBuffer.targetRegistry = targetRegistry;
+        this.configManager = configManager;
+        this.targetRegistry = targetRegistry;
         configManager.onAfterReload(() -> {
             load();
         });
     }
 
-    public static void append(
-        BlockState state,
-        BlockPos pos,
-        Level world,
-        Player player
-    ) {
-        String blockName = state
-            .getBlock()
-            .getDescriptionId()
-            .replaceFirst("block.minecraft.", "");
+    private void load() {
+        this.blockMap = configManager.get().readoutBlockSet();
+        logger.debug("EventBuffer initialized.");
+    }
 
+    public void checkAndBuffer(
+        MixinEvent mixinEvent
+    ) {
         logger.debug(
-            "Acknowledging event for {} by {}...",
-            blockName,
-            player.getPlainTextName()
+            "Acknowledging event for block {} by player {}...",
+            mixinEvent.blockName(),
+            mixinEvent.playerName()
         );
-        if (blockMap.contains(blockName)) {
+
+        if (blockMap.contains(mixinEvent.blockName())) {
             logger.debug("Updating eventCountMap map.");
 
-            // We use UUID over username because playerManager.getPlayer(UUID)
-            // is much faster [O(1)] than playerManager.getPlayer(username) [O(n)].
-            String uuidString = player.getStringUUID();
+            String uuidString = mixinEvent.playerUuid();
             Integer currentValue = eventCountMap.get(uuidString);
             if (currentValue == null) {
                 eventCountMap.put(uuidString, 1);
@@ -79,7 +66,7 @@ public class EventBuffer {
         }
     }
 
-    public static void flush() {
+    public void flush() {
         MinecraftServer server = ServerContext.get();
         if (server == null) {
             logger.error("Could not find active MinecraftServer instance.");
@@ -110,7 +97,7 @@ public class EventBuffer {
     }
 
     /** Dispatches the notification to the appropriate sinks. */
-    private static void dispatch(int quantity, Level world, Player player) {
+    private void dispatch(int quantity, Level world, Player player) {
         String playerName = player.getName().getString();
         String dimensionName = world
             .dimension()

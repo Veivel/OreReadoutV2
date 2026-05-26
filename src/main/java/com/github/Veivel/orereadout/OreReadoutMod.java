@@ -5,6 +5,7 @@ import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.config.YamlConfigManager;
 import com.github.Veivel.logger.ModLogInitializer;
 import com.github.Veivel.notifier.EventBuffer;
+import com.github.Veivel.notifier.EventBufferRelay;
 import com.github.Veivel.notifier.target.TargetRegistry;
 import com.github.Veivel.server.PreferenceManager;
 import com.github.Veivel.server.ServerContext;
@@ -39,8 +40,9 @@ public class OreReadoutMod implements ModInitializer {
                 configManager,
                 preferenceManager
             );
+            EventBuffer eventBuffer = new EventBuffer(configManager, targetRegistry);
+            EventBufferRelay.setInstance(eventBuffer);
             new ModLogInitializer(MOD_NAME, configManager); // Don't save to variable
-            EventBuffer.init(configManager, targetRegistry);
 
             // Load config and all its consumers
             configManager.load();
@@ -67,7 +69,7 @@ public class OreReadoutMod implements ModInitializer {
                         server.getTickCount() %
                         (TICKS_PER_SECOND * readoutWindowInSeconds);
                     if (tickDiff == 0) {
-                        EventBuffer.flush();
+                        EventBufferRelay.flush();
                         return;
                     }
                 }
