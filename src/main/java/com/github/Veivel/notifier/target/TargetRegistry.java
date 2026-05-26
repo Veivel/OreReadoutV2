@@ -2,25 +2,24 @@ package com.github.Veivel.notifier.target;
 
 import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.event.ReadoutEvent;
+import com.github.Veivel.logger.ModLogger;
 import com.github.Veivel.notifier.target.chat.ChatConfig;
 import com.github.Veivel.notifier.target.chat.ChatTarget;
 import com.github.Veivel.notifier.target.console.ServerConsoleConfig;
 import com.github.Veivel.notifier.target.console.ServerConsoleTarget;
 import com.github.Veivel.notifier.target.discord.DiscordConfig;
 import com.github.Veivel.notifier.target.discord.DiscordTarget;
-import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.PreferenceManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class TargetRegistry {
 
-    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final Logger logger = ModLogger.get();
     private Integer size;
     private List<Target> targets;
     private Map<String, Function<TargetConfig, Target>> factories = new HashMap<
@@ -82,6 +81,7 @@ public class TargetRegistry {
             logger.error("Health check for target {} failed, skipping.", target.getClass().getName());
             return;
         }
+
         logger.debug(
             "Registering target to TargetRegistry: {}",
             target.getClass().getName()

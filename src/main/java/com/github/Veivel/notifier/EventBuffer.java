@@ -2,6 +2,7 @@ package com.github.Veivel.notifier;
 
 import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.event.ReadoutEvent;
+import com.github.Veivel.logger.ModLogger;
 import com.github.Veivel.notifier.target.TargetRegistry;
 import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.ServerContext;
@@ -15,7 +16,6 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
@@ -26,9 +26,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class EventBuffer {
 
-    private static final Logger logger = LogManager.getLogger(
-        OreReadoutMod.MOD_NAME
-    );
+    private static final Logger logger = ModLogger.get();
     private static Map<String, Integer> eventCountMap = new HashMap<>();
     private static volatile Set<String> blockMap;
     private static volatile ConfigManager configManager;

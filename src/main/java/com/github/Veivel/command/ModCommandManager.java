@@ -1,7 +1,7 @@
 package com.github.Veivel.command;
 
 import com.github.Veivel.config.ConfigManager;
-import com.github.Veivel.orereadout.OreReadoutMod;
+import com.github.Veivel.logger.ModLogger;
 import com.github.Veivel.server.PreferenceManager;
 import com.github.Veivel.util.TextFormat;
 import com.mojang.brigadier.CommandDispatcher;
@@ -15,12 +15,11 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.Commands.CommandSelection;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.world.entity.player.Player;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ModCommandManager {
 
-    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final Logger logger = ModLogger.get();
     private ConfigManager configManager;
     private PreferenceManager preferenceManager;
 

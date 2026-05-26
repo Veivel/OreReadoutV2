@@ -2,9 +2,9 @@ package com.github.Veivel.notifier.target.chat;
 
 import com.github.Veivel.command.ModPermission;
 import com.github.Veivel.event.ReadoutEvent;
+import com.github.Veivel.logger.ModLogger;
 import com.github.Veivel.notifier.target.Target;
 import com.github.Veivel.notifier.target.TargetConfig;
-import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.server.PreferenceManager;
 import com.github.Veivel.server.ServerContext;
 import com.github.Veivel.util.TextFormat;
@@ -17,12 +17,11 @@ import net.minecraft.network.chat.HoverEvent.ShowText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ChatTarget implements Target {
 
-    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final Logger logger = ModLogger.get();
     private PreferenceManager preferenceManager;
     private ChatConfig config;
 

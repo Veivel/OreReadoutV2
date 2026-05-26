@@ -1,14 +1,13 @@
 package com.github.Veivel.server;
 
-import com.github.Veivel.orereadout.OreReadoutMod;
+import com.github.Veivel.logger.ModLogger;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class PreferenceManager {
 
-    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final Logger logger = ModLogger.get();
     private Map<String, Map<String, Object>> data;
 
     public PreferenceManager() {

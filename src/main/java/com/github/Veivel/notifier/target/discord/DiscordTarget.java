@@ -1,9 +1,9 @@
 package com.github.Veivel.notifier.target.discord;
 
 import com.github.Veivel.event.ReadoutEvent;
+import com.github.Veivel.logger.ModLogger;
 import com.github.Veivel.notifier.target.Target;
 import com.github.Veivel.notifier.target.TargetConfig;
-import com.github.Veivel.orereadout.OreReadoutMod;
 import com.github.Veivel.util.DataFormat;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,12 +11,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class DiscordTarget implements Target {
 
-    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final Logger logger = ModLogger.get();
     private HttpClient httpClient; // reusable HttpClient instance
     private URI webhookUri;
     private DiscordConfig config;

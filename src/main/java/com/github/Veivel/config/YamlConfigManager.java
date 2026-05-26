@@ -2,19 +2,18 @@ package com.github.Veivel.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.github.Veivel.orereadout.OreReadoutMod;
+import com.github.Veivel.logger.ModLogger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class YamlConfigManager implements ConfigManager {
 
-    private final Logger logger = LogManager.getLogger(OreReadoutMod.MOD_NAME);
+    private final Logger logger = ModLogger.get();
     private final List<Runnable> listeners = new ArrayList<>();
     private ModConfig config;
     private Path configPath;
