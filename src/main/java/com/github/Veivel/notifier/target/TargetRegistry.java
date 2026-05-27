@@ -58,6 +58,7 @@ public class TargetRegistry {
                 register(target);
             }
         });
+        logger.debug("TargetRegistry loaded.");
         return;
     }
 

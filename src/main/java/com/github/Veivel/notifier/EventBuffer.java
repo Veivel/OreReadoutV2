@@ -2,29 +2,24 @@ package com.github.Veivel.notifier;
 
 import com.github.Veivel.config.ConfigManager;
 import com.github.Veivel.event.MixinEvent;
+import com.github.Veivel.event.MixinEventAggregate;
 import com.github.Veivel.event.ReadoutEvent;
 import com.github.Veivel.logger.ModLogger;
 import com.github.Veivel.notifier.target.TargetRegistry;
-import com.github.Veivel.server.ServerContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Buffers events to the store using {@link #append}, then orchestrates
+ * Buffers events to the store using {@link #checkAndBuffer}, then orchestrates
  * read-outs by calling {@link #dispatch} via {@link #flush}.
  */
 public class EventBuffer {
 
     private final Logger logger = ModLogger.get();
-    private Map<String, Integer> eventCountMap = new HashMap<>();
-    private Set<String> blockMap;
+    private Map<String, MixinEventAggregate> mixinEventAggMap = new HashMap<String, MixinEventAggregate>();
+    private Set<String> blockSet;
     private ConfigManager configManager;
     private TargetRegistry targetRegistry;
 
@@ -40,8 +35,8 @@ public class EventBuffer {
     }
 
     private void load() {
-        this.blockMap = configManager.get().readoutBlockSet();
-        logger.debug("EventBuffer initialized.");
+        this.blockSet = configManager.get().readoutBlockSet();
+        logger.debug("EventBuffer loaded.");
     }
 
     public void checkAndBuffer(
@@ -53,65 +48,45 @@ public class EventBuffer {
             mixinEvent.playerName()
         );
 
-        if (blockMap.contains(mixinEvent.blockName())) {
-            logger.debug("Updating eventCountMap map.");
+        if (blockSet.contains(mixinEvent.blockName())) {
+            logger.debug("Updating buffer store...");
 
             String uuidString = mixinEvent.playerUuid();
-            Integer currentValue = eventCountMap.get(uuidString);
-            if (currentValue == null) {
-                eventCountMap.put(uuidString, 1);
+            MixinEventAggregate mixinEventAgg = mixinEventAggMap.get(uuidString);
+
+            // Buffer event into store
+            if (mixinEventAgg == null) {
+                // Player is not present in buffer store
+                mixinEventAgg = MixinEventAggregate.of(mixinEvent);
             } else {
-                eventCountMap.put(uuidString, currentValue + 1);
+                // Player is already present in buffer store
+                mixinEventAgg = mixinEventAgg.aggregate(mixinEvent);
             }
+            mixinEventAggMap.put(uuidString, mixinEventAgg);
         }
     }
 
     public void flush() {
-        MinecraftServer server = ServerContext.get();
-        if (server == null) {
-            logger.error("Could not find active MinecraftServer instance.");
-            return;
-        }
-
-        eventCountMap.forEach((playerUuidString, blocksMined) -> {
-            PlayerList playerManager = server.getPlayerList();
-            Player player = playerManager.getPlayer(
-                UUID.fromString(playerUuidString)
-            );
-            if (player == null) {
-                logger.warn(
-                    "Player {} does not exist or has disconnected.",
-                    playerUuidString
-                );
-            } else {
-                Level world = player.level();
-                dispatch(blocksMined, world, player);
-            }
+        mixinEventAggMap.forEach((playerUuidString, mixinEventAgg) -> {
+            dispatch(mixinEventAgg);
         });
 
         logger.debug(
-            "Flushing eventCountMap map of size {}...",
-            eventCountMap.size()
+            "Flushing buffer store of size {}...",
+            mixinEventAggMap.size()
         );
-        eventCountMap.clear();
+        mixinEventAggMap.clear();
     }
 
     /** Dispatches the notification to the appropriate sinks. */
-    private void dispatch(int quantity, Level world, Player player) {
-        String playerName = player.getName().getString();
-        String dimensionName = world
-            .dimension()
-            .identifier()
-            .toString()
-            .replaceFirst("minecraft:", "");
-
+    private void dispatch(MixinEventAggregate mixinEventAgg) {
         ReadoutEvent event = new ReadoutEvent(
-            playerName,
-            quantity,
-            player.getX(),
-            player.getY(),
-            player.getZ(),
-            dimensionName
+            mixinEventAgg.playerName(),
+            mixinEventAgg.quantity(),
+            mixinEventAgg.x(),
+            mixinEventAgg.y(),
+            mixinEventAgg.z(),
+            mixinEventAgg.dimensionName()
         );
         targetRegistry.emit(event);
     }
