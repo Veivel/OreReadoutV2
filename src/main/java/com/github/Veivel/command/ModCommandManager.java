@@ -172,7 +172,7 @@ public class ModCommandManager {
             source.sendSystemMessage(
                 TextFormat.getPrefix().append(
                     TextFormat.fmt(
-                        "You will no longer receive ore readouts for this session.",
+                        "You will no longer receive ore readouts until the next server restart.",
                         ChatFormatting.AQUA
                     )
                 )

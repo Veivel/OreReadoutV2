@@ -1,7 +1,8 @@
 import org.jetbrains.changelog.Changelog
 
 plugins {
-    id "net.fabricmc.fabric-loom"
+    id 'net.fabricmc.fabric-loom'
+    id 'jacoco'
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "0.8.4"
     id 'org.jetbrains.changelog' version '2.2.0'
@@ -31,14 +32,34 @@ dependencies {
     implementation "org.yaml:snakeyaml:${project.snakeyaml_version}"
     include "org.yaml:snakeyaml:${project.snakeyaml_version}"
 
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.3"
-    include "com.fasterxml.jackson.core:jackson-core:2.21.3"
-    include "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.3"
-    include "com.fasterxml.jackson.core:jackson-databind:2.21.3"
-    include 'com.fasterxml.jackson.core:jackson-annotations:2.21'
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${project.jackson_base_version}"
+    include "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${project.jackson_base_version}"
+    include "com.fasterxml.jackson.core:jackson-core:${project.jackson_base_version}"
+    include "com.fasterxml.jackson.core:jackson-databind:${project.jackson_base_version}"
+    include "com.fasterxml.jackson.core:jackson-annotations:${project.jackson_annotations_version}"
 
     implementation "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
     include "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
+
+    testImplementation platform("org.junit:junit-bom:5.11.3")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.mockito:mockito-core:5.15.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:5.15.2"
+    testImplementation "org.assertj:assertj-core:3.26.3"
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs '-Dnet.bytebuddy.experimental=true' // TODO: research the "correct" way to do it for java 25
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required  = false  // flip to true if you ever wire up Codecov/Coveralls
+    }
 }
 
 // https://github.com/diffplug/spotless/blob/main/plugin-gradle/README.md

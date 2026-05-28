@@ -71,6 +71,7 @@ public class YamlConfigManager implements ConfigManager {
     }
 
     private ModConfig readConfig() throws IOException {
+        // TODO: Drop com.fasterxml.jackson.databind, switch to Configurate
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         try {
             ModConfig config = mapper.readValue(
