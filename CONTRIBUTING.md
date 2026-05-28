@@ -1,14 +1,18 @@
 ## Contributing
 
 Ore Readout V2 was picked up from the original OreReadout mod out of personal need and nothing else.
-If you find that Ore Readout V2 is helpful for you, and you want a change to be made, consider contributing 
+If you find that Ore Readout V2 is helpful for you, and you want a change to be made, consider contributing
 by making a Pull Request. Feel free to ping @Veivel or add as reviewer.
 
 ## Building from Source
 
 1. Clone this repository locally.
-2. Build with `gradle clean build` or `./gradlew clean build`.
+2. Build with `gradle spotlessApply build` or `./gradlew spotlessApply build`.
 3. You can find your artifact in `build/libs/**.jar`.
+
+## Tests
+
+To run tests, run `./gradlew test jacocoTestReport`.
 
 ## Development
 
