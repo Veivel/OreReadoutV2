@@ -6,33 +6,33 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class MixinEventAdapter {
-  public static MixinEvent from(
-      BlockState state,
-      BlockPos pos,
-      Level world,
-      Player player
-  ) {
-    String blockName = state
-      .getBlock()
-      .getDescriptionId()
-      .replaceFirst("block.minecraft.", "");
 
-    // We use UUID over username because playerManager.getPlayer(UUID)
-    // is much faster [O(1)] than playerManager.getPlayer(username) [O(n)].
-    String playerUuidString = player.getStringUUID();
-    String playerName = player.getPlainTextName();
+    public static MixinEvent from(
+        BlockState state,
+        BlockPos pos,
+        Level world,
+        Player player
+    ) {
+        String blockName = state
+            .getBlock()
+            .getDescriptionId()
+            .replaceFirst("block.minecraft.", "");
 
-    String dimension = world.dimension().identifier().toString();
+        // We use UUID over username because playerManager.getPlayer(UUID)
+        // is much faster [O(1)] than playerManager.getPlayer(username) [O(n)].
+        String playerUuidString = player.getStringUUID();
+        String playerName = player.getPlainTextName();
 
-    return new MixinEvent(
-      playerUuidString,
-      playerName,
-      blockName,
-      dimension,
-      pos.getX(),
-      pos.getY(),
-      pos.getZ()
-    );
+        String dimension = world.dimension().identifier().toString();
 
-  }
+        return new MixinEvent(
+            playerUuidString,
+            playerName,
+            blockName,
+            dimension,
+            pos.getX(),
+            pos.getY(),
+            pos.getZ()
+        );
+    }
 }

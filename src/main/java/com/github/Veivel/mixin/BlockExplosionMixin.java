@@ -3,7 +3,6 @@ package com.github.Veivel.mixin;
 import com.github.Veivel.event.MixinEvent;
 import com.github.Veivel.event.MixinEventAdapter;
 import com.github.Veivel.notifier.EventBufferRelay;
-
 import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -38,7 +37,12 @@ public class BlockExplosionMixin {
         ) {
             LivingEntity entity = explosion.getIndirectSourceEntity(); // Indirect source finds the source at the root of the explosion chain
             if (entity != null && entity instanceof Player) {
-                MixinEvent mixinEvent = MixinEventAdapter.from(state, pos, world, (Player) entity);
+                MixinEvent mixinEvent = MixinEventAdapter.from(
+                    state,
+                    pos,
+                    world,
+                    (Player) entity
+                );
                 EventBufferRelay.checkAndBuffer(mixinEvent);
             }
         }

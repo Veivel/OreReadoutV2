@@ -18,7 +18,10 @@ import org.apache.logging.log4j.Logger;
 public class EventBuffer {
 
     private final Logger logger = ModLogger.get();
-    private Map<String, MixinEventAggregate> mixinEventAggMap = new HashMap<String, MixinEventAggregate>();
+    private Map<String, MixinEventAggregate> mixinEventAggMap = new HashMap<
+        String,
+        MixinEventAggregate
+    >();
     private Set<String> blockSet;
     private ConfigManager configManager;
     private TargetRegistry targetRegistry;
@@ -39,9 +42,7 @@ public class EventBuffer {
         logger.debug("EventBuffer loaded.");
     }
 
-    public void checkAndBuffer(
-        MixinEvent mixinEvent
-    ) {
+    public void checkAndBuffer(MixinEvent mixinEvent) {
         logger.debug(
             "Acknowledging event for block {} by player {}...",
             mixinEvent.blockName(),
@@ -52,7 +53,9 @@ public class EventBuffer {
             logger.debug("Updating buffer store...");
 
             String uuidString = mixinEvent.playerUuid();
-            MixinEventAggregate mixinEventAgg = mixinEventAggMap.get(uuidString);
+            MixinEventAggregate mixinEventAgg = mixinEventAggMap.get(
+                uuidString
+            );
 
             // Buffer event into store
             if (mixinEventAgg == null) {

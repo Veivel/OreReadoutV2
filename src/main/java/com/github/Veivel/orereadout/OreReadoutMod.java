@@ -40,7 +40,10 @@ public class OreReadoutMod implements ModInitializer {
                 configManager,
                 preferenceManager
             );
-            EventBuffer eventBuffer = new EventBuffer(configManager, targetRegistry);
+            EventBuffer eventBuffer = new EventBuffer(
+                configManager,
+                targetRegistry
+            );
             EventBufferRelay.setInstance(eventBuffer);
             new ModLogInitializer(MOD_NAME, configManager); // Don't save to variable
 
