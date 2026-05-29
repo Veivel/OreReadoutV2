@@ -1,8 +1,8 @@
 package com.github.Veivel.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.Veivel.logger.ModLogger;
+import com.github.Veivel.notifier.target.TargetConfig;
+import com.github.Veivel.notifier.target.TargetConfigSerializer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.Logger;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 public class YamlConfigManager implements ConfigManager {
 
@@ -55,7 +57,7 @@ public class YamlConfigManager implements ConfigManager {
             blockCount,
             targetCount
         );
-        logger.debug(this.config);
+        logger.info("Config: {}", this.config);
 
         // Run all `onAfterReload` listeners
         listeners.forEach(Runnable::run);
@@ -71,13 +73,23 @@ public class YamlConfigManager implements ConfigManager {
     }
 
     private ModConfig readConfig() throws IOException {
-        // TODO: Drop com.fasterxml.jackson.databind, switch to Configurate
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        YamlConfigurationLoader loader = YamlConfigurationLoader.builder()
+            .defaultOptions(opts ->
+                opts.serializers(build ->
+                    // We use registerExact in place of register to avoid recursion when our
+                    // custom serializer returns a concrete class implementing TargetConfig
+                    build.registerExact(
+                        TargetConfig.class,
+                        TargetConfigSerializer.INSTANCE
+                    )
+                )
+            )
+            .path(configPath)
+            .build();
+
         try {
-            ModConfig config = mapper.readValue(
-                configPath.toFile(),
-                ModConfig.class
-            );
+            ConfigurationNode node = loader.load();
+            ModConfig config = node.get(ModConfig.class);
             return config;
         } catch (IOException e) {
             throw e;

@@ -1,11 +1,12 @@
 package com.github.Veivel.notifier.target.discord;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.Veivel.notifier.target.TargetConfig;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
+@ConfigSerializable
 public record DiscordConfig(
     String name,
     boolean enabled,
-
-    @JsonProperty("webhook_url") String webhookUrl
+    @Setting("webhook_url") String webhookUrl
 ) implements TargetConfig {}
