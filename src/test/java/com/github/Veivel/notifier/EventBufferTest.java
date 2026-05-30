@@ -2,6 +2,7 @@ package com.github.Veivel.notifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import com.github.Veivel.config.YamlConfigManager;
 import com.github.Veivel.event.MixinEvent;
@@ -24,6 +25,9 @@ class EventBufferTest {
 
     private static final String CONFIG_FIXTURE = "event-buffer-test.yaml";
     private static final String CONFIG_FILE_NAME = "ore-readout-v2.yaml";
+
+    // Fixture sets blocks_broken_threshold to this value.
+    private static final int THRESHOLD = 2;
 
     private static final String MATCHING_BLOCK = "diamond_ore";
     private static final String PLAYER_UUID = "uuid-steve";
@@ -60,19 +64,32 @@ class EventBufferTest {
         configManager.load();
     }
 
-    @Test
-    void checkAndBuffer_emitsReadoutForMatchingBlock_onFlush() {
-        MixinEvent event = new MixinEvent(
+    private MixinEvent eventAt(int x, int y, int z) {
+        return new MixinEvent(
             PLAYER_UUID,
             PLAYER_NAME,
             MATCHING_BLOCK,
             DIMENSION,
-            10,
-            20,
-            30
+            x,
+            y,
+            z
         );
+    }
 
-        eventBuffer.checkAndBuffer(event);
+    @Test
+    void dispatch_doesNotEmitReadout_whenQuantityIsBelowThreshold() {
+        // Threshold = 2; a single buffered event leaves quantity at 1, so
+        // dispatch should short-circuit before calling targetRegistry.emit.
+        eventBuffer.checkAndBuffer(eventAt(10, 20, 30));
+        eventBuffer.flush();
+
+        verifyNoInteractions(targetRegistry);
+    }
+
+    @Test
+    void dispatch_emitsReadout_whenQuantityEqualsThreshold() {
+        eventBuffer.checkAndBuffer(eventAt(10, 20, 30));
+        eventBuffer.checkAndBuffer(eventAt(10, 20, 30));
         eventBuffer.flush();
 
         ArgumentCaptor<ReadoutEvent> emitted = ArgumentCaptor.forClass(
@@ -82,7 +99,7 @@ class EventBufferTest {
 
         ReadoutEvent readout = emitted.getValue();
         assertThat(readout.playerName).isEqualTo(PLAYER_NAME);
-        assertThat(readout.quantity).isEqualTo(1);
+        assertThat(readout.quantity).isEqualTo(THRESHOLD);
         assertThat(readout.x).isEqualTo(10);
         assertThat(readout.y).isEqualTo(20);
         assertThat(readout.z).isEqualTo(30);
@@ -90,28 +107,12 @@ class EventBufferTest {
     }
 
     @Test
-    void checkAndBuffer_aggregatesTwoEventsFromSamePlayer_onFlush() {
-        MixinEvent firstEvent = new MixinEvent(
-            PLAYER_UUID,
-            PLAYER_NAME,
-            MATCHING_BLOCK,
-            DIMENSION,
-            10,
-            20,
-            30
-        );
-        MixinEvent secondEvent = new MixinEvent(
-            PLAYER_UUID,
-            PLAYER_NAME,
-            MATCHING_BLOCK,
-            DIMENSION,
-            11,
-            21,
-            31
-        );
-
-        eventBuffer.checkAndBuffer(firstEvent);
-        eventBuffer.checkAndBuffer(secondEvent);
+    void dispatch_emitsReadout_whenQuantityIsAboveThreshold() {
+        // Three events at distinct coordinates: quantity = 3 (above threshold)
+        // and the aggregate position should track the latest event.
+        eventBuffer.checkAndBuffer(eventAt(10, 20, 30));
+        eventBuffer.checkAndBuffer(eventAt(11, 21, 31));
+        eventBuffer.checkAndBuffer(eventAt(12, 22, 32));
         eventBuffer.flush();
 
         ArgumentCaptor<ReadoutEvent> emitted = ArgumentCaptor.forClass(
@@ -121,10 +122,10 @@ class EventBufferTest {
 
         ReadoutEvent readout = emitted.getValue();
         assertThat(readout.playerName).isEqualTo(PLAYER_NAME);
-        assertThat(readout.quantity).isEqualTo(2);
-        assertThat(readout.x).isEqualTo(11);
-        assertThat(readout.y).isEqualTo(21);
-        assertThat(readout.z).isEqualTo(31);
+        assertThat(readout.quantity).isEqualTo(3);
+        assertThat(readout.x).isEqualTo(12);
+        assertThat(readout.y).isEqualTo(22);
+        assertThat(readout.z).isEqualTo(32);
         assertThat(readout.dimension).isEqualTo(DIMENSION);
     }
 }

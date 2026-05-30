@@ -7,6 +7,6 @@ readout_blocks:
 
 readout_window_in_seconds: 5
 
-blocks_broken_threshold: 0
+blocks_broken_threshold: 2
 
 debug_mode: false

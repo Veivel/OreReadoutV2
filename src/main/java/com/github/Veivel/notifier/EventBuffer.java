@@ -23,6 +23,7 @@ public class EventBuffer {
         MixinEventAggregate
     >();
     private Set<String> blockSet;
+    private Integer blocksBrokenThreshold;
     private ConfigManager configManager;
     private TargetRegistry targetRegistry;
 
@@ -39,6 +40,9 @@ public class EventBuffer {
 
     private void load() {
         this.blockSet = configManager.get().readoutBlockSet();
+        this.blocksBrokenThreshold = configManager
+            .get()
+            .blocksBrokenThreshold();
         logger.debug("EventBuffer loaded.");
     }
 
@@ -81,8 +85,15 @@ public class EventBuffer {
         mixinEventAggMap.clear();
     }
 
-    /** Dispatches the notification to the appropriate sinks. */
+    /**
+     * Dispatches a read-out to all registered targets
+     * provided that the read-out's block quantity is above the threshold.
+     */
     private void dispatch(MixinEventAggregate mixinEventAgg) {
+        if (mixinEventAgg.quantity() < blocksBrokenThreshold) {
+            return;
+        }
+
         ReadoutEvent event = new ReadoutEvent(
             mixinEventAgg.playerName(),
             mixinEventAgg.quantity(),
