@@ -20,10 +20,6 @@ public class YamlConfigManager implements ConfigManager {
     private ModConfig config;
     private Path configPath;
 
-    // TODO: move this somewhere else
-    public static final String READOUT_BLOCKS_KEY = "readout_blocks";
-    public static final String READOUT_TARGETS_KEY = "targets";
-    public static final String READOUT_WINDOW_KEY = "readout_window_seconds";
     public static final String DEFAULT_CONFIG_RESOURCE =
         "data/config/default.yaml";
 
@@ -57,10 +53,11 @@ public class YamlConfigManager implements ConfigManager {
             blockCount,
             targetCount
         );
-        logger.info("Config: {}", this.config);
 
         // Run all `onAfterReload` listeners
         listeners.forEach(Runnable::run);
+        logger.debug("Config: {}", this.config);
+
         return;
     }
 
@@ -96,6 +93,8 @@ public class YamlConfigManager implements ConfigManager {
         }
     }
 
+    // We take in a String for the params because we
+    // use a Resource rather than a Path.
     private void writeDefaultConfig(String internalResourceName) {
         Path destinationPath = configPath;
         try {
