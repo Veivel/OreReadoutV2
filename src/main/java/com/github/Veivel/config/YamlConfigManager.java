@@ -97,12 +97,12 @@ public class YamlConfigManager implements ConfigManager {
     // use a Resource rather than a Path.
     private void writeDefaultConfig(String internalResourceName) {
         Path destinationPath = configPath;
+        InputStream stream;
         try {
             ClassLoader classLoader = getClass().getClassLoader();
-            InputStream stream = classLoader.getResourceAsStream(
-                internalResourceName
-            );
+            stream = classLoader.getResourceAsStream(internalResourceName);
             Files.copy(stream, destinationPath);
+            stream.close();
         } catch (NullPointerException e) {
             logger.error(
                 "Could not obtain obtain default config YAML as stream: {}",

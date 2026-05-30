@@ -1,0 +1,21 @@
+config_version: 3
+
+targets:
+  - name: discord
+    enabled: true
+    webhook_url: "https://example.com/hook"
+  - name: server-chat
+    enabled: true
+    notification_sound: true
+  - name: server-console
+    enabled: false
+
+readout_blocks:
+  - diamond_ore
+  - emerald_ore
+
+readout_window_in_seconds: 7
+
+blocks_broken_threshold: 4
+
+debug_mode: true

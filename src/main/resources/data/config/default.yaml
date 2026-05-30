@@ -22,8 +22,7 @@ readout_blocks:
   - deepslate_emerald_ore
   - ancient_debris
 
-readout:
-  window_in_seconds: 5
-  blocks_broken_threshold: 0
+window_in_seconds: 5
+blocks_broken_threshold: 0
 
 debug_mode: false

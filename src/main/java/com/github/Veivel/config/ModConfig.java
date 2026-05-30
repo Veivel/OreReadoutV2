@@ -22,5 +22,7 @@ public record ModConfig(
 
     @Setting("readout_window_in_seconds") Integer readoutWindowInSeconds,
 
+    @Setting("blocks_broken_threshold") Integer blocksBrokenThreshold,
+
     @Setting("debug_mode") boolean debugMode
 ) {}
