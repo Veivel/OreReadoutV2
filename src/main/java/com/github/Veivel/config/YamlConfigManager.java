@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -87,8 +88,11 @@ public class YamlConfigManager implements ConfigManager {
         try {
             ConfigurationNode node = loader.load();
             ModConfig config = node.get(ModConfig.class);
+            config.validate();
             return config;
         } catch (IOException e) {
+            throw e;
+        } catch (NoSuchElementException e) {
             throw e;
         }
     }

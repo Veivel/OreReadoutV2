@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -115,30 +116,16 @@ class YamlConfigManagerTest {
     }
 
     @Test
-    void load_withValidYamlButMissingProperties_returnsConfigWithDefaults(
+    void load_withValidYamlButMissingProperties_throwsNoSuchElementException(
         @TempDir Path tempDir
     ) throws IOException {
         Path configPath = copyFixture("partial.yaml", tempDir);
 
         YamlConfigManager manager = new YamlConfigManager(configPath);
-        manager.load();
 
-        ModConfig config = manager.get();
-        assertThat(config).isNotNull();
-
-        // Properties present in the YAML are populated as expected.
-        assertThat(config.configVersion()).isEqualTo(3);
-        assertThat(config.readoutBlockSet()).containsExactlyInAnyOrder(
-            "diamond_ore",
-            "lapis_lazuli_ore"
-        );
-
-        // Missing wrapper-typed properties remain null.
-        assertThat(config.readoutWindowInSeconds()).isNull();
-        assertThat(config.blocksBrokenThreshold()).isNull();
-        // Missing primitive boolean falls back to its default (false).
-        assertThat(config.debugMode()).isFalse();
-        // Missing collection — Configurate yields either null or an empty list.
-        assertThat(config.targets()).isNullOrEmpty();
+        assertThatThrownBy(manager::load)
+            .isInstanceOf(NoSuchElementException.class)
+            .hasMessageContaining("readoutWindowInSeconds");
+        assertThat(manager.get()).isNull();
     }
 }
