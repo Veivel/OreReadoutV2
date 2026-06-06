@@ -52,4 +52,4 @@ To get your webhook URL, see step 1 of [this Discord article](https://support.di
 
 I only picked up development of this Fabric mod after finding [the original version](https://modrinth.com/mod/ore-readout) by yitzy299, which was abandoned four years ago. While you may ask for support or make feature requests on our GitHub issues tracker, **I cannot make promises to deliver anything**.
 
-If there is a change you want made, consider contributing! See [CONTRIBUTING.md](./CONTRIBUTING.md)
+If there is a change you want made, consider contributing! See [CONTRIBUTING.md](./CONTRIBUTING.md).
