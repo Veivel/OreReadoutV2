@@ -1,5 +1,7 @@
+# Config version (do not modify)
 config_version: 3
 
+# Targets to emit read-outs to
 targets:
   - name: discord
     enabled: false
@@ -10,6 +12,7 @@ targets:
   - name: server-console
     enabled: true
 
+# The blocks that will count for read-outs
 readout_blocks:
   - lapis_lazuli_ore
   - deepslate_lapis_lazuli_ore
@@ -22,7 +25,12 @@ readout_blocks:
   - deepslate_emerald_ore
   - ancient_debris
 
+# Read-outs will be emitted every N number of seconds, specified here
 readout_window_in_seconds: 5
+
+# Read-outs will only be emitted if the number of blocks broken within
+# a window reach this threshold
 blocks_broken_threshold: 0
 
+# Do not modify unless you need extra debugging logs in the server console
 debug_mode: false
