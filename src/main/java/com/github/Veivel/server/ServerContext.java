@@ -1,4 +1,4 @@
-package com.github.Veivel.context;
+package com.github.Veivel.server;
 
 import net.minecraft.server.MinecraftServer;
 
@@ -27,4 +27,6 @@ public final class ServerContext {
     public static MinecraftServer get() {
         return server;
     }
+
+    public static void tick() {}
 }

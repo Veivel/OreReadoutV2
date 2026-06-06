@@ -1,0 +1,12 @@
+config_version: 1
+
+targets: []
+
+readout_blocks:
+  - diamond_ore
+
+readout_window_in_seconds: 5
+
+blocks_broken_threshold: 2
+
+debug_mode: false

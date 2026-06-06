@@ -1,14 +1,16 @@
 package com.github.Veivel.mixin;
 
-import com.github.Veivel.notifier.DispatchBuffer;
+import com.github.Veivel.event.MixinEvent;
+import com.github.Veivel.event.MixinEventAdapter;
+import com.github.Veivel.notifier.EventBufferRelay;
 import java.util.function.BiConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,16 +30,21 @@ public class BlockExplosionMixin {
         BiConsumer<ItemStack, BlockPos> stackMerger,
         CallbackInfo ci
     ) {
-        String blockName = state
-            .getBlock()
-            .getDescriptionId()
-            .replaceFirst("block.minecraft.", "");
-
-        // Indirect source finds the source at the root of the explosion chain
-        LivingEntity entity = explosion.getIndirectSourceEntity();
-        Boolean isPlayer = entity.getType() == EntityType.PLAYER;
-        if (entity != null && isPlayer) {
-            DispatchBuffer.append(blockName, pos, world, (Player) entity);
+        // Mimics the same check in BlockBehaviour.onExplosionHit()
+        if (
+            !state.isAir() &&
+            explosion.getBlockInteraction() != BlockInteraction.TRIGGER_BLOCK
+        ) {
+            LivingEntity entity = explosion.getIndirectSourceEntity(); // Indirect source finds the source at the root of the explosion chain
+            if (entity != null && entity instanceof Player) {
+                MixinEvent mixinEvent = MixinEventAdapter.from(
+                    state,
+                    pos,
+                    world,
+                    (Player) entity
+                );
+                EventBufferRelay.checkAndBuffer(mixinEvent);
+            }
         }
     }
 }

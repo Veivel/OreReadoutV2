@@ -1,8 +1,8 @@
-package com.github.Veivel.perms;
+package com.github.Veivel.command;
 
-public final class Perms {
+public final class ModPermission {
 
-    private Perms() {}
+    private ModPermission() {}
 
     // root permission for all commands
     public static final String ROOT = "ore-readout.root";

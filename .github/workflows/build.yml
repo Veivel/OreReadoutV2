@@ -22,10 +22,10 @@ jobs:
     steps:
 
     - uses: actions/checkout@v4
-    - name: Set up JDK 21
+    - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: '21'
+        java-version: '25'
         distribution: 'temurin'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
@@ -35,6 +35,9 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
+
+    - name: Run tests with Gradle
+      run: ./gradlew test
 
     - name: Build with Gradle
       run: ./gradlew build --stacktrace --info

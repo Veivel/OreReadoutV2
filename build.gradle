@@ -2,10 +2,11 @@ import org.jetbrains.changelog.Changelog
 
 plugins {
     id "net.fabricmc.fabric-loom"
-    id 'maven-publish'
+    id "jacoco"
+    id "maven-publish"
     id "me.modmuss50.mod-publish-plugin" version "0.8.4"
-    id 'org.jetbrains.changelog' version '2.2.0'
-    id 'com.diffplug.spotless' version '8.2.1'
+    id "org.jetbrains.changelog" version "2.2.0"
+    id "com.diffplug.spotless" version "8.2.1"
 }
 
 java {
@@ -18,8 +19,8 @@ version = "${project.mod_version}-${project.minecraft_version}"
 group = project.maven_group
 
 repositories {
-    maven { url 'https://api.modrinth.com/maven' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url "https://api.modrinth.com/maven" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     mavenCentral()
 }
 
@@ -28,11 +29,38 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    implementation "org.yaml:snakeyaml:${project.snakeyaml_version}"
-    include "org.yaml:snakeyaml:${project.snakeyaml_version}"
+    implementation "org.spongepowered:configurate-core:${project.configurate_version}"
+    include "org.spongepowered:configurate-core:${project.configurate_version}"
+    implementation "org.spongepowered:configurate-yaml:${project.configurate_version}"
+    include "org.spongepowered:configurate-yaml:${project.configurate_version}"
+
+    // Dependencies of Configurate - see `./gradlew dependencies --configuration runtimeClasspath`.
+    include "net.kyori:option:1.1.0"
+    include "io.leangen.geantyref:geantyref:1.3.16"
+    include "org.snakeyaml:snakeyaml-engine:2.7"
 
     implementation "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
     include "me.lucko:fabric-permissions-api:${project.fabric_permissions_api_version}"
+
+    testImplementation platform("org.junit:junit-bom:5.11.3")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation "org.mockito:mockito-core:5.15.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:5.15.2"
+    testImplementation "org.assertj:assertj-core:3.26.3"
+}
+
+test {
+    useJUnitPlatform()
+    jvmArgs '-Dnet.bytebuddy.experimental=true' // TODO: research the "correct" way to do it for java 25
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required  = false  // flip to true if you ever wire up Codecov/Coveralls
+    }
 }
 
 // https://github.com/diffplug/spotless/blob/main/plugin-gradle/README.md

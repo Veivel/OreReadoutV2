@@ -1,12 +1,13 @@
-package com.github.Veivel.notifier.sink;
+package com.github.Veivel.notifier.target.chat;
 
-import com.github.Veivel.context.ServerContext;
+import com.github.Veivel.command.ModPermission;
 import com.github.Veivel.event.ReadoutEvent;
-import com.github.Veivel.orereadout.OreReadoutMod;
-import com.github.Veivel.perms.Perms;
-import com.github.Veivel.store.PlayerConfigStore;
+import com.github.Veivel.logger.ModLogger;
+import com.github.Veivel.notifier.target.Target;
+import com.github.Veivel.notifier.target.TargetConfig;
+import com.github.Veivel.server.PreferenceManager;
+import com.github.Veivel.server.ServerContext;
 import com.github.Veivel.util.TextFormat;
-import java.util.Map;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
@@ -16,21 +17,24 @@ import net.minecraft.network.chat.HoverEvent.ShowText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
+import org.apache.logging.log4j.Logger;
 
-public class ChatSink extends AbstractSink {
+public class ChatTarget implements Target {
 
-    public ChatSink() {
-        super();
-        setLogger(OreReadoutMod.LOGGER);
+    private final Logger logger = ModLogger.get();
+    private PreferenceManager preferenceManager;
+    private ChatConfig config;
+
+    public ChatTarget(ChatConfig config, PreferenceManager preferenceManager) {
+        this.config = config;
+        this.preferenceManager = preferenceManager;
     }
 
     public void sendReadout(ReadoutEvent event) {
         try {
             MinecraftServer server = ServerContext.get();
             if (server == null) {
-                getLogger().error(
-                    "Could not find active MinecraftServer instance."
-                );
+                logger.error("Could not find active MinecraftServer instance.");
                 return;
             }
 
@@ -49,37 +53,42 @@ public class ChatSink extends AbstractSink {
                 .getPlayers()
                 .forEach(serverPlayerEntity -> {
                     String uuidStr = serverPlayerEntity.getUUID().toString();
-
                     Permissions.check(
                         serverPlayerEntity.getUUID(),
-                        Perms.VIEW_READOUT,
+                        ModPermission.VIEW_READOUT,
                         false
                     ).thenAccept(hasPermissionBoolean -> {
-                        getLogger().debug(
+                        logger.debug(
                             "Permission check passed for player {} {}.",
                             serverPlayerEntity.getName().getString(),
                             uuidStr
                         );
 
-                        // check for player's toggle settings
+                        // Double check permission (not sure if redundant or not)
                         boolean hasPermission = Boolean.TRUE.equals(
                             hasPermissionBoolean
                         );
-                        boolean hasChatReadoutEnabled = true;
-                        Map<String, Boolean> chatReadoutEnabledByPlayer =
-                            PlayerConfigStore.getChatReadoutEnabledByPlayer();
-                        boolean hasKey = chatReadoutEnabledByPlayer.containsKey(
-                            uuidStr
-                        );
+                        logger.debug("Permission check {}", hasPermission);
+                        if (!hasPermission) {
+                            return;
+                        }
 
-                        if (hasKey) hasChatReadoutEnabled =
-                            chatReadoutEnabledByPlayer.get(uuidStr);
-                        if (hasPermission && hasChatReadoutEnabled) {
-                            try {
-                                serverPlayerEntity.sendSystemMessage(mainText);
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
-                            }
+                        // Check for player's toggle settings
+                        boolean hasReadoutEnabled =
+                            (boolean) preferenceManager.get(
+                                uuidStr,
+                                "chat-readout",
+                                true
+                            );
+                        logger.debug("Preference check {}", hasReadoutEnabled);
+                        if (!hasReadoutEnabled) {
+                            return;
+                        }
+
+                        try {
+                            serverPlayerEntity.sendSystemMessage(mainText);
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
                         }
                     });
                 });
@@ -88,12 +97,28 @@ public class ChatSink extends AbstractSink {
         }
     }
 
+    public boolean healthCheck() {
+        if (config == null) {
+            return false;
+        } else if (preferenceManager == null) {
+            return false;
+        }
+
+        MinecraftServer server = ServerContext.get();
+        if (server == null) {
+            logger.debug(
+                "ServerContext is not populated yet, but will continue the healthCheck."
+            );
+        }
+        return true;
+    }
+
     private MutableComponent composeText(
         String playerName,
         int quantity,
-        double x,
-        double y,
-        double z,
+        int x,
+        int y,
+        int z,
         String dimension
     ) {
         HoverEvent showText = new ShowText(
@@ -103,7 +128,7 @@ public class ChatSink extends AbstractSink {
             )
         );
         ClickEvent suggestCommand = new SuggestCommand(
-            String.format("/tp %.2f %.2f %.2f", x, y, z)
+            String.format("/tp %d %d %d", x, y, z)
         );
 
         // text that includes coordinates, click event, & hover event
@@ -132,5 +157,10 @@ public class ChatSink extends AbstractSink {
             );
 
         return mainText;
+    }
+
+    @Override
+    public TargetConfig getConfig() {
+        return config;
     }
 }

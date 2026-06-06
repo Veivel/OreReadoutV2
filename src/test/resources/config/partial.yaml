@@ -1,0 +1,5 @@
+config_version: 3
+
+readout_blocks:
+  - diamond_ore
+  - lapis_lazuli_ore

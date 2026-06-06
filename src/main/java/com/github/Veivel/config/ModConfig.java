@@ -1,133 +1,55 @@
 package com.github.Veivel.config;
 
-import com.google.gson.Gson;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import com.github.Veivel.notifier.target.TargetConfig;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-public class ModConfig {
+/**
+ * An immutable record containing the mod's Config object.
+ * It is not persistent; the record will be replaced with a new on reload.
+ * <br/>
+ * All error-handling, loading, and serializing are handled by the Manager.
+ */
+@ConfigSerializable
+public record ModConfig(
+    @Setting("config_version") Integer configVersion,
 
-    public static final String DISCORD_WEBHOOK_URL_KEY = "discordWebhookUrl";
-    public static final String BLOCKS_KEY = "blocks";
-    public static final String READOUT_TARGETS_KEY = "readoutTargets";
-    public static final String READOUT_WINDOW_KEY = "readoutWindowInSeconds";
+    @Setting("targets") List<TargetConfig> targets,
 
-    private ReadoutTargetOptions readoutTargetConfig;
-    private String discordWebhookUrl;
-    private List<String> blocks;
-    private Map<String, Boolean> blockMap;
-    private Integer readoutWindowInSeconds;
+    @Setting("readout_blocks") Set<String> readoutBlockSet,
 
-    public ReadoutTargetOptions getReadoutTargets() {
-        return readoutTargetConfig;
-    }
+    @Setting("readout_window_in_seconds") Integer readoutWindowInSeconds,
 
-    public boolean isSendToConsole() {
-        return readoutTargetConfig.getConsole();
-    }
+    @Setting("blocks_broken_threshold") @NonNull Integer blocksBrokenThreshold,
 
-    public boolean isSendToIngame() {
-        return readoutTargetConfig.getIngame();
-    }
-
-    public boolean isSendToDiscord() {
-        return readoutTargetConfig.getDiscord();
-    }
-
-    public void setReadoutTargets(ReadoutTargetOptions readoutTargetConfig) {
-        this.readoutTargetConfig = readoutTargetConfig;
-    }
-
-    public String getDiscordWebhookUrl() {
-        return discordWebhookUrl;
-    }
-
-    public void setDiscordWebhookUrl(String discordWebhookUrl) {
-        this.discordWebhookUrl = discordWebhookUrl;
-    }
-
-    public Integer getReadoutWindowInSeconds() {
-        return this.readoutWindowInSeconds;
-    }
-
-    public void setReadoutWindowInSeconds(int seconds) {
-        this.readoutWindowInSeconds = seconds;
-    }
-
-    public List<String> getBlocks() {
-        return blocks;
-    }
-
-    public void setBlocks(List<String> blocks) {
-        this.blocks = blocks;
-    }
-
-    public Map<String, Boolean> getBlockMap() {
-        return blockMap;
-    }
-
-    public void setBlockMap(Map<String, Boolean> blockMap) {
-        this.blockMap = blockMap;
-    }
-
-    public Map<String, Boolean> createBlockMapFromList(List<String> blocks) {
-        HashMap<String, Boolean> resultMap = new HashMap<>();
-        blocks.forEach(key -> resultMap.put(key, true));
-
-        return resultMap;
-    }
-
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(READOUT_TARGETS_KEY, getReadoutTargets());
-        map.put(BLOCKS_KEY, getBlocks());
-        map.put(DISCORD_WEBHOOK_URL_KEY, getDiscordWebhookUrl());
-
-        return map;
-    }
-
-    @SuppressWarnings("unchecked")
-    public void parseMap(Map<String, Object> map) {
-        if (map.containsKey(DISCORD_WEBHOOK_URL_KEY)) {
-            setDiscordWebhookUrl((String) map.get(DISCORD_WEBHOOK_URL_KEY));
-        }
-        if (map.containsKey(BLOCKS_KEY)) {
-            // assuming type-cast is OK
-            setBlocks((List<String>) map.get(BLOCKS_KEY));
-            Map<String, Boolean> blockMap = createBlockMapFromList(getBlocks());
-            setBlockMap(blockMap);
-        }
-
-        if (map.containsKey(READOUT_TARGETS_KEY)) {
-            // assuming type-cast is OK
-            Map<String, Object> readoutMap = (Map<String, Object>) map.get(
-                READOUT_TARGETS_KEY
+    @Setting("debug_mode") boolean debugMode
+) {
+    public void validate() throws NoSuchElementException {
+        // NOTE: There's probably a cleaner way to do this, but it works
+        if (configVersion() == null) {
+            throw new NoSuchElementException(
+                "configVersion is missing from the configuration"
             );
-
-            boolean discord = Boolean.TRUE.equals(readoutMap.get("discord"));
-            boolean console = Boolean.TRUE.equals(readoutMap.get("console"));
-            boolean ingame = Boolean.TRUE.equals(readoutMap.get("ingame"));
-            ReadoutTargetOptions readoutTargets = new ReadoutTargetOptions(
-                console,
-                ingame,
-                discord
+        } else if (readoutWindowInSeconds() == null) {
+            throw new NoSuchElementException(
+                "readoutWindowInSeconds is missing from the configuration"
             );
-            setReadoutTargets(readoutTargets);
+        } else if (blocksBrokenThreshold() == null) {
+            throw new NoSuchElementException(
+                "blocksBrokenThreshold is missing from the configuration"
+            );
+        } else if (targets() == null) {
+            throw new NoSuchElementException(
+                "targets is missing from the configuration"
+            );
+        } else if (readoutBlockSet() == null) {
+            throw new NoSuchElementException(
+                "readoutBlockSet is missing from the configuration"
+            );
         }
-
-        if (map.containsKey(READOUT_WINDOW_KEY)) {
-            String secondsStr = map.get(READOUT_WINDOW_KEY).toString();
-            setReadoutWindowInSeconds(Integer.parseInt(secondsStr));
-        } else {
-            // default settings
-            setReadoutWindowInSeconds(7);
-        }
-    }
-
-    @Override
-    public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
     }
 }
