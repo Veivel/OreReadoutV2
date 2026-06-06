@@ -83,9 +83,9 @@ class DiscordTargetTest {
     @Test
     void healthCheck_returnsTrue_whenSendPayloadSucceeds() {
         // doReturn(...) sidesteps generic inference on sendAsync(<String>).
-        doReturn(
-            CompletableFuture.completedFuture(responseWith(204, ""))
-        ).when(httpClient).sendAsync(any(), any());
+        doReturn(CompletableFuture.completedFuture(responseWith(204, "")))
+            .when(httpClient)
+            .sendAsync(any(), any());
         DiscordTarget target = newTarget(validConfig);
 
         assertThat(target.healthCheck()).isTrue();
@@ -108,9 +108,9 @@ class DiscordTargetTest {
 
     @Test
     void sendReadout_postsThePayloadToTheConfiguredWebhook() {
-        doReturn(
-            CompletableFuture.completedFuture(responseWith(204, ""))
-        ).when(httpClient).sendAsync(any(), any());
+        doReturn(CompletableFuture.completedFuture(responseWith(204, "")))
+            .when(httpClient)
+            .sendAsync(any(), any());
         DiscordTarget target = newTarget(validConfig);
 
         target.sendReadout(
@@ -130,10 +130,10 @@ class DiscordTargetTest {
     @Test
     void sendReadout_logsError_whenResponseStatusIs4xxOrHigher() {
         doReturn(
-            CompletableFuture.completedFuture(
-                responseWith(500, "server error")
-            )
-        ).when(httpClient).sendAsync(any(), any());
+            CompletableFuture.completedFuture(responseWith(500, "server error"))
+        )
+            .when(httpClient)
+            .sendAsync(any(), any());
         DiscordTarget target = newTarget(validConfig);
 
         target.sendReadout(

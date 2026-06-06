@@ -9,6 +9,8 @@ ore-readout.ipr
 ore-readout.iws
 .gitattributes
 
+# Logs printed by logger in test runs
+logs/
 
 # Ignore Gradle GUI config
 gradle-app.setting
