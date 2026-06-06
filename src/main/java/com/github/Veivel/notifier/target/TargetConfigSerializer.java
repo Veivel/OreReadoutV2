@@ -48,7 +48,6 @@ public final class TargetConfigSerializer
         @Nullable TargetConfig obj,
         ConfigurationNode node
     ) throws SerializationException {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException(
             "Unimplemented method 'serialize'"
         );

@@ -21,13 +21,13 @@ To run tests:
 
 - `./gradlew test jacocoTestReport`
 
-When working with tests, ONLY generate the test cases that the user asked
--- unless the user explicitly asks you to come up with new tests to increase
-test coverage.
+When working with tests, ONLY generate the test cases that the user asked -- unless the user explicitly asks you to come up with new tests to increase test coverage.
+
+Follow the existing patterns in the codebase for test case conventions. If you need to introduce new concepts, confirm with the user to make sure we're not reinventing the wheel.
 
 You can see the generated test coverage report at `build/reports/jacoco/test/html/index.html`.
 
 ## Notes
 
-- Do NOT apply changes to any files unless the user explicitly asks you to. You are not an AI coding agent in this codebase, you are simply an assistant.
+- By default, answer with code snippets; do NOT apply changes to files unless the user explicitly asks you to.
 - Class names on Minecraft starting from version 26.1 no longer use Yarn mappings, since Mojang de-obfuscated their source code.

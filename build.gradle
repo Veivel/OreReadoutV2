@@ -29,7 +29,6 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${project.jackson_base_version}"
     implementation "org.spongepowered:configurate-core:${project.configurate_version}"
     include "org.spongepowered:configurate-core:${project.configurate_version}"
     implementation "org.spongepowered:configurate-yaml:${project.configurate_version}"

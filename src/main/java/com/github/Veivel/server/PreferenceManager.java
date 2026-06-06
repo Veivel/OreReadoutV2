@@ -64,7 +64,7 @@ public class PreferenceManager {
 
     /*
      * Persists the entire session store to a file.
-     * TODO: currently not implemented
+     * TODO: currently not implemented, PreferenceManager currently resets every server stop/restart
      */
     public void persist() {}
 }
