@@ -16,15 +16,19 @@ import org.apache.logging.log4j.Logger;
 public class DiscordTarget implements Target {
 
     private final Logger logger = ModLogger.get();
-    private HttpClient httpClient; // reusable HttpClient instance
+    private HttpClient httpClient;
     private URI webhookUri;
     private DiscordConfig config;
 
     public DiscordTarget(DiscordConfig config) {
+        this(config, HttpClient.newHttpClient());
+    }
+
+    public DiscordTarget(DiscordConfig config, HttpClient httpClient) {
         try {
             this.config = config;
             this.webhookUri = new URI(config.webhookUrl());
-            this.httpClient = HttpClient.newHttpClient();
+            this.httpClient = httpClient;
         } catch (URISyntaxException e) {
             logger.error(e);
         }
