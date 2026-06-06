@@ -106,9 +106,10 @@ public class ChatTarget implements Target {
 
         MinecraftServer server = ServerContext.get();
         if (server == null) {
-            return false;
+            logger.debug(
+                "ServerContext is not populated yet, but will continue the healthCheck."
+            );
         }
-
         return true;
     }
 
