@@ -7,11 +7,16 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "0.8.4"
     id "org.jetbrains.changelog" version "2.2.0"
     id "com.diffplug.spotless" version "8.2.1"
+    id "com.gradleup.shadow" version "9.4.1"
 }
 
 java {
     sourceCompatibility = JavaVersion.toVersion(25)
     targetCompatibility = JavaVersion.toVersion(25)
+}
+
+configurations {
+    shade
 }
 
 base.archivesName = project.archives_base_name
@@ -30,9 +35,13 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     implementation "org.spongepowered:configurate-core:${project.configurate_version}"
-    include "org.spongepowered:configurate-core:${project.configurate_version}"
     implementation "org.spongepowered:configurate-yaml:${project.configurate_version}"
-    include "org.spongepowered:configurate-yaml:${project.configurate_version}"
+
+    // We shade these dependencies to avoid version conflict / incompatibility
+    // issues with other mods (e.g. Vanish)
+
+    shade("org.spongepowered:configurate-core:${project.configurate_version}") { transitive = false }
+    shade("org.spongepowered:configurate-yaml:${project.configurate_version}") { transitive = false }
 
     // Dependencies of Configurate - see `./gradlew dependencies --configuration runtimeClasspath`.
     include "net.kyori:option:1.1.0"
@@ -97,6 +106,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 jar {
+    archiveClassifier.set("slim")
 	inputs.property "projectName", project.name
 
 	from("LICENSE") {
@@ -104,11 +114,28 @@ jar {
 	}
 }
 
+tasks.register("bundleJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+    dependsOn tasks.named("jar")
+
+    archiveClassifier.set("")
+    configurations = [project.configurations.shade]
+    from zipTree(tasks.named("jar").flatMap { it.archiveFile })
+    relocate("org.spongepowered.configurate", "com.github.Veivel.shadow.configurate")
+    
+    mergeServiceFiles() 
+    exclude("META-INF/*.SF")
+    exclude("META-INF/*.RSA")
+    // exclude("META-INF/*.DSA")
+    // exclude("META-INF/*.EC")
+}
+tasks.named("assemble") { dependsOn "bundleJar" }
+tasks.named("shadowJar") { enabled = false } // replaced with bundleJar
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact(jar) {
-                builtBy jar
+                builtBy bundleJar
             }
         }
     }
@@ -116,7 +143,7 @@ publishing {
 
 // this only publishes one artifact: one mod jar for one minecraft version
 publishMods {
-    file = jar.archiveFile
+    file = bundleJar.archiveFile
     type = STABLE
     changelog = fetchChangelog()
 
