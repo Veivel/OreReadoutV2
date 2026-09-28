@@ -17,3 +17,11 @@ To run tests, run `./gradlew test jacocoTestReport`.
 ## Development
 
 You should work on your personal GitHub fork and make a pull request to this repository's `master` branch once ready. Before working on anything, however, please create a new Issue first.
+
+## Upgrading Versions
+
+1. Bump the `minecraft_version` number in `gradle.properties`.
+2. Refresh Gradle's cache for the Minecraft source: `./gradlew genSources --refresh-dependencies`
+3. If you're using VS Code and want intellisense to refresh as well, open Command Palette → "Java: Clean Java Language Server Workspace"
+
+## Deployment

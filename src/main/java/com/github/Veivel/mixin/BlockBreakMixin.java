@@ -4,9 +4,9 @@ import com.github.Veivel.event.MixinEvent;
 import com.github.Veivel.event.MixinEventAdapter;
 import com.github.Veivel.notifier.EventBufferRelay;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,8 +20,8 @@ public class BlockBreakMixin {
 
     @Inject(method = "playerDestroy", at = @At("HEAD"))
     public void playerDestroy(
-        Level world,
-        Player player,
+        ServerLevel world,
+        ServerPlayer player,
         BlockPos pos,
         BlockState state,
         BlockEntity blockEntity,
