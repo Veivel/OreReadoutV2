@@ -2,13 +2,12 @@
 
 > **TLDR: Customizable ore readouts for server console and staff!**
 
-A simple Fabric mod to notify staff and server console when certain blocks (e.g. ores) are broken.
-If you are familiar with OreAnnouncer and OreNotifier,
-this is basically the lighter version for Fabric.
+OreReadoutV2 is a server-side Fabric mod to notify staff and server console whenever
+certain blocks (e.g. ores) are broken. If you are familiar with Ore Announcer and Ore
+Notifier, this mod is basically the lite version of those but on Fabric.
 
-This mod comes in handy as a server administrator
-when you want to catch potential xrayers and cheaters,
-but prefer not using an anti-xray or ore obfuscator mod.
+This mod comes in handy as a server administrator when you want to catch potential
+x-rayers and cheaters, but prefer not using an anti-xray or ore obfuscator mod.
 
 ## Configuration
 
